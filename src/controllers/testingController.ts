@@ -5,5 +5,5 @@ import {setDB} from "../db/db";
 export const clearDatabaseController = (req: Request, res: Response<OutputVideoType[]>) => {
     setDB()
     res
-        .status(204)
+        .status(204).end()
 }
