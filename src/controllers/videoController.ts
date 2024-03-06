@@ -1,7 +1,8 @@
 import {Request, Response} from 'express'
 import {db} from '../db/db'
-import {createVideoInputValidation} from "../validation/videos";
+import {createVideoInputValidation, updateVideoInputValidation} from "../validation/videos";
 import {VideoDBType, OutputVideoType, OutputErrorsType} from "../types";
+import {dataset2} from "../../__tests__/datasets";
 
 export const getVideosController = (req: Request, res: Response<OutputVideoType[]>) => {
     res
@@ -32,18 +33,49 @@ export const createVideoController = (req: Request, res: Response<OutputVideoTyp
 
 export const findVideoController = (req: Request, res: Response<OutputVideoType>) => {
     let foundVideo = db.videos.filter(item => item.id === Number(req.params.id))[0];
+    console.debug(foundVideo)
     if (!foundVideo) {
-        res.status(404)
+        res.status(404).end()
         return
     }
 
-    res
+   res
         .status(200)
         .json(foundVideo)
 }
 
+export const updateVideoController = (req: Request, res: Response<OutputVideoType | OutputErrorsType>) => {
+    const errors = updateVideoInputValidation(req.body)
+    if (errors.errorsMessages.length) {
+        res
+            .status(400)
+            .json(errors)
+        return
+    }
+    const index = db.videos.findIndex(item => item.id === Number(req.params.id))
+    if (index < 0) {
+        res.status(404).end()
+        return
+    }
+
+    db.videos[index] = { ... db.videos[index], ...req.body };
+
+   res
+        .status(204).end()
+}
+
+
+
 export const deleteVideoController = (req: Request, res: Response<OutputVideoType[]>) => {
+    const index = db.videos.findIndex(item => item.id === Number(req.params.id))
+    if (index < 0) {
+        res.status(404).end()
+        return
+    }
+
+    db.videos.splice(index, 1);
+
     res
-        .status(200)
-        .json(db.videos)
+        .status(204).end()
+
 }

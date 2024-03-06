@@ -1,10 +1,12 @@
-import {ResolutionsType} from "./config/video.config";
-
 export type InputVideoType = {
     title: string
     author: string
-    availableResolution: string[]
+    availableResolution?: string[]
+    canBeDownloaded?:boolean
+    minAgeRestriction?:number
+    publicationDate?:string
 }
+
 
 export type OutputVideoType = {
     id: number

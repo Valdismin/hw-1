@@ -25,6 +25,16 @@ export const video2: VideoDBType = {
     publicationDate: new Date().toISOString(),
     availableResolutions: [Resolutions.P240],
 }
+export const video3: VideoDBType = {
+    id: 2,
+    title: 't' + Date.now() + Math.random(),
+    author: 'a' + Date.now() + Math.random(),
+    canBeDownloaded: true,
+    minAgeRestriction: null,
+    createdAt: new Date().toISOString(),
+    publicationDate: new Date().toISOString(),
+    availableResolutions: [Resolutions.P240],
+}
 
 
 export const dataset1: DBType = {
@@ -32,4 +42,7 @@ export const dataset1: DBType = {
 }
 export const dataset2: DBType = {
     videos: [video2],
+}
+export const dataset3: DBType = {
+    videos: [video1, video2, video3],
 }
