@@ -40,16 +40,33 @@ export const updateVideoInputValidation = (video: InputVideoType) => {
     const publicationDateCondition = video?.publicationDate ? video.author.length > 20
         || video.author.length === 0 : false
 
-    const errorCondition = resolutionCondition
-        || titleCondition
-        || authorCondition
-        || minAgeRestrictionCondition
-        || publicationDateCondition
-
-    if (errorCondition) {
+    if(resolutionCondition) {
         errors.errorsMessages.push({
             message: 'error!!!!', field: 'availableResolution'
         })
     }
+    if(titleCondition) {
+        errors.errorsMessages.push({
+            message: 'error!!!!', field: 'title'
+        })
+    }
+    if(authorCondition) {
+        errors.errorsMessages.push({
+            message: 'error!!!!', field: 'author'
+        })
+    }
+
+    if(minAgeRestrictionCondition) {
+        errors.errorsMessages.push({
+            message: 'error!!!!', field: 'minAgeRestriction'
+        })
+    }
+
+    if(publicationDateCondition) {
+        errors.errorsMessages.push({
+            message: 'error!!!!', field: 'publicationDate'
+        })
+    }
+
     return errors
 }
