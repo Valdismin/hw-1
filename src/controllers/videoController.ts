@@ -19,7 +19,7 @@ export const createVideoController = (req: Request, res: Response<OutputVideoTyp
         return
     }
 
-    const newDate = new Date(Date.now())
+    const newDate = new Date()
     const publishDate = new Date(newDate.getDate() + 1)
 
     const newVideo: VideoDBType = {
