@@ -77,10 +77,11 @@ describe('/videos', () => {
         setDB(dataset3)
         const updatedVideo: InputVideoType = {
             title: 't1',
-            author: 'a1'
+            author: 'a1',
+            canBeDownloaded: true
         }
 
-       await req
+        await req
             .put(`${SETTINGS.PATH.VIDEOS}/2`)
             .send(updatedVideo)
             .expect(204)
@@ -91,9 +92,9 @@ describe('/videos', () => {
             title: 't1',
             author: 'a1'
         }
-         await req
+        await req
             .put(`${SETTINGS.PATH.VIDEOS}/221312`)
-             .send(updatedVideo)
+            .send(updatedVideo)
             .expect(404)
     })
     it('should be error in input', async () => {
@@ -104,7 +105,7 @@ describe('/videos', () => {
         }
         const res = await req
             .put(`${SETTINGS.PATH.VIDEOS}/2`)
-             .send(updatedVideo)
+            .send(updatedVideo)
             .expect(400)
 
         expect(res.body.errorsMessages.length).toBe(1)
