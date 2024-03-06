@@ -1,5 +1,6 @@
 import {Resolutions, ResolutionsType} from "../config/video.config";
 import {InputVideoType, OutputErrorsType} from "../types";
+import {isBoolean} from "util";
 
 export const createVideoInputValidation = (video: InputVideoType) => {
     const errors: OutputErrorsType = {
@@ -65,6 +66,12 @@ export const updateVideoInputValidation = (video: InputVideoType) => {
     if(publicationDateCondition) {
         errors.errorsMessages.push({
             message: 'error!!!!', field: 'publicationDate'
+        })
+    }
+
+    if(typeof video.canBeDownloaded === "boolean") {
+        errors.errorsMessages.push({
+            message: 'error!!!!', field: 'canBeDownloaded'
         })
     }
 
