@@ -1,5 +1,5 @@
 import {Resolutions} from "../config/video.config";
-import {InputVideoType, OutputErrorsType} from "../types";
+import {InputVideoType, OutputErrorsType, UpdateVideoType} from "../types";
 
 export const createVideoInputValidation = (video: InputVideoType) => {
     const errors: OutputErrorsType = {
@@ -12,9 +12,6 @@ export const createVideoInputValidation = (video: InputVideoType) => {
         || video.title.length === 0
     const authorCondition = !video.author || video.author.length > 20
         || video.author.length === 0
-    const minAgeRestrictionCondition = video?.minAgeRestriction ? video.minAgeRestriction > 18 || video.minAgeRestriction < 1 : false
-    const publicationDateCondition = video?.publicationDate ? video.author.length > 20
-        || video.author.length === 0 : false
 
     if(resolutionCondition) {
         errors.errorsMessages.push({
@@ -31,27 +28,9 @@ export const createVideoInputValidation = (video: InputVideoType) => {
             message: 'error!!!!', field: 'author'
         })
     }
-
-    if(minAgeRestrictionCondition) {
-        errors.errorsMessages.push({
-            message: 'error!!!!', field: 'minAgeRestriction'
-        })
-    }
-
-    if(publicationDateCondition) {
-        errors.errorsMessages.push({
-            message: 'error!!!!', field: 'publicationDate'
-        })
-    }
-
-    if(typeof video.canBeDownloaded === "boolean") {
-        errors.errorsMessages.push({
-            message: 'error!!!!', field: 'canBeDownloaded'
-        })
-    }
     return errors
 }
-export const updateVideoInputValidation = (video: InputVideoType) => {
+export const updateVideoInputValidation = (video: UpdateVideoType) => {
     const errors: OutputErrorsType = {
         errorsMessages: []
     }

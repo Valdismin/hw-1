@@ -3,10 +3,15 @@ import {Resolutions} from "./config/video.config";
 export type InputVideoType = {
     title: string
     author: string
+    availableResolution: Resolutions[]
+}
+export type UpdateVideoType = {
+    title: string
+    author: string
     availableResolution?: Resolutions[]
-    canBeDownloaded?:boolean
-    minAgeRestriction?:number
-    publicationDate?:string
+    canBeDownloaded?: boolean
+    minAgeRestriction?: number
+    publicationDate?: string
 }
 
 
@@ -15,10 +20,10 @@ export type OutputVideoType = {
     title: string
     author: string
     canBeDownloaded: boolean
-    minAgeRestriction: number | null
+    minAgeRestriction: null
     createdAt: string,
     publicationDate: string,
-    availableResolutions: string[]
+    availableResolutions: Resolutions[]
 }
 
 export type OutputErrorsType = {
@@ -35,7 +40,7 @@ export type VideoDBType = {
     title: string
     author: string
     canBeDownloaded: boolean
-    minAgeRestriction: number | null
+    minAgeRestriction: null
     createdAt: string,
     publicationDate: string,
     availableResolutions: Resolutions[]

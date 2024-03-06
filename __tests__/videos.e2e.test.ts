@@ -32,7 +32,7 @@ describe('/videos', () => {
         const newVideo: InputVideoType = {
             title: 't1',
             author: 'a1',
-            availableResolution: ["P144","Invalid","P720"]
+            availableResolution: ["P144","Invalid","P720"] as any
         }
 
         const res = await req
