@@ -7,9 +7,8 @@ export const createVideoInputValidation = (video: InputVideoType) => {
         errorsMessages: []
     }
 
-
     const resolutionCondition = video?.availableResolution?.length ? !Array.isArray(video.availableResolution)
-        || video.availableResolution.find(p => !Resolutions[p as ResolutionsType]) : false
+        || video.availableResolution.find(p => !Resolutions[p]) : false
     const titleCondition = !video.title || video.title.length > 40
         || video.title.length === 0
     const authorCondition = !video.author || video.author.length > 20
@@ -59,7 +58,7 @@ export const updateVideoInputValidation = (video: InputVideoType) => {
     }
 
     const resolutionCondition = video?.availableResolution?.length ? !Array.isArray(video.availableResolution)
-        || video.availableResolution.find(p => !Resolutions[p as ResolutionsType]) : false
+        || video.availableResolution.find(p => !Resolutions[p]) : false
     const titleCondition = !video.title || video.title.length > 40
         || video.title.length === 0
     const authorCondition = !video.author || video.author.length > 20
