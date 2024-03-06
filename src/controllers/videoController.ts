@@ -19,10 +19,16 @@ export const createVideoController = (req: Request, res: Response<OutputVideoTyp
         return
     }
 
+    const newDate = new Date(Date.now())
+    const publishDate = new Date(newDate.getDate() + 1)
+
     const newVideo: VideoDBType = {
         ...req.body,
         id: Date.now() + Math.random(),
-        // ...
+        canBeDownloaded: false,
+        minAgeRestriction: null,
+        createdAt: newDate.toISOString(),
+        publicationDate: publishDate.toISOString(),
     }
     db.videos = [...db.videos, newVideo]
 
@@ -38,7 +44,7 @@ export const findVideoController = (req: Request, res: Response<OutputVideoType>
         return
     }
 
-   res
+    res
         .status(200)
         .json(foundVideo)
 }
@@ -57,12 +63,11 @@ export const updateVideoController = (req: Request, res: Response<OutputVideoTyp
         return
     }
 
-    db.videos[index] = { ... db.videos[index], ...req.body };
+    db.videos[index] = {...db.videos[index], ...req.body};
 
-   res
+    res
         .status(204).end()
 }
-
 
 
 export const deleteVideoController = (req: Request, res: Response<OutputVideoType[]>) => {
