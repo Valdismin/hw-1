@@ -21,6 +21,7 @@ export const createVideoController = (req: Request, res: Response<OutputVideoTyp
 
     const newDate = new Date()
     const publishDate = new Date()
+    publishDate.setDate(publishDate.getDate() + 1)
 
     const newVideo: VideoDBType = {
         ...req.body,
@@ -28,7 +29,7 @@ export const createVideoController = (req: Request, res: Response<OutputVideoTyp
         canBeDownloaded: false,
         minAgeRestriction: null,
         createdAt: newDate.toISOString(),
-        publicationDate: publishDate.setDate(publishDate.getDate() + 1),
+        publicationDate: publishDate.toISOString(),
     }
     db.videos = [...db.videos, newVideo]
 
