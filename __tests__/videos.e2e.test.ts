@@ -15,8 +15,6 @@ describe('/videos', () => {
             .get(SETTINGS.PATH.VIDEOS)
             .expect(200)
 
-        console.log(res.body)
-
         expect(res.body.length).toBe(0)
     })
     it('should get not empty array', async () => {

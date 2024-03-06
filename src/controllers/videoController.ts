@@ -33,7 +33,6 @@ export const createVideoController = (req: Request, res: Response<OutputVideoTyp
 
 export const findVideoController = (req: Request, res: Response<OutputVideoType>) => {
     let foundVideo = db.videos.filter(item => item.id === Number(req.params.id))[0];
-    console.debug(foundVideo)
     if (!foundVideo) {
         res.status(404).end()
         return
