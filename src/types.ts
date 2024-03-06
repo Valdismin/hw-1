@@ -1,9 +1,9 @@
-import {ResolutionsType} from "./config/video.config";
+import {Resolutions} from "./config/video.config";
 
 export type InputVideoType = {
     title: string
     author: string
-    availableResolution?: ResolutionsType[]
+    availableResolution?: Resolutions[]
     canBeDownloaded?:boolean
     minAgeRestriction?:number
     publicationDate?:string
@@ -38,5 +38,5 @@ export type VideoDBType = {
     minAgeRestriction: number | null
     createdAt: string,
     publicationDate: string,
-    availableResolutions: ResolutionsType[]
+    availableResolutions: Resolutions[]
 }

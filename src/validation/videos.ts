@@ -1,6 +1,5 @@
-import {Resolutions, ResolutionsType} from "../config/video.config";
+import {Resolutions} from "../config/video.config";
 import {InputVideoType, OutputErrorsType} from "../types";
-import {isBoolean} from "util";
 
 export const createVideoInputValidation = (video: InputVideoType) => {
     const errors: OutputErrorsType = {
