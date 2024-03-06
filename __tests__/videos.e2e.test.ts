@@ -3,7 +3,7 @@ import {SETTINGS} from '../src/settings'
 import {db, setDB} from "../src/db/db";
 import {dataset1, dataset2, dataset3} from "./datasets";
 import {Resolutions} from "../src/config/video.config";
-import {InputVideoType} from "../src/types";
+import {InputVideoType, UpdateVideoType} from "../src/types";
 
 describe('/videos', () => {
     beforeAll(async () => {
@@ -32,7 +32,7 @@ describe('/videos', () => {
         const newVideo: InputVideoType = {
             title: 't1',
             author: 'a1',
-            availableResolution: ["P144","Invalid","P720"] as any
+            availableResolution: ["P144","P720"] as any
         }
 
         const res = await req
@@ -48,7 +48,7 @@ describe('/videos', () => {
         const newVideo: InputVideoType = {
             title: '',
             author: 'a1',
-            availableResolution: [Resolutions.P144]
+            availableResolution: ["lfksdlkfmn","fdkl;smfds"] as any
         }
 
         const res = await req
@@ -56,7 +56,7 @@ describe('/videos', () => {
             .send(newVideo)
             .expect(400)
 
-        expect(res.body.errorsMessages.length).toBe(1)
+        expect(res.body.errorsMessages.length).toBe(2)
     })
     it('should find video', async () => {
         setDB(dataset2)
@@ -75,7 +75,7 @@ describe('/videos', () => {
     })
     it('should update video', async () => {
         setDB(dataset3)
-        const updatedVideo: InputVideoType = {
+        const updatedVideo: UpdateVideoType = {
             title: 't1',
             author: 'a1',
             canBeDownloaded: true
@@ -88,7 +88,7 @@ describe('/videos', () => {
     })
     it('should not find video to update', async () => {
         setDB(dataset3)
-        const updatedVideo: InputVideoType = {
+        const updatedVideo: UpdateVideoType = {
             title: 't1',
             author: 'a1'
         }
@@ -99,7 +99,7 @@ describe('/videos', () => {
     })
     it('should be error in input', async () => {
         setDB(dataset3)
-        const updatedVideo: InputVideoType = {
+        const updatedVideo: UpdateVideoType = {
             title: '',
             author: 'a1'
         }
