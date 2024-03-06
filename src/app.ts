@@ -11,4 +11,4 @@ app.get('/', (req, res) => {
 })
 
 app.use('/videos', videosRouter)
-app.use('/videos', testsRouter)
+app.use('/testing', testsRouter)
