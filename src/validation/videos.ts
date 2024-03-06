@@ -8,9 +8,9 @@ export const createVideoInputValidation = (video: InputVideoType) => {
 
     const resolutionCondition = video?.availableResolution?.length ? !Array.isArray(video.availableResolution)
         || video.availableResolution.find(p => !Resolutions[p as ResolutionsType]) : false
-    const titleCondition = video.title || video.title.length > 40
+    const titleCondition = !video.title || video.title.length > 40
         || video.title.length === 0
-    const authorCondition = video.author || video.author.length > 20
+    const authorCondition = !video.author || video.author.length > 20
         || video.author.length === 0
 
     const errorCondition = resolutionCondition
@@ -32,9 +32,9 @@ export const updateVideoInputValidation = (video: InputVideoType) => {
 
     const resolutionCondition = video?.availableResolution?.length ? !Array.isArray(video.availableResolution)
         || video.availableResolution.find(p => !Resolutions[p as ResolutionsType]) : false
-    const titleCondition = video.title || video.title.length > 40
+    const titleCondition = !video.title || video.title.length > 40
         || video.title.length === 0
-    const authorCondition = video.author || video.author.length > 20
+    const authorCondition = !video.author || video.author.length > 20
         || video.author.length === 0
     const minAgeRestrictionCondition = video?.minAgeRestriction ? video.minAgeRestriction > 18 || video.minAgeRestriction < 1 : false
     const publicationDateCondition = video?.publicationDate ? video.author.length > 20
