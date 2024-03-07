@@ -3,12 +3,12 @@ import {Resolutions} from "./config/video.config";
 export type InputVideoType = {
     title: string
     author: string
-    availableResolution: Resolutions[]
+    availableResolutions: Resolutions[]
 }
 export type UpdateVideoType = {
     title: string
     author: string
-    availableResolution?: Resolutions[]
+    availableResolutions?: Resolutions[]
     canBeDownloaded?: boolean
     minAgeRestriction?: number
     publicationDate?: string

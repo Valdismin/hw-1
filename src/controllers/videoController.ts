@@ -12,6 +12,7 @@ export const getVideosController = (req: Request, res: Response<OutputVideoType[
 
 export const createVideoController = (req: Request, res: Response<OutputVideoType | OutputErrorsType>) => {
     const errors = createVideoInputValidation(req.body)
+
     if (errors.errorsMessages.length) {
         res
             .status(400)

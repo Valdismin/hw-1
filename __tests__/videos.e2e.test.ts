@@ -32,7 +32,7 @@ describe('/videos', () => {
         const newVideo: InputVideoType = {
             title: 't1',
             author: 'a1',
-            availableResolution: ["P144", "P720"] as any
+            availableResolutions: ["P144", "P720"] as any
         }
 
         const res = await req
@@ -40,7 +40,7 @@ describe('/videos', () => {
             .send(newVideo)
             .expect(201)
 
-        expect(res.body.availableResolution).toEqual(newVideo.availableResolution)
+        expect(res.body.availableResolutions).toEqual(newVideo.availableResolutions)
         expect(res.body.title).toEqual(newVideo.title)
     })
     it('should be an error on create', async () => {
@@ -48,14 +48,13 @@ describe('/videos', () => {
         const newVideo: InputVideoType = {
             title: 'rwer',
             author: 'a1',
-            availableResolution: ["P144","Invalid","P720"] as any
+            availableResolutions: ["P144","Invalid","P720"] as any
         }
 
         const res = await req
             .post(SETTINGS.PATH.VIDEOS)
             .send(newVideo)
             .expect(400)
-        console.debug(res.body)
         expect(res.body.errorsMessages.length).toBe(1)
     })
     it('should find video', async () => {
