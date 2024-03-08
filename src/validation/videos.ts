@@ -6,24 +6,24 @@ export const createVideoInputValidation = (video: InputVideoType) => {
         errorsMessages: []
     }
 
-    const resolutionCondition = video?.availableResolution?.length ? !Array.isArray(video.availableResolution)
-        || video.availableResolution.find(p => !Resolutions[p]) : false
+    const resolutionCondition = video?.availableResolutions?.length ? !Array.isArray(video.availableResolutions)
+        || video.availableResolutions.find(p => !Resolutions[p]) || video.availableResolutions.find(p => p === "Invalid" as any) : false
     const titleCondition = !video.title || video.title.length > 40
         || video.title.length === 0
     const authorCondition = !video.author || video.author.length > 20
         || video.author.length === 0
 
-    if(resolutionCondition) {
+    if (resolutionCondition) {
         errors.errorsMessages.push({
-            message: 'error!!!!', field: 'availableResolution'
+            message: 'error!!!!', field: 'availableResolutions'
         })
     }
-    if(titleCondition) {
+    if (titleCondition) {
         errors.errorsMessages.push({
             message: 'error!!!!', field: 'title'
         })
     }
-    if(authorCondition) {
+    if (authorCondition) {
         errors.errorsMessages.push({
             message: 'error!!!!', field: 'author'
         })
@@ -35,8 +35,8 @@ export const updateVideoInputValidation = (video: UpdateVideoType) => {
         errorsMessages: []
     }
 
-    const resolutionCondition = video?.availableResolution?.length ? !Array.isArray(video.availableResolution)
-        || video.availableResolution.find(p => !Resolutions[p]) : false
+    const resolutionCondition = video?.availableResolutions?.length ? !Array.isArray(video.availableResolutions)
+        || video.availableResolutions.find(p => !Resolutions[p]) : false
     const titleCondition = !video.title || video.title.length > 40
         || video.title.length === 0
     const authorCondition = !video.author || video.author.length > 20
@@ -45,35 +45,35 @@ export const updateVideoInputValidation = (video: UpdateVideoType) => {
     const publicationDateCondition = video?.publicationDate ? video.author.length > 20
         || video.author.length === 0 : false
 
-    if(resolutionCondition) {
+    if (resolutionCondition) {
         errors.errorsMessages.push({
-            message: 'error!!!!', field: 'availableResolution'
+            message: 'error!!!!', field: 'availableResolutions'
         })
     }
-    if(titleCondition) {
+    if (titleCondition) {
         errors.errorsMessages.push({
             message: 'error!!!!', field: 'title'
         })
     }
-    if(authorCondition) {
+    if (authorCondition) {
         errors.errorsMessages.push({
             message: 'error!!!!', field: 'author'
         })
     }
 
-    if(minAgeRestrictionCondition) {
+    if (minAgeRestrictionCondition) {
         errors.errorsMessages.push({
             message: 'error!!!!', field: 'minAgeRestriction'
         })
     }
 
-    if(publicationDateCondition) {
+    if (publicationDateCondition) {
         errors.errorsMessages.push({
             message: 'error!!!!', field: 'publicationDate'
         })
     }
 
-    if(typeof video.canBeDownloaded !== "boolean") {
+    if (typeof video.canBeDownloaded !== "boolean") {
         errors.errorsMessages.push({
             message: 'error!!!!', field: 'canBeDownloaded'
         })
