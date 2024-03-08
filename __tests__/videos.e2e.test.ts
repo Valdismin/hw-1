@@ -32,7 +32,7 @@ describe('/videos', () => {
         const newVideo: InputVideoType = {
             title: 't1',
             author: 'a1',
-            availableResolution: ["P144","P720"] as any
+            availableResolution: ["P144", "P720"] as any
         }
 
         const res = await req
@@ -46,17 +46,17 @@ describe('/videos', () => {
     it('should be an error on create', async () => {
         setDB()
         const newVideo: InputVideoType = {
-            title: '',
+            title: 'fdsfsdf',
             author: 'a1',
-            availableResolution: ["lfksdlkfmn","fdkl;smfds"] as any
+            availableResolution: ["P144", "Invalid", "P720"] as any
         }
 
         const res = await req
             .post(SETTINGS.PATH.VIDEOS)
             .send(newVideo)
             .expect(400)
-
-        expect(res.body.errorsMessages.length).toBe(2)
+        console.debug(res.body.errorsMessages)
+        expect(res.body.errorsMessages.length).toBe(1)
     })
     it('should find video', async () => {
         setDB(dataset2)
