@@ -14,7 +14,7 @@ const blogDescriptionUpdateValidation = body('description').trim().isString().is
 const blogURLUpdateValidation = body('websiteUrl').trim().isString().isLength({min: 1, max:100}).matches(/^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$/)
 
 export const updateBlogValidation = [
-    blogNameValidation,
-    blogDescriptionValidation,
-    blogURLValidation
+    blogNameUpdateValidation,
+    blogDescriptionUpdateValidation,
+    blogURLUpdateValidation
 ]

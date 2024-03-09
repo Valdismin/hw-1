@@ -2,9 +2,10 @@ import {validationResult} from "express-validator";
 import {NextFunction, Request, Response} from "express";
 import {OutputErrorsType} from "../types/videosTypes";
 
-export const inputCheckErrorsMiddleware = (req: Request, res:Response<OutputErrorsType>, next:NextFunction) => {
+export const inputCheckErrorsMiddleware = (req: Request, res: Response<OutputErrorsType>, next: NextFunction) => {
     const e = validationResult(req)
     const errors = e.array()
+    console.debug(errors)
     if (errors.length) {
         res.status(400).json({
             errorsMessages: errors.map((error: any) => {
