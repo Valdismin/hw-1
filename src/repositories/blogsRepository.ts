@@ -26,7 +26,7 @@ export const blogsRepository = {
         if(index < 0) {
             return []
         }
-        return db.blogs.slice(index, 1)
+        return db.blogs.splice(index, 1)
     },
     async findBlogById(id: string) {
         return db.blogs.find(b => b.id === id)

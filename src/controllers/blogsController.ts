@@ -1,7 +1,6 @@
 import {Request, Response} from "express";
 import {blogsRepository} from "../repositories/blogsRepository";
 import {OutputBlogType} from "../types/blogsTypes";
-import {validationResult} from "express-validator";
 import {OutputErrorsType} from "../types/videosTypes";
 
 export const createBlogController = async (req: Request, res: Response<OutputBlogType | OutputErrorsType>) => {
@@ -32,6 +31,7 @@ export const updateBlogController = async (req: Request, res: Response) => {
 
 export const deleteBlogController = async (req: Request, res: Response) => {
     const deletedBlog = await blogsRepository.deleteBlog(req.params.id)
+    console.log(deletedBlog)
     if (deletedBlog.length === 0) {
         res
             .status(404).end()
