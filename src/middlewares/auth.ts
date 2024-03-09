@@ -10,16 +10,11 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
             .json({})
         return
     }
-    console.log(auth)
-    console.log(ADMIN_AUTH)
 
     const buff = Buffer.from(auth.slice(6), 'base64')
     const decodedAuth = buff.toString('utf8')
 
-    //const buff2 = Buffer.from(ADMIN_AUTH, 'utf8')
-    //const codedAuth = buff2.toString('base64')
-
-    if (decodedAuth === ADMIN_AUTH || auth.slice(0, 5) !== 'Basic ') {
+    if (decodedAuth !== ADMIN_AUTH || auth.slice(0, 6) !== 'Basic ') {
         res
             .status(401)
             .json({})
