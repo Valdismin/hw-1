@@ -101,7 +101,7 @@ describe('/blogs', () => {
         const updatedVideo: UpdateBlogType = {
             name: '',
             description: 'a1',
-            websiteUrl: 'https://www.youtube.com/watch?v=6Ejga4kJUts'
+            websiteUrl: 'hgfhfgh'
         }
         const res = await req
             .put(`${SETTINGS.PATH.BLOGS}/2`)
