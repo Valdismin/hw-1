@@ -1,9 +1,8 @@
 import {req} from './test-helpers'
 import {SETTINGS} from '../src/settings'
-import {db, setDB} from "../src/db/db";
+import {setDB} from "../src/db/db";
 import {dataset1, dataset2, dataset3} from "./datasets";
-import {Resolutions} from "../src/config/video.config";
-import {InputVideoType, UpdateVideoType} from "../src/types";
+import {InputVideoType, UpdateVideoType} from "../src/types/videosTypes";
 
 describe('/videos', () => {
     beforeAll(async () => {
