@@ -124,7 +124,7 @@ describe('/blogs', () => {
             .send(updatedVideo)
             .expect(400)
 
-        expect(res.body.errorsMessages.length).toBe(1)
+        expect(res.body.errorsMessages.length).toBe(2)
     })
     it('should delete blog', async () => {
         setBlogsDB(dataset2)
