@@ -1,7 +1,6 @@
 import {Request, Response} from "express";
 import {blogsRepository} from "../repositories/blogsRepository";
 import {OutputBlogType} from "../types/blogsTypes";
-import {validationResult} from "express-validator";
 import {OutputErrorsType} from "../types/videosTypes";
 
 export const createBlogController = async (req: Request, res: Response<OutputBlogType | OutputErrorsType>) => {

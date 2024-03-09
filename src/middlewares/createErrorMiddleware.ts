@@ -5,7 +5,6 @@ import {OutputErrorsType} from "../types/videosTypes";
 export const inputCheckErrorsMiddleware = (req: Request, res: Response<OutputErrorsType>, next: NextFunction) => {
     const e = validationResult(req)
     const errors = e.array()
-    console.debug(errors)
     if (errors.length) {
         res.status(400).json({
             errorsMessages: errors.map((error: any) => {

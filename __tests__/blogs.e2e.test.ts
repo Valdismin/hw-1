@@ -1,6 +1,6 @@
 import {req} from "./test-helpers";
 import {SETTINGS} from "../src/settings";
-import {setBlogsDB, setDB} from "../src/db/db";
+import {setBlogsDB} from "../src/db/db";
 import {dataset1, dataset2, dataset3} from "./datasets";
 import {InputBlogType, UpdateBlogType} from "../src/types/blogsTypes";
 import {ADMIN_AUTH} from "../src/middlewares/auth";
@@ -37,7 +37,7 @@ describe('/blogs', () => {
 
         const res = await req
             .post(SETTINGS.PATH.BLOGS)
-            .set({'Authorisation': 'Basic ' + codedAuth})
+            .set({'Authorization': 'Basic ' + codedAuth})
             .send(newBlog)
             .expect(201)
 
@@ -56,7 +56,7 @@ describe('/blogs', () => {
 
         const res = await req
             .post(SETTINGS.PATH.BLOGS)
-            .set({'Authorisation': 'Basic ' + codedAuth})
+            .set({'Authorization': 'Basic ' + codedAuth})
             .send(newBlog)
             .expect(400)
 
@@ -71,7 +71,6 @@ describe('/blogs', () => {
 
         expect(res.body).toEqual(dataset2.blogs[0])
     })
-
     it('should not find video', async () => {
         setBlogsDB(dataset2)
         await req
@@ -90,7 +89,7 @@ describe('/blogs', () => {
 
         await req
             .put(`${SETTINGS.PATH.BLOGS}/2`)
-            .set({'Authorisation': 'Basic ' + codedAuth})
+            .set({'Authorization': 'Basic ' + codedAuth})
             .send(updatedBlog)
             .expect(204)
     })
@@ -105,7 +104,7 @@ describe('/blogs', () => {
         }
         await req
             .put(`${SETTINGS.PATH.BLOGS}/221312`)
-            .set({'Authorisation': 'Basic ' + codedAuth})
+            .set({'Authorization': 'Basic ' + codedAuth})
             .send(updatedVideo)
             .expect(404)
     })
@@ -120,7 +119,7 @@ describe('/blogs', () => {
         }
         const res = await req
             .put(`${SETTINGS.PATH.BLOGS}/2`)
-            .set({'Authorisation': 'Basic ' + codedAuth})
+            .set({'Authorization': 'Basic ' + codedAuth})
             .send(updatedVideo)
             .expect(400)
 
@@ -132,17 +131,16 @@ describe('/blogs', () => {
         const codedAuth = buff2.toString('base64')
         await req
             .delete(`${SETTINGS.PATH.BLOGS}/2`)
-            .set({'Authorisation': 'Basic ' + codedAuth})
+            .set({'Authorization': 'Basic ' + codedAuth})
             .expect(204)
     })
-
     it('should not find video to delete', async () => {
         setBlogsDB()
         const buff2 = Buffer.from(ADMIN_AUTH, 'utf8')
         const codedAuth = buff2.toString('base64')
         await req
             .delete(`${SETTINGS.PATH.BLOGS}/2`)
-            .set({'Authorisation': 'Basic ' + codedAuth})
+            .set({'Authorization': 'Basic ' + codedAuth})
             .expect(404)
     })
 })

@@ -7,6 +7,7 @@ export const SETTINGS = {
         VIDEOS: '/videos',
         TESTING: '/testing',
         BLOGS: '/blogs',
+        POSTS: '/posts',
     },
     AUTH: {
         LOGIN: 'admin',
