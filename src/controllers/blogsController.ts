@@ -31,7 +31,6 @@ export const updateBlogController = async (req: Request, res: Response) => {
 
 export const deleteBlogController = async (req: Request, res: Response) => {
     const deletedBlog = await blogsRepository.deleteBlog(req.params.id)
-    console.log(deletedBlog)
     if (deletedBlog.length === 0) {
         res
             .status(404).end()
