@@ -3,6 +3,7 @@ import {SETTINGS} from "../src/settings";
 import {setBlogsDB, setDB} from "../src/db/db";
 import {dataset1, dataset2, dataset3} from "./datasets";
 import {InputBlogType, UpdateBlogType} from "../src/types/blogsTypes";
+import {ADMIN_AUTH} from "../src/middlewares/auth";
 
 describe('/blogs', () => {
     beforeAll(async () => {
@@ -26,6 +27,8 @@ describe('/blogs', () => {
     })
     it('should create blog', async () => {
         setBlogsDB()
+        const buff2 = Buffer.from(ADMIN_AUTH, 'utf8')
+        const codedAuth = buff2.toString('base64')
         const newBlog: InputBlogType = {
             name: 'n1',
             description: 'd1',
@@ -34,6 +37,7 @@ describe('/blogs', () => {
 
         const res = await req
             .post(SETTINGS.PATH.BLOGS)
+            .set({'Authorisation': 'Basic ' + codedAuth})
             .send(newBlog)
             .expect(201)
 
@@ -42,6 +46,8 @@ describe('/blogs', () => {
     })
     it('should be name error', async () => {
         setBlogsDB()
+        const buff2 = Buffer.from(ADMIN_AUTH, 'utf8')
+        const codedAuth = buff2.toString('base64')
         const newBlog: InputBlogType = {
             name: '',
             description: 'd1',
@@ -50,6 +56,7 @@ describe('/blogs', () => {
 
         const res = await req
             .post(SETTINGS.PATH.BLOGS)
+            .set({'Authorisation': 'Basic ' + codedAuth})
             .send(newBlog)
             .expect(400)
 
@@ -73,6 +80,8 @@ describe('/blogs', () => {
     })
     it('should update blog', async () => {
         setBlogsDB(dataset2)
+        const buff2 = Buffer.from(ADMIN_AUTH, 'utf8')
+        const codedAuth = buff2.toString('base64')
         const updatedBlog: UpdateBlogType = {
             name: 't1',
             description: 'a1',
@@ -81,11 +90,14 @@ describe('/blogs', () => {
 
         await req
             .put(`${SETTINGS.PATH.BLOGS}/2`)
+            .set({'Authorisation': 'Basic ' + codedAuth})
             .send(updatedBlog)
             .expect(204)
     })
     it('should not find blog to update', async () => {
         setBlogsDB(dataset3)
+        const buff2 = Buffer.from(ADMIN_AUTH, 'utf8')
+        const codedAuth = buff2.toString('base64')
         const updatedVideo: UpdateBlogType = {
             name: 't1',
             description: 'a1',
@@ -93,11 +105,14 @@ describe('/blogs', () => {
         }
         await req
             .put(`${SETTINGS.PATH.BLOGS}/221312`)
+            .set({'Authorisation': 'Basic ' + codedAuth})
             .send(updatedVideo)
             .expect(404)
     })
     it('should be error in input', async () => {
         setBlogsDB(dataset2)
+        const buff2 = Buffer.from(ADMIN_AUTH, 'utf8')
+        const codedAuth = buff2.toString('base64')
         const updatedVideo: UpdateBlogType = {
             name: '',
             description: 'a1',
@@ -105,6 +120,7 @@ describe('/blogs', () => {
         }
         const res = await req
             .put(`${SETTINGS.PATH.BLOGS}/2`)
+            .set({'Authorisation': 'Basic ' + codedAuth})
             .send(updatedVideo)
             .expect(400)
 
@@ -112,16 +128,21 @@ describe('/blogs', () => {
     })
     it('should delete blog', async () => {
         setBlogsDB(dataset2)
-
+        const buff2 = Buffer.from(ADMIN_AUTH, 'utf8')
+        const codedAuth = buff2.toString('base64')
         await req
             .delete(`${SETTINGS.PATH.BLOGS}/2`)
+            .set({'Authorisation': 'Basic ' + codedAuth})
             .expect(204)
     })
 
     it('should not find video to delete', async () => {
         setBlogsDB()
+        const buff2 = Buffer.from(ADMIN_AUTH, 'utf8')
+        const codedAuth = buff2.toString('base64')
         await req
             .delete(`${SETTINGS.PATH.BLOGS}/2`)
+            .set({'Authorisation': 'Basic ' + codedAuth})
             .expect(404)
     })
 })
