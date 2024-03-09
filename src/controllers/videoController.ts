@@ -1,8 +1,7 @@
 import {Request, Response} from 'express'
 import {db} from '../db/db'
 import {createVideoInputValidation, updateVideoInputValidation} from "../validation/videos";
-import {VideoDBType, OutputVideoType, OutputErrorsType} from "../types";
-import {dataset2} from "../../__tests__/datasets";
+import {VideoDBType, OutputVideoType, OutputErrorsType} from "../types/videosTypes";
 
 export const getVideosController = (req: Request, res: Response<OutputVideoType[]>) => {
     res

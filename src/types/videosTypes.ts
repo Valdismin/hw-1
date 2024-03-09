@@ -1,4 +1,4 @@
-import {Resolutions} from "./config/video.config";
+import {Resolutions} from "../config/video.config";
 
 export type InputVideoType = {
     title: string
