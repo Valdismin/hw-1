@@ -1,7 +1,8 @@
 import {Request, Response} from 'express'
 import {postsRepository} from "../repositories/postsRepository";
+import {OutputPostType} from "../types/postsTypes";
 
-export const getPostsController = async (req: Request, res: Response) => {
+export const getPostsController = async (req: Request, res: Response<OutputPostType[]>) => {
     const posts = await postsRepository.getPosts()
     if (posts.length === 0) {
         res.status(404).end()
@@ -10,13 +11,13 @@ export const getPostsController = async (req: Request, res: Response) => {
     res.status(200).json(posts)
 }
 
-export const createPostController = async (req: Request, res: Response) => {
+export const createPostController = async (req: Request, res: Response<OutputPostType>) => {
     const post = await postsRepository.createPost(req.body)
 
     res.status(201).json(post)
 }
 
-export const getPostByIdController = async (req: Request, res: Response) => {
+export const getPostByIdController = async (req: Request, res: Response<OutputPostType>) => {
     const post = await postsRepository.getPostById(req.params.id)
     if (Array.isArray(post)) {
         res.status(404).end()
