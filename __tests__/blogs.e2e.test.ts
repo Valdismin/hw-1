@@ -65,12 +65,12 @@ describe('/blogs', () => {
             websiteUrl: 'https://w1.com',
         })
         const blogs = await blogsRepository.getBlogs()
-        const id = blogs[0]._id
+        const id = blogs[0].id
         const res = await req
             .get(`${SETTINGS.PATH.BLOGS}/${id}`)
             .expect(200)
 
-        expect(res.body._id).toEqual(blogs[0]._id?.toString())
+        expect(res.body.id).toEqual(blogs[0].id?.toString())
     })
     it('should update blog', async () => {
         const buff2 = Buffer.from(ADMIN_AUTH, 'utf8')
@@ -81,18 +81,17 @@ describe('/blogs', () => {
             websiteUrl: 'https://w1.com',
         })
         const blogs = await blogsRepository.getBlogs()
-        const id = blogs[0]._id
+        const id = blogs[0].id
         const updatedBlog: UpdateBlogType = {
             name: 't1',
             description: 'a1',
             websiteUrl: 'https://www.youtube.com/'
         }
-
-        const res = await req
+        await req
             .put(`${SETTINGS.PATH.BLOGS}/${id}`)
             .set({'Authorization': 'Basic ' + codedAuth})
             .send(updatedBlog)
-            .expect(204)
+            .expect(204);
     })
     it('should not find blog to update', async () => {
         const buff2 = Buffer.from(ADMIN_AUTH, 'utf8')
@@ -127,7 +126,7 @@ describe('/blogs', () => {
     })
     it('should delete blog', async () => {
         const blogs = await blogsRepository.getBlogs()
-        const id = blogs[0]._id
+        const id = blogs[0].id
         const buff2 = Buffer.from(ADMIN_AUTH, 'utf8')
         const codedAuth = buff2.toString('base64')
         await req

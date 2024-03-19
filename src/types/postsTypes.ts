@@ -4,14 +4,14 @@ export type InputPostType = {
     title: string,
     shortDescription: string,
     content: string,
-    blogId: ObjectId,
+    blogId: string,
 }
 
 export type UpdatePostType = {
     title: string,
     shortDescription: string,
     content: string,
-    blogId?: ObjectId,
+    blogId?: string,
 }
 
 export type OutputPostType = {
@@ -19,7 +19,7 @@ export type OutputPostType = {
     title: string,
     shortDescription: string,
     content: string,
-    blogId?: ObjectId,
+    blogId?: string,
     blogName: string,
     createdAt?: string,
 }
@@ -29,7 +29,7 @@ export type PostDBType = {
     title: string,
     shortDescription: string,
     content: string,
-    blogId: ObjectId,
+    blogId: string,
     blogName: string
     createdAt?: string,
 }

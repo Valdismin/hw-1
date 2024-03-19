@@ -2,13 +2,12 @@ import {Request, Response} from "express";
 import {blogsRepository} from "../repositories/blogsRepository";
 import {OutputBlogType} from "../types/blogsTypes";
 import {OutputErrorsType} from "../types/videosTypes";
-import {ObjectId} from "mongodb";
 
 export const createBlogController = async (req: Request, res: Response<OutputBlogType | OutputErrorsType>) => {
     const newBlog = await blogsRepository.createBlog(req.body);
     res
         .status(201)
-        .json(newBlog)
+        .json(newBlog as OutputBlogType)
 }
 
 export const getBlogsController = async (req: Request, res: Response<OutputBlogType[]>) => {
@@ -20,7 +19,8 @@ export const getBlogsController = async (req: Request, res: Response<OutputBlogT
 }
 
 export const updateBlogController = async (req: Request, res: Response) => {
-    const updatedBlog = await blogsRepository.updateBlog(req.body, req.params.id)
+    const id = req.params.id
+    const updatedBlog = await blogsRepository.updateBlog(req.body, id)
     if (Array.isArray(updatedBlog)) {
         res
             .status(404).end()
@@ -31,7 +31,8 @@ export const updateBlogController = async (req: Request, res: Response) => {
 }
 
 export const deleteBlogController = async (req: Request, res: Response) => {
-    const deletedBlog = await blogsRepository.deleteBlog(req.params.id)
+    const id = req.params.id
+    const deletedBlog = await blogsRepository.deleteBlog(id)
     if (deletedBlog.length === 0) {
         res
             .status(404).end()
@@ -42,8 +43,8 @@ export const deleteBlogController = async (req: Request, res: Response) => {
 }
 
 export const findBlogController = async (req: Request, res: Response<OutputBlogType>) => {
-
-    const blog = await blogsRepository.findBlogById(new ObjectId(req.params.id))
+    const id = req.params.id
+    const blog = await blogsRepository.findBlogById(id)
     if (!blog) {
         res
             .status(404).end()

@@ -1,7 +1,6 @@
 import {Request, Response} from 'express'
 import {postsRepository} from "../repositories/postsRepository";
 import {OutputPostType} from "../types/postsTypes";
-import {ObjectId} from "mongodb";
 
 export const getPostsController = async (req: Request, res: Response<OutputPostType[]>) => {
     const posts = await postsRepository.getPosts()
@@ -15,11 +14,11 @@ export const getPostsController = async (req: Request, res: Response<OutputPostT
 export const createPostController = async (req: Request, res: Response<OutputPostType>) => {
     const post = await postsRepository.createPost(req.body)
 
-    res.status(201).json(post)
+    res.status(201).json(post as OutputPostType)
 }
 
 export const getPostByIdController = async (req: Request, res: Response<OutputPostType>) => {
-    const post = await postsRepository.getPostById(new ObjectId(req.params.id))
+    const post = await postsRepository.getPostById(req.params.id)
     if (Array.isArray(post)) {
         res.status(404).end()
         return
@@ -40,7 +39,7 @@ export const updatePostController = async (req: Request, res: Response) => {
 }
 
 export const deletePostController = async (req: Request, res: Response) => {
-    const deletedPost = await postsRepository.deletePost(new ObjectId(req.params.id))
+    const deletedPost = await postsRepository.deletePost(req.params.id)
     if (deletedPost.length === 0) {
         res
             .status(404).end()

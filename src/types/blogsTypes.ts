@@ -3,7 +3,9 @@ import {ObjectId} from "mongodb";
 export type InputBlogType = {
     name: string,
     description: string,
-    websiteUrl: string
+    websiteUrl: string,
+    createdAt?: string,
+    isMembership?: boolean
 }
 
 export type UpdateBlogType = {
@@ -13,7 +15,7 @@ export type UpdateBlogType = {
 }
 
 export type OutputBlogType = {
-    _id?: ObjectId,
+    id: string,
     name: string,
     description: string,
     websiteUrl: string,
@@ -23,6 +25,7 @@ export type OutputBlogType = {
 
 export type BlogDBType = {
     _id?: ObjectId,
+    id: string,
     name: string,
     description: string,
     websiteUrl: string

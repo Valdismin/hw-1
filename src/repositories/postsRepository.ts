@@ -1,39 +1,40 @@
 import {InputPostType, UpdatePostType} from "../types/postsTypes";
 import {blogsRepository} from "./blogsRepository";
-import {db, postCollection} from "../db/mongo-db";
-import {ObjectId} from "mongodb";
+import {postCollection} from "../db/mongo-db";
 
 export const postsRepository = {
     async getPosts() {
-        return postCollection.find({}).toArray()
+        return postCollection.find({}, { projection: { _id: 0 } }).toArray()
     },
     async createPost(post: InputPostType) {
-        const blog = await blogsRepository.findBlogById(new ObjectId(post.blogId))
+        const blog = await blogsRepository.findBlogById(post.blogId)
         const newPost = {
             blogName: blog?.name || '',
+            id: `${Date.now() + Math.random()}`,
+            createdAt: new Date().toISOString(),
             ...post
         }
         await postCollection.insertOne(newPost)
-        return newPost
+        return await postCollection.findOne({id: newPost.id}, {projection: {_id: 0}})
     },
-    async getPostById(id: ObjectId) {
-        const post = await postCollection.findOne({_id: id})
+    async getPostById(id: string) {
+        const post = await postCollection.findOne({id: id}, { projection: { _id: 0 } })
         if (!post) {
             return []
         }
         return post
     },
     async updatePost(post: UpdatePostType, id: string): Promise<any> {
-        const updatedPost = await postCollection.updateOne({_id: new ObjectId(id)}, {$set: post})
+        const updatedPost = await postCollection.updateOne({id:id}, {$set: {...post}})
         if (updatedPost.modifiedCount === 0) {
             return []
         }
         return updatedPost
     },
-    async deletePost(id: ObjectId) {
-        const deletedPost = await postCollection.findOne({_id: id})
-        const result = await postCollection.deleteOne({_id: id})
-        console.debug('result', result)
+    async deletePost(id: string) {
+        const deletedPost = await postCollection.findOne({id: id}, { projection: { _id: 0 } })
+        const result = await postCollection.deleteOne({id: id})
+
         if (result.deletedCount === 0) {
             return []
         }
