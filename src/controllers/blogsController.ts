@@ -2,6 +2,7 @@ import {Request, Response} from "express";
 import {blogsRepository} from "../repositories/blogsRepository";
 import {OutputBlogType} from "../types/blogsTypes";
 import {OutputErrorsType} from "../types/videosTypes";
+import {ObjectId} from "mongodb";
 
 export const createBlogController = async (req: Request, res: Response<OutputBlogType | OutputErrorsType>) => {
     const newBlog = await blogsRepository.createBlog(req.body);
@@ -42,7 +43,7 @@ export const deleteBlogController = async (req: Request, res: Response) => {
 
 export const findBlogController = async (req: Request, res: Response<OutputBlogType>) => {
 
-    const blog = await blogsRepository.findBlogById(req.params.id)
+    const blog = await blogsRepository.findBlogById(new ObjectId(req.params.id))
     if (!blog) {
         res
             .status(404).end()

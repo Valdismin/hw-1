@@ -1,34 +1,33 @@
 import {InputBlogType, OutputBlogType, UpdateBlogType} from "../types/blogsTypes";
-import {db} from "../db/db";
+import {ObjectId} from "mongodb";
+import {blogCollection} from "../db/mongo-db";
 
 export const blogsRepository = {
     async createBlog(blog: InputBlogType) {
         const newBlog = {
-            id: `${Date.now() + Math.random()}`,
             ...blog
         }
-        db.blogs.push(newBlog)
+        await blogCollection.insertOne(newBlog)
         return newBlog
     },
     async getBlogs(): Promise<OutputBlogType[]> {
-        return db.blogs
+        return await blogCollection.find({}).toArray();
     },
     async updateBlog(blog: UpdateBlogType, id: string) {
-        const index = db.blogs.findIndex(b => b.id === id)
-        if (index < 0) {
+        const result = await blogCollection.updateOne({_id: new ObjectId(id)}, {$set: blog})
+        if (result.modifiedCount === 0) {
             return []
         }
-        db.blogs[index] = {...db.blogs[index], ...blog};
-        return db.blogs[index]
+        return blogCollection.find({_id: new ObjectId(id)})
     },
     async deleteBlog(id: string) {
-        const index = db.blogs.findIndex(b => b.id === id)
-        if(index < 0) {
+        const result = await blogCollection.deleteOne({_id: new ObjectId(id)})
+        if (result.deletedCount === 0) {
             return []
         }
-        return db.blogs.splice(index, 1)
+        return blogCollection.find({}).toArray()
     },
-    async findBlogById(id: string) {
-        return db.blogs.find(b => b.id === id)
+    async findBlogById(id: ObjectId) {
+        return await blogCollection.findOne({_id: id})
     },
 }

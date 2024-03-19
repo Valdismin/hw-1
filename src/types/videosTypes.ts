@@ -1,4 +1,5 @@
 import {Resolutions} from "../config/video.config";
+import {ObjectId} from "mongodb";
 
 export type InputVideoType = {
     title: string
@@ -16,7 +17,7 @@ export type UpdateVideoType = {
 
 
 export type OutputVideoType = {
-    id: number
+    _id: ObjectId
     title: string
     author: string
     canBeDownloaded: boolean
@@ -36,7 +37,7 @@ export type ErrorType = {
 }
 
 export type VideoDBType = {
-    id: number
+    _id: ObjectId
     title: string
     author: string
     canBeDownloaded: boolean
