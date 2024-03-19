@@ -1,83 +1,83 @@
-import {Resolutions} from "../config/video.config";
-import {InputVideoType, OutputErrorsType, UpdateVideoType} from "../types/videosTypes";
-
-export const createVideoInputValidation = (video: InputVideoType) => {
-    const errors: OutputErrorsType = {
-        errorsMessages: []
-    }
-
-    const resolutionCondition = video?.availableResolutions?.length ? !Array.isArray(video.availableResolutions)
-        || video.availableResolutions.find(p => !Resolutions[p]) || video.availableResolutions.find(p => p === "Invalid" as any) : false
-    const titleCondition = !video.title || video.title.length > 40
-        || video.title.length === 0
-    const authorCondition = !video.author || video.author.length > 20
-        || video.author.length === 0
-
-    if (resolutionCondition) {
-        errors.errorsMessages.push({
-            message: 'error!!!!', field: 'availableResolutions'
-        })
-    }
-    if (titleCondition) {
-        errors.errorsMessages.push({
-            message: 'error!!!!', field: 'title'
-        })
-    }
-    if (authorCondition) {
-        errors.errorsMessages.push({
-            message: 'error!!!!', field: 'author'
-        })
-    }
-    return errors
-}
-export const updateVideoInputValidation = (video: UpdateVideoType) => {
-    const errors: OutputErrorsType = {
-        errorsMessages: []
-    }
-
-    const resolutionCondition = video?.availableResolutions?.length ? !Array.isArray(video.availableResolutions)
-        || video.availableResolutions.find(p => !Resolutions[p]) : false
-    const titleCondition = !video.title || video.title.length > 40
-        || video.title.length === 0
-    const authorCondition = !video.author || video.author.length > 20
-        || video.author.length === 0
-    const minAgeRestrictionCondition = video?.minAgeRestriction ? video.minAgeRestriction > 18 || video.minAgeRestriction < 1 : false
-    const publicationDateCondition = video?.publicationDate ? video.author.length > 20
-        || video.author.length === 0 : false
-
-    if (resolutionCondition) {
-        errors.errorsMessages.push({
-            message: 'error!!!!', field: 'availableResolutions'
-        })
-    }
-    if (titleCondition) {
-        errors.errorsMessages.push({
-            message: 'error!!!!', field: 'title'
-        })
-    }
-    if (authorCondition) {
-        errors.errorsMessages.push({
-            message: 'error!!!!', field: 'author'
-        })
-    }
-
-    if (minAgeRestrictionCondition) {
-        errors.errorsMessages.push({
-            message: 'error!!!!', field: 'minAgeRestriction'
-        })
-    }
-
-    if (publicationDateCondition) {
-        errors.errorsMessages.push({
-            message: 'error!!!!', field: 'publicationDate'
-        })
-    }
-
-    if (typeof video.canBeDownloaded !== "boolean") {
-        errors.errorsMessages.push({
-            message: 'error!!!!', field: 'canBeDownloaded'
-        })
-    }
-
-    return errors
-}
+// import {Resolutions} from "../config/video.config";
+// import {InputVideoType, OutputErrorsType, UpdateVideoType} from "../types/videosTypes";
+//
+// export const createVideoInputValidation = (video: InputVideoType) => {
+//     const errors: OutputErrorsType = {
+//         errorsMessages: []
+//     }
+//
+//     const resolutionCondition = video?.availableResolutions?.length ? !Array.isArray(video.availableResolutions)
+//         || video.availableResolutions.find(p => !Resolutions[p]) || video.availableResolutions.find(p => p === "Invalid" as any) : false
+//     const titleCondition = !video.title || video.title.length > 40
+//         || video.title.length === 0
+//     const authorCondition = !video.author || video.author.length > 20
+//         || video.author.length === 0
+//
+//     if (resolutionCondition) {
+//         errors.errorsMessages.push({
+//             message: 'error!!!!', field: 'availableResolutions'
+//         })
+//     }
+//     if (titleCondition) {
+//         errors.errorsMessages.push({
+//             message: 'error!!!!', field: 'title'
+//         })
+//     }
+//     if (authorCondition) {
+//         errors.errorsMessages.push({
+//             message: 'error!!!!', field: 'author'
+//         })
+//     }
+//     return errors
+// }
+// export const updateVideoInputValidation = (video: UpdateVideoType) => {
+//     const errors: OutputErrorsType = {
+//         errorsMessages: []
+//     }
+//
+//     const resolutionCondition = video?.availableResolutions?.length ? !Array.isArray(video.availableResolutions)
+//         || video.availableResolutions.find(p => !Resolutions[p]) : false
+//     const titleCondition = !video.title || video.title.length > 40
+//         || video.title.length === 0
+//     const authorCondition = !video.author || video.author.length > 20
+//         || video.author.length === 0
+//     const minAgeRestrictionCondition = video?.minAgeRestriction ? video.minAgeRestriction > 18 || video.minAgeRestriction < 1 : false
+//     const publicationDateCondition = video?.publicationDate ? video.author.length > 20
+//         || video.author.length === 0 : false
+//
+//     if (resolutionCondition) {
+//         errors.errorsMessages.push({
+//             message: 'error!!!!', field: 'availableResolutions'
+//         })
+//     }
+//     if (titleCondition) {
+//         errors.errorsMessages.push({
+//             message: 'error!!!!', field: 'title'
+//         })
+//     }
+//     if (authorCondition) {
+//         errors.errorsMessages.push({
+//             message: 'error!!!!', field: 'author'
+//         })
+//     }
+//
+//     if (minAgeRestrictionCondition) {
+//         errors.errorsMessages.push({
+//             message: 'error!!!!', field: 'minAgeRestriction'
+//         })
+//     }
+//
+//     if (publicationDateCondition) {
+//         errors.errorsMessages.push({
+//             message: 'error!!!!', field: 'publicationDate'
+//         })
+//     }
+//
+//     if (typeof video.canBeDownloaded !== "boolean") {
+//         errors.errorsMessages.push({
+//             message: 'error!!!!', field: 'canBeDownloaded'
+//         })
+//     }
+//
+//     return errors
+// }

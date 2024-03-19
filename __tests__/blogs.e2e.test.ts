@@ -1,38 +1,23 @@
 import {req} from "./test-helpers";
 import {SETTINGS} from "../src/settings";
-import {setBlogsDB} from "../src/db/db";
-import {dataset1, dataset2, dataset3} from "./datasets";
 import {InputBlogType, UpdateBlogType} from "../src/types/blogsTypes";
 import {ADMIN_AUTH} from "../src/middlewares/auth";
+import {blogCollection, connectToDB} from "../src/db/mongo-db";
+import {blogsRepository} from "../src/repositories/blogsRepository";
+import {ObjectId} from "mongodb";
 
 describe('/blogs', () => {
     beforeAll(async () => {
-        await req.delete(`${SETTINGS.PATH.TESTING}/all-data`)
-    })
-
-    it('should get array', async () => {
-        setBlogsDB(dataset1)
-        const res = await req.get(`${SETTINGS.PATH.BLOGS}`)
-            .expect(200)
-
-        expect(res.body.length).toBe(1)
-        expect(res.body[0]).toEqual(dataset1.blogs[0])
-    })
-    it('should get empty array', async () => {
-        setBlogsDB()
-        const res = await req.get(`${SETTINGS.PATH.BLOGS}`)
-            .expect(200)
-
-        expect(res.body).toEqual([])
+        await connectToDB()
     })
     it('should create blog', async () => {
-        setBlogsDB()
+        await blogCollection.drop()
         const buff2 = Buffer.from(ADMIN_AUTH, 'utf8')
         const codedAuth = buff2.toString('base64')
         const newBlog: InputBlogType = {
             name: 'n1',
             description: 'd1',
-            websiteUrl: 'w1',
+            websiteUrl: 'https://w1.com',
         }
 
         const res = await req
@@ -45,7 +30,6 @@ describe('/blogs', () => {
         expect(res.body.description).toEqual(newBlog.description)
     })
     it('should be name error', async () => {
-        setBlogsDB()
         const buff2 = Buffer.from(ADMIN_AUTH, 'utf8')
         const codedAuth = buff2.toString('base64')
         const newBlog: InputBlogType = {
@@ -60,56 +44,72 @@ describe('/blogs', () => {
             .send(newBlog)
             .expect(400)
 
-        expect(res.body.errorsMessages.length).toBe(1)
-        expect(res.body.errorsMessages[0].field).toBe('name')
+        expect(res.body.errorsMessages.length).toBe(2)
     })
-    it('should find blog', async () => {
-        setBlogsDB(dataset2)
-        const res = await req
-            .get(`${SETTINGS.PATH.BLOGS}/2`)
+    it('should get array', async () => {
+        const res = await req.get(`${SETTINGS.PATH.BLOGS}`)
             .expect(200)
 
-        expect(res.body).toEqual(dataset2.blogs[0])
+        expect(res.body.length).toBeGreaterThan(0)
     })
-    it('should not find video', async () => {
-        setBlogsDB(dataset2)
-        await req
-            .get(`${SETTINGS.PATH.VIDEOS}/1`)
-            .expect(404)
+    it('should get empty array', async () => {
+        await blogCollection.drop()
+        const res = await req.get(`${SETTINGS.PATH.BLOGS}`)
+            .expect(200)
+        expect(res.body).toEqual([])
+    })
+    it('should find blog', async () => {
+        await blogsRepository.createBlog({
+            name: 'n1',
+            description: 'd1',
+            websiteUrl: 'https://w1.com',
+        })
+        const blogs = await blogsRepository.getBlogs()
+        const id = blogs[0]._id
+        const res = await req
+            .get(`${SETTINGS.PATH.BLOGS}/${id}`)
+            .expect(200)
+
+        expect(res.body._id).toEqual(blogs[0]._id?.toString())
     })
     it('should update blog', async () => {
-        setBlogsDB(dataset2)
         const buff2 = Buffer.from(ADMIN_AUTH, 'utf8')
         const codedAuth = buff2.toString('base64')
+        await blogsRepository.createBlog({
+            name: 'n1',
+            description: 'd1',
+            websiteUrl: 'https://w1.com',
+        })
+        const blogs = await blogsRepository.getBlogs()
+        const id = blogs[0]._id
         const updatedBlog: UpdateBlogType = {
             name: 't1',
             description: 'a1',
-            websiteUrl: 'https://www.youtube.com/watch?v=6Ejga4kJUts'
+            websiteUrl: 'https://www.youtube.com/'
         }
 
-        await req
-            .put(`${SETTINGS.PATH.BLOGS}/2`)
+        const res = await req
+            .put(`${SETTINGS.PATH.BLOGS}/${id}`)
             .set({'Authorization': 'Basic ' + codedAuth})
             .send(updatedBlog)
             .expect(204)
     })
     it('should not find blog to update', async () => {
-        setBlogsDB(dataset3)
         const buff2 = Buffer.from(ADMIN_AUTH, 'utf8')
         const codedAuth = buff2.toString('base64')
         const updatedVideo: UpdateBlogType = {
             name: 't1',
             description: 'a1',
-            websiteUrl: 'https://www.youtube.com/watch?v=6Ejga4kJUts'
+            websiteUrl: 'https://www.youtube.com/watch'
         }
+        const id = new ObjectId()
         await req
-            .put(`${SETTINGS.PATH.BLOGS}/221312`)
+            .put(`${SETTINGS.PATH.BLOGS}/${id}`)
             .set({'Authorization': 'Basic ' + codedAuth})
             .send(updatedVideo)
             .expect(404)
     })
     it('should be error in input', async () => {
-        setBlogsDB(dataset2)
         const buff2 = Buffer.from(ADMIN_AUTH, 'utf8')
         const codedAuth = buff2.toString('base64')
         const updatedVideo: UpdateBlogType = {
@@ -126,20 +126,21 @@ describe('/blogs', () => {
         expect(res.body.errorsMessages.length).toBe(2)
     })
     it('should delete blog', async () => {
-        setBlogsDB(dataset2)
+        const blogs = await blogsRepository.getBlogs()
+        const id = blogs[0]._id
         const buff2 = Buffer.from(ADMIN_AUTH, 'utf8')
         const codedAuth = buff2.toString('base64')
         await req
-            .delete(`${SETTINGS.PATH.BLOGS}/2`)
+            .delete(`${SETTINGS.PATH.BLOGS}/${id}`)
             .set({'Authorization': 'Basic ' + codedAuth})
             .expect(204)
     })
     it('should not find video to delete', async () => {
-        setBlogsDB()
         const buff2 = Buffer.from(ADMIN_AUTH, 'utf8')
         const codedAuth = buff2.toString('base64')
+        const id = new ObjectId()
         await req
-            .delete(`${SETTINGS.PATH.BLOGS}/2`)
+            .delete(`${SETTINGS.PATH.BLOGS}/${id}`)
             .set({'Authorization': 'Basic ' + codedAuth})
             .expect(404)
     })

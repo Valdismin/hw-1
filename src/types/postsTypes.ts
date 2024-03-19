@@ -1,31 +1,35 @@
+import {ObjectId} from "mongodb";
+
 export type InputPostType = {
     title: string,
     shortDescription: string,
     content: string,
-    blogId: string,
+    blogId: ObjectId,
 }
 
 export type UpdatePostType = {
     title: string,
     shortDescription: string,
     content: string,
-    blogId: string,
+    blogId?: ObjectId,
 }
 
 export type OutputPostType = {
-    id: string,
+    _id?: ObjectId,
     title: string,
     shortDescription: string,
     content: string,
-    blogId: string,
-    blogName: string
+    blogId?: ObjectId,
+    blogName: string,
+    createdAt?: string,
 }
 
 export type PostDBType = {
-    id: string,
+    _id?: ObjectId,
     title: string,
     shortDescription: string,
     content: string,
-    blogId: string,
+    blogId: ObjectId,
     blogName: string
+    createdAt?: string,
 }
