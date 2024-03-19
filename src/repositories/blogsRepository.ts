@@ -1,33 +1,35 @@
 import {InputBlogType, OutputBlogType, UpdateBlogType} from "../types/blogsTypes";
-import {ObjectId} from "mongodb";
 import {blogCollection} from "../db/mongo-db";
 
 export const blogsRepository = {
     async createBlog(blog: InputBlogType) {
         const newBlog = {
+            createdAt: new Date().toISOString(),
+            isMembership: false,
+            id: `${Date.now() + Math.random()}`,
             ...blog
         }
         await blogCollection.insertOne(newBlog)
-        return newBlog
+        return await blogCollection.findOne({id: newBlog.id}, {projection: {_id: 0}})
     },
     async getBlogs(): Promise<OutputBlogType[]> {
-        return await blogCollection.find({}).toArray();
+        return await blogCollection.find({}, { projection: { _id: 0 } }).toArray();
     },
     async updateBlog(blog: UpdateBlogType, id: string) {
-        const result = await blogCollection.updateOne({_id: new ObjectId(id)}, {$set: blog})
+        const result = await blogCollection.updateOne({id: id}, {$set: blog})
         if (result.modifiedCount === 0) {
             return []
         }
-        return blogCollection.find({_id: new ObjectId(id)})
+        return blogCollection.find({id: id}, { projection: { _id: 0 } })
     },
     async deleteBlog(id: string) {
-        const result = await blogCollection.deleteOne({_id: new ObjectId(id)})
+        const result = await blogCollection.deleteOne({id: id})
         if (result.deletedCount === 0) {
             return []
         }
-        return blogCollection.find({}).toArray()
+        return blogCollection.find({}, { projection: { _id: 0 } }).toArray()
     },
-    async findBlogById(id: ObjectId) {
-        return await blogCollection.findOne({_id: id})
+    async findBlogById(id: string) {
+        return await blogCollection.findOne({id: id}, { projection: { _id: 0 } })
     },
 }
