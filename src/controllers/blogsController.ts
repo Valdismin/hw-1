@@ -1,7 +1,9 @@
 import {Request, Response} from "express";
 import {blogsRepository} from "../repositories/blogsRepository";
-import {OutputBlogType} from "../types/blogsTypes";
+import {OutputBlogType, OutputPaginatedBlogsType} from "../types/blogsTypes";
 import {OutputErrorsType} from "../types/videosTypes";
+import {blogsQueryRepository} from "../repositories/blogsQueryRepository";
+import {queryHelper} from "../helpers";
 
 export const createBlogController = async (req: Request, res: Response<OutputBlogType | OutputErrorsType>) => {
     const newBlog = await blogsRepository.createBlog(req.body);
@@ -10,9 +12,13 @@ export const createBlogController = async (req: Request, res: Response<OutputBlo
         .json(newBlog as OutputBlogType)
 }
 
-export const getBlogsController = async (req: Request, res: Response<OutputBlogType[]>) => {
-    const blogs = await blogsRepository.getBlogs()
-
+export const getBlogsController = async (req: Request, res: Response<OutputPaginatedBlogsType | undefined>) => {
+    const sanitizedQuery = queryHelper(req.query)
+    const blogs = await blogsQueryRepository.getBlogs(sanitizedQuery)
+    if (!blogs) {
+        res.status(404).end()
+        return
+    }
     res
         .status(200)
         .json(blogs)
@@ -21,7 +27,7 @@ export const getBlogsController = async (req: Request, res: Response<OutputBlogT
 export const updateBlogController = async (req: Request, res: Response) => {
     const id = req.params.id
     const updatedBlog = await blogsRepository.updateBlog(req.body, id)
-    if (Array.isArray(updatedBlog)) {
+    if (updatedBlog.length === 0) {
         res
             .status(404).end()
         return
@@ -44,7 +50,7 @@ export const deleteBlogController = async (req: Request, res: Response) => {
 
 export const findBlogController = async (req: Request, res: Response<OutputBlogType>) => {
     const id = req.params.id
-    const blog = await blogsRepository.findBlogById(id)
+    const blog = await blogsQueryRepository.getBlogById(id)
     if (!blog) {
         res
             .status(404).end()

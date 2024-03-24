@@ -23,6 +23,23 @@ export type OutputBlogType = {
     isMembership?: boolean
 }
 
+export type OutputPaginatedBlogType = {
+    id: string,
+    title: string,
+    description: string,
+    websiteUrl: string,
+    createdAt?: string,
+    isMembership?: boolean
+}
+
+export type OutputPaginatedBlogsType = {
+    items: OutputPaginatedBlogType[],
+    totalCount: number,
+    pagesCount: number,
+    page: string,
+    pageSize: string
+}
+
 export type BlogDBType = {
     _id?: ObjectId,
     id: string,

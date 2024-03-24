@@ -1,10 +1,22 @@
 import {Request, Response} from 'express'
 import {postsRepository} from "../repositories/postsRepository";
-import {OutputPostType} from "../types/postsTypes";
+import {OutputPaginatedPostType, OutputPostType} from "../types/postsTypes";
+import {queryHelper} from "../helpers";
+import {postQueryRepository} from "../repositories/postQueryRepository";
+import {blogsQueryRepository} from "../repositories/blogsQueryRepository";
 
-export const getPostsController = async (req: Request, res: Response<OutputPostType[]>) => {
-    const posts = await postsRepository.getPosts()
-    if (posts.length === 0) {
+export const getPostsController = async (req: Request, res: Response<OutputPaginatedPostType | undefined>) => {
+    const sanitizedQuery = queryHelper(req.query)
+    if (req.params.blogId) {
+        const blogs = await blogsQueryRepository.getBlogById(req.params.blogId)
+        if (!blogs) {
+            res.status(404).end()
+            return
+        }
+    }
+
+    const posts = await postQueryRepository.getManyPosts(sanitizedQuery, req.params.blogId)
+    if (!posts) {
         res.status(404).end()
         return
     }
@@ -13,6 +25,17 @@ export const getPostsController = async (req: Request, res: Response<OutputPostT
 
 export const createPostController = async (req: Request, res: Response<OutputPostType>) => {
     const post = await postsRepository.createPost(req.body)
+
+    res.status(201).json(post as OutputPostType)
+}
+
+export const createPostForBlogController = async (req: Request, res: Response<OutputPostType>) => {
+    const blog = await blogsQueryRepository.getBlogById(req.params.blogId)
+    if (!blog) {
+        res.status(404).end()
+        return
+    }
+    const post = await postsRepository.createPostForBlog(req.body, blog)
 
     res.status(201).json(post as OutputPostType)
 }

@@ -5,7 +5,8 @@ import {ADMIN_AUTH} from "../src/middlewares/auth";
 import {connectToDB, postCollection} from "../src/db/mongo-db";
 import {ObjectId} from "mongodb";
 import {blogsRepository} from "../src/repositories/blogsRepository";
-import {postsRepository} from "../src/repositories/postsRepository";
+import {postQueryRepository} from "../src/repositories/postQueryRepository";
+import {blogsQueryRepository} from "../src/repositories/blogsQueryRepository";
 
 describe('/blogs', () => {
     beforeAll(async () => {
@@ -17,8 +18,15 @@ describe('/blogs', () => {
             description: 'd1',
             websiteUrl: 'https://w1.com',
         })
-        const blogs = await blogsRepository.getBlogs()
-        const id = blogs[0]._id
+        const query = {
+            pageNumber: 1,
+            pageSize: 10,
+            sortBy: 'createdAt',
+            sortDirection: 1,
+            searchNameTerm: null,
+        }
+        const blogs = await blogsQueryRepository.getBlogs(query)
+        const id = blogs ? blogs.items[0]!.id : '4234234'
         const buff2 = Buffer.from(ADMIN_AUTH, 'utf8')
         const codedAuth = buff2.toString('base64')
         const newPost: InputPostType = {
@@ -41,7 +49,7 @@ describe('/blogs', () => {
             title: 'New post',
             shortDescription: 'New short description',
             content: 'New content',
-            blogId: new ObjectId()
+            blogId: "fdsfdsf"
         }
         await req.post(`${SETTINGS.PATH.POSTS}`)
             .send(newPost)
@@ -55,7 +63,7 @@ describe('/blogs', () => {
             title: '',
             shortDescription: 'New short description',
             content: 'New content',
-            blogId: new ObjectId()
+            blogId: "new ObjectId()"
         }
         await req.post(`${SETTINGS.PATH.POSTS}`)
             .send(newPost)
@@ -79,8 +87,8 @@ describe('/blogs', () => {
             description: 'd1',
             websiteUrl: 'https://w1.com',
         })
-        const blogs = await blogsRepository.getBlogs()
-        const id = blogs[0]._id
+        const blogs = await blogsQueryRepository.getBlogs({})
+        const id = blogs ? blogs.items[0]!.id : '4234234'
         const buff2 = Buffer.from(ADMIN_AUTH, 'utf8')
         const codedAuth = buff2.toString('base64')
         const newPost: InputPostType = {
@@ -95,9 +103,9 @@ describe('/blogs', () => {
             .set({'Authorization': 'Basic ' + codedAuth})
             .expect(201)
 
-        const posts = await postsRepository.getPosts()
+        const posts = await postQueryRepository.getPosts()
 
-        const res = await req.get(`${SETTINGS.PATH.POSTS}/${posts[0]._id}`)
+        const res = await req.get(`${SETTINGS.PATH.POSTS}/${posts[0].id}`)
             .expect(200)
 
     })
@@ -110,12 +118,12 @@ describe('/blogs', () => {
         const buff2 = Buffer.from(ADMIN_AUTH, 'utf8')
         const codedAuth = buff2.toString('base64')
 
-        const posts = await postsRepository.getPosts()
+        const posts = await postQueryRepository.getPosts()
         const updatedPost: UpdatePostType = {
             title: 'fsdfsdfdsf',
             shortDescription: 'New short description',
             content: 'New content',
-            blogId: new ObjectId()
+            blogId: "new ObjectId()"
         }
 
         await req
@@ -132,7 +140,7 @@ describe('/blogs', () => {
             title: 'fsdfsdfdsf',
             shortDescription: 'New short description',
             content: 'New content',
-            blogId: new ObjectId()
+            blogId: "new ObjectId()"
         }
         await req
             .put(`${SETTINGS.PATH.POSTS}/${id}`)
@@ -147,7 +155,7 @@ describe('/blogs', () => {
             title: '',
             shortDescription: 'New short description',
             content: 'New content',
-            blogId: new ObjectId()
+            blogId: "new ObjectId()"
         }
         const res = await req
             .put(`${SETTINGS.PATH.POSTS}/2`)
@@ -160,7 +168,7 @@ describe('/blogs', () => {
     it('should delete post', async () => {
         const buff2 = Buffer.from(ADMIN_AUTH, 'utf8')
         const codedAuth = buff2.toString('base64')
-        const posts = await postsRepository.getPosts()
+        const posts = await postQueryRepository.getPosts()
         await req
             .delete(`${SETTINGS.PATH.POSTS}/${posts[0]._id}`)
             .set({'Authorization': 'Basic ' + codedAuth})
