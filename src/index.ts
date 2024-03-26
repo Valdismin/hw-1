@@ -5,6 +5,7 @@ import {connectToDB} from "./db/mongo-db";
 
 const start = async () => {
 
+
     if (!await connectToDB()) {
         console.log('..failed to connect to db')
         process.exit(1)
