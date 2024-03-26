@@ -15,6 +15,6 @@ export const SETTINGS = {
     },
     BLOG_COLLECTION_NAME: 'blogs',
     POST_COLLECTION_NAME: 'posts',
-    MONGO_URL: 'mongodb+srv://valdismin:Vl281296vO@cluster0.yepohjo.mongodb.net/express-homework?retryWrites=true&w=majority&appName=Cluster0' || 'mongodb://localhost:27017',
+    MONGO_URL: 'mongodb+srv://valdismin:Vl281296vO@cluster0.yepohjo.mongodb.net/express-homework?retryWrites=true&w=majority&appName=Cluster0',
     DB_NAME: process.env.DB_NAME || 'test'
 }
