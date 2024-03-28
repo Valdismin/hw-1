@@ -8,7 +8,7 @@ import {blogsRepository} from "../src/repositories/blogsRepository";
 import {postQueryRepository} from "../src/repositories/postQueryRepository";
 import {blogsQueryRepository} from "../src/repositories/blogsQueryRepository";
 
-describe('/blogs', () => {
+describe('/posts', () => {
     beforeAll(async () => {
         await connectToDB()
     })

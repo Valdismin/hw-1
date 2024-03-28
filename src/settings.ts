@@ -8,6 +8,7 @@ export const SETTINGS = {
         TESTING: '/testing',
         BLOGS: '/blogs',
         POSTS: '/posts',
+        USERS: '/users',
     },
     AUTH: {
         LOGIN: 'admin',
@@ -15,6 +16,7 @@ export const SETTINGS = {
     },
     BLOG_COLLECTION_NAME: 'blogs',
     POST_COLLECTION_NAME: 'posts',
+    USERS_COLLECTION_NAME: 'users',
     MONGO_URL: process.env.MONGO_URL || 'mongodb://localhost:27017',
     DB_NAME: process.env.DB_NAME || 'test'
 }
