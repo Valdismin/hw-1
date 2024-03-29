@@ -24,7 +24,7 @@ export const usersQueryRepository = {
                 .limit(query.pageSize)
                 .toArray()
 
-            const c = await userCollection.countDocuments()
+            const c = await userCollection.countDocuments(findQuery)
 
             return {
                 items,
