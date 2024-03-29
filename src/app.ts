@@ -3,6 +3,7 @@ import {blogsRouter} from "./routers/blogs";
 import {postsRouter} from "./routers/posts";
 import {testsRouter} from "./routers/testing";
 import {usersRouter} from "./routers/users";
+import {authRouter} from "./routers/auth";
 
 export const app = express()
 app.use(express.json())
@@ -16,3 +17,4 @@ app.use('/testing', testsRouter)
 app.use('/blogs', blogsRouter)
 app.use('/posts', postsRouter)
 app.use('/users', usersRouter)
+app.use('/auth', authRouter)
