@@ -6,15 +6,15 @@ export const usersQueryRepository = {
 
         if (query.searchLoginTerm) {
             const searchLoginRegex = new RegExp(query.searchLoginTerm, 'i');
-            searchConditions.push({ login: searchLoginRegex });
+            searchConditions.push({login: searchLoginRegex});
         }
 
         if (query.searchEmailTerm) {
             const searchEmailRegex = new RegExp(query.searchEmailTerm, 'i');
-            searchConditions.push({ email: searchEmailRegex });
+            searchConditions.push({email: searchEmailRegex});
         }
 
-        const findQuery = searchConditions.length ? { $or: searchConditions } : {};
+        const findQuery = searchConditions.length ? {$or: searchConditions} : {};
 
         try {
             const items: any = await userCollection.find(findQuery).project({_id: 0, hash: 0, salt: 0}).sort(
@@ -36,5 +36,8 @@ export const usersQueryRepository = {
         } catch (e) {
             return undefined
         }
-    }
+    },
+    async getUserForAuth(loginOrEmail: string) {
+        return await userCollection.findOne({$or: [{login: loginOrEmail}, {email: loginOrEmail}]})
+    },
 }

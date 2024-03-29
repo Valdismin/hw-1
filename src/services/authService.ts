@@ -1,9 +1,9 @@
 import bcrypt from "bcrypt";
-import {authRepository} from "../repositories/authRepository";
+import {usersQueryRepository} from "../repositories/usersQueryRepository";
 
 export const authService = {
-    authUser: async (loginOrEmail, password) => {
-        const user = await authRepository.login(loginOrEmail)
+    authUser: async (loginOrEmail: string, password: string) => {
+        const user = await usersQueryRepository.getUserForAuth(loginOrEmail)
         const hashedPassword = await bcrypt.hash(password, user?.salt!)
         return hashedPassword === user?.hash;
     }

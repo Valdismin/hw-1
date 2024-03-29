@@ -68,4 +68,10 @@ describe('/users', () => {
             .expect(204)
 
     })
+    it('should login user', async () => {
+        await req.post(`${SETTINGS.PATH.AUTH}/login`)
+            .send({loginOrEmail: 'newUser2', password: '123456444'})
+            .expect(204)
+
+    })
 })
