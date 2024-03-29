@@ -55,6 +55,11 @@ describe('/users', () => {
 
         expect(res.body.items[0].login).toEqual(newUser.searchLoginTerm)
     })
+    it('should get user without queries', async () => {
+        const res = await req.get(`${SETTINGS.PATH.USERS}`)
+            .expect(200)
+        console.debug(res.body)
+    })
     it('should delete user', async () => {
         const buff2 = Buffer.from(ADMIN_AUTH, 'utf8')
         const codedAuth = buff2.toString('base64')
