@@ -27,6 +27,12 @@ export const postQueryRepository = {
         } catch (e) {
             return undefined
         }
+    },
+    getPostById: async (id: string) => {
+        const post = await postCollection.findOne({id: id}, {projection: {_id: 0}})
+        if (!post) {
+            return null
+        }
+        return post
     }
-
 }

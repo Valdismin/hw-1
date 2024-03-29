@@ -3,10 +3,9 @@ import {blogCollection} from "../db/mongo-db";
 import {blogService} from "../services/blogService";
 
 export const blogsRepository = {
-    async createBlog(blog: InputBlogType): Promise<OutputBlogType | null> {
-        const newBlog = blogService.createBlogService(blog)
-        await blogCollection.insertOne(newBlog)
-        return blogCollection.findOne({id: newBlog.id}, {projection: {_id: 0}})
+    async createBlog(blog: BlogDBType): Promise<OutputBlogType | null> {
+        await blogCollection.insertOne(blog)
+        return blogCollection.findOne({id: blog.id}, {projection: {_id: 0}})
     },
     async updateBlog(blog: UpdateBlogType, id: string): Promise<OutputBlogType[]> {
         const result = await blogCollection.updateOne({id: id}, {$set: blog})

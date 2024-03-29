@@ -4,6 +4,7 @@ import {OutputPaginatedPostType, OutputPostType} from "../types/postsTypes";
 import {queryHelper} from "../helpers";
 import {postQueryRepository} from "../repositories/postQueryRepository";
 import {blogsQueryRepository} from "../repositories/blogsQueryRepository";
+import {postService} from "../services/postService";
 
 export const getPostsController = async (req: Request, res: Response<OutputPaginatedPostType | undefined>) => {
     const sanitizedQuery = queryHelper(req.query)
@@ -24,7 +25,7 @@ export const getPostsController = async (req: Request, res: Response<OutputPagin
 }
 
 export const createPostController = async (req: Request, res: Response<OutputPostType>) => {
-    const post = await postsRepository.createPost(req.body)
+    const post = await postService.createPostService(req.body)
 
     res.status(201).json(post as OutputPostType)
 }
@@ -35,13 +36,13 @@ export const createPostForBlogController = async (req: Request, res: Response<Ou
         res.status(404).end()
         return
     }
-    const post = await postsRepository.createPostForBlog(req.body, blog)
+    const post = await postService.createPostForBlogService(req.body, blog)
 
     res.status(201).json(post as OutputPostType)
 }
 
 export const getPostByIdController = async (req: Request, res: Response<OutputPostType>) => {
-    const post = await postsRepository.getPostById(req.params.id)
+    const post = await postQueryRepository.getPostById(req.params.id)
     if (!post) {
         res.status(404).end()
         return
@@ -51,7 +52,7 @@ export const getPostByIdController = async (req: Request, res: Response<OutputPo
 }
 
 export const updatePostController = async (req: Request, res: Response) => {
-    const updatedPost = await postsRepository.updatePost(req.body, req.params.id)
+    const updatedPost = await postService.updatePostService(req.body, req.params.id)
     if (!updatedPost) {
         res
             .status(404).end()
@@ -62,7 +63,7 @@ export const updatePostController = async (req: Request, res: Response) => {
 }
 
 export const deletePostController = async (req: Request, res: Response) => {
-    const deletedPost = await postsRepository.deletePost(req.params.id)
+    const deletedPost = await postService.deletePostService(req.params.id)
     if (!deletedPost) {
         res
             .status(404).end()
