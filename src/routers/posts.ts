@@ -1,7 +1,7 @@
 import {Router} from "express";
 import {
     createPostController, deletePostController,
-    getPostByIdController,
+    getPostByIdController, getPostCommentsController,
     getPostsController,
     updatePostController
 } from "../controllers/postsController";
@@ -16,3 +16,4 @@ postsRouter.post('/', [authMiddleware, ...postValidation], inputCheckErrorsMiddl
 postsRouter.get('/:id', getPostByIdController)
 postsRouter.put('/:id', [authMiddleware, ...postValidation], inputCheckErrorsMiddleware, updatePostController)
 postsRouter.delete('/:id', authMiddleware, deletePostController)
+postsRouter.get('/:id/comments', getPostCommentsController)

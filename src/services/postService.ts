@@ -30,5 +30,8 @@ export const postService = {
     },
     updatePostService: async (post: UpdatePostType, id: string) => {
         return await postsRepository.updatePost(post, id)
+    },
+    createPostCommentService: async (postId: string, commentId: string) => {
+
     }
 }
