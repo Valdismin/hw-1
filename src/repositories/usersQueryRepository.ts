@@ -40,4 +40,7 @@ export const usersQueryRepository = {
     async getUserForAuth(loginOrEmail: string) {
         return await userCollection.findOne({$or: [{login: loginOrEmail}, {email: loginOrEmail}]})
     },
+    async getUserById(id: string) {
+        return await userCollection.findOne({id: id}, {projection: {_id: 0, hash: 0, salt: 0, createdAt: 0}})
+    },
 }

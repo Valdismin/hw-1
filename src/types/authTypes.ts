@@ -4,3 +4,9 @@ export type authDBType = {
     hash: string,
     salt: string
 }
+
+export type authMeType = {
+    email?: string,
+    login?: string,
+    userId?: string
+}

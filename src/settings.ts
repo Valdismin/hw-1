@@ -20,5 +20,6 @@ export const SETTINGS = {
     USERS_COLLECTION_NAME: 'users',
     AUTH_COLLECTION_NAME: 'auth',
     MONGO_URL: process.env.MONGO_URL || 'mongodb://localhost:27017',
+    JWT_SECRET: process.env.SECRET_KEY || 'secret',
     DB_NAME: process.env.DB_NAME || 'test'
 }
