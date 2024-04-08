@@ -6,12 +6,15 @@ import bcrypt from "bcrypt";
 export const authService = {
     authUser: async (loginOrEmail: string, password: string) => {
         const user = await usersQueryRepository.getUserForAuth(loginOrEmail)
+        console.debug('user', user)
         if (!user) {
             return false
         }
         const hashedPassword = await bcrypt.hash(password, user?.salt!)
         if (hashedPassword === user?.hash) {
             return JWTService.createToken(user);
+        } else {
+            return false
         }
     },
     getMe: async (userId: string) => {

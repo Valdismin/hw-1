@@ -7,6 +7,7 @@ export const loginUserController = async (req: Request, res: Response) => {
     const result = await authService.authUser(loginOrEmail, password)
     if (!result) {
         res.status(401).end()
+        return
     }
 
     res.status(200).json({accessToken: result})
