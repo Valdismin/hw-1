@@ -184,7 +184,7 @@ describe('/posts', () => {
             .expect(404)
     })
     it('should create comment for post', async () => {
-        const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE3MTI2MDUwMTg0OTguNDkxIiwiaWF0IjoxNzEyNjA1MDMyLCJleHAiOjE3MTI2MDg2MzJ9.yKqlTNc4C-tPYeE3EtYqh4h_a8zl6jN3uyu3_xATPs4"
+        const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE3MTI2MDU5NzM0MzIuMTgxNiIsImlhdCI6MTcxMjYwNTk3OSwiZXhwIjoxNzEyNjA5NTc5fQ.kGrcM38C7kWIp5-ba66gyR1zyT0J8G6JgiI73VI8sqw"
         const id = "1712604339797.2065"
         await req
             .post(`${SETTINGS.PATH.POSTS}/${id}/comments`)

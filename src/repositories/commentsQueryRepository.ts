@@ -1,5 +1,6 @@
 import {commentsCollection, postCollection} from "../db/mongo-db";
 import {OutputCommentType, OutputPaginatedCommentsType} from "../types/commentsTypes";
+import {ObjectId} from "mongodb";
 
 export const commentsQueryRepository = {
     getPostComments: async (postId: string, query: any): Promise<OutputPaginatedCommentsType | undefined> => {
@@ -26,6 +27,13 @@ export const commentsQueryRepository = {
     },
     getCommentById: async (id: string): Promise<OutputCommentType | null> => {
         const comment = await commentsCollection.findOne({id: id}, {projection: {_id: 0, acknowledged: 0, insertedId: 0}})
+        if (!comment) {
+            return null
+        }
+        return comment
+    },
+    getCommentByDBId: async (id: ObjectId): Promise<OutputCommentType | null> => {
+        const comment = await commentsCollection.findOne({_id: id}, {projection: {_id: 0, acknowledged: 0, insertedId: 0}})
         if (!comment) {
             return null
         }

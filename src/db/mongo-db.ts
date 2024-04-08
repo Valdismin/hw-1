@@ -12,7 +12,7 @@ export const db: Db = client.db(SETTINGS.DB_NAME);
 export const blogCollection: Collection<BlogDBType> = db.collection<BlogDBType>(SETTINGS.BLOG_COLLECTION_NAME)
 export const postCollection: Collection<PostDBType> = db.collection<PostDBType>(SETTINGS.POST_COLLECTION_NAME)
 export const userCollection: Collection<UsersDBType> = db.collection<UsersDBType>(SETTINGS.USERS_COLLECTION_NAME)
-export const commentsCollection: Collection<CommentsDBType> = db.collection<CommentsDBType>(SETTINGS.USERS_COLLECTION_NAME)
+export const commentsCollection: Collection<CommentsDBType> = db.collection<CommentsDBType>(SETTINGS.COMMENTS_COLLECTION_NAME)
 
 export const connectToDB = async () => {
     try {
