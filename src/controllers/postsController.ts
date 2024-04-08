@@ -5,6 +5,8 @@ import {queryHelper} from "../helpers";
 import {postQueryRepository} from "../repositories/postQueryRepository";
 import {blogsQueryRepository} from "../repositories/blogsQueryRepository";
 import {postService} from "../services/postService";
+import {commentsQueryRepository} from "../repositories/commentsQueryRepository";
+import {commentsService} from "../services/commentsService";
 
 export const getPostsController = async (req: Request, res: Response<OutputPaginatedPostType | undefined>) => {
     const sanitizedQuery = queryHelper(req.query)
@@ -71,4 +73,23 @@ export const deletePostController = async (req: Request, res: Response) => {
     }
     res
         .status(204).end()
+}
+
+export const getPostCommentsController = async (req: Request, res: Response) => {
+    const sanitizedQuery = queryHelper(req.query)
+    const comments = await commentsQueryRepository.getPostComments(req.params.id, sanitizedQuery)
+    if (!comments) {
+        res.status(404).end()
+        return
+    }
+    res.status(200).json(comments)
+}
+
+export const createPostComment = async (req: Request, res: Response) => {
+    const comments = await commentsService.createPostCommentService(req.params.id, req.body, req.headers.authorization as string)
+    if (!comments) {
+        res.status(404).end()
+        return
+    }
+    res.status(200).json(comments)
 }

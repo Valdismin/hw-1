@@ -1,5 +1,4 @@
 import {body} from "express-validator";
-import {blogsRepository} from "../repositories/blogsRepository";
 import {blogsQueryRepository} from "../repositories/blogsQueryRepository";
 
 const postTitleValidation = body('title').trim().isString().bail().isLength({min: 1, max: 30}).bail().notEmpty().bail()

@@ -1,5 +1,6 @@
 import {Router} from "express";
 import {
+    createPostComment,
     createPostController, deletePostController,
     getPostByIdController, getPostCommentsController,
     getPostsController,
@@ -8,6 +9,7 @@ import {
 import {authMiddleware} from "../middlewares/auth";
 import {postValidation} from "../validation/posts";
 import {inputCheckErrorsMiddleware} from "../middlewares/createErrorMiddleware";
+import {commentValidation} from "../validation/comments";
 
 export const postsRouter = Router()
 
@@ -17,3 +19,4 @@ postsRouter.get('/:id', getPostByIdController)
 postsRouter.put('/:id', [authMiddleware, ...postValidation], inputCheckErrorsMiddleware, updatePostController)
 postsRouter.delete('/:id', authMiddleware, deletePostController)
 postsRouter.get('/:id/comments', getPostCommentsController)
+postsRouter.post('/:id/comments', authMiddleware, commentValidation, inputCheckErrorsMiddleware, createPostComment)
