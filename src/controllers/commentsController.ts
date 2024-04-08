@@ -1,6 +1,5 @@
 import {Request, Response} from "express";
 import {commentsQueryRepository} from "../repositories/commentsQueryRepository";
-import {commentsRepository} from "../repositories/commentsRepository";
 import {commentsService} from "../services/commentsService";
 
 export const getCommentById = async (req: Request, res: Response) => {

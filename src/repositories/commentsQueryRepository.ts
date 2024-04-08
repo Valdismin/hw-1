@@ -5,7 +5,7 @@ import {ObjectId} from "mongodb";
 export const commentsQueryRepository = {
     getPostComments: async (postId: string, query: any): Promise<OutputPaginatedCommentsType | undefined> => {
         try {
-            const items: any = await commentsCollection.find({postId}).project({_id: 0}).sort(
+            const items: any = await commentsCollection.find({postId}).project({_id: 0, postId: 0}).sort(
                 query.sortBy,
                 query.sortDirection)
                 .skip((query.pageNumber - 1) * query.pageSize)
@@ -26,7 +26,7 @@ export const commentsQueryRepository = {
         }
     },
     getCommentById: async (id: string): Promise<OutputCommentType | null> => {
-        const comment = await commentsCollection.findOne({id: id}, {projection: {_id: 0, acknowledged: 0, insertedId: 0}})
+        const comment = await commentsCollection.findOne({id: id}, {projection: {_id: 0, acknowledged: 0, insertedId: 0, postId: 0}})
         if (!comment) {
             return null
         }
