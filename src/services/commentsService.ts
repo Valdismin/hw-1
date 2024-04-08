@@ -21,8 +21,7 @@ export const commentsService = {
         }
         const createdCommentResult = await commentsRepository.createComment(newComment)
         const createdComment = await commentsQueryRepository.getCommentByDBId(createdCommentResult.insertedId)
-        console.debug(createdComment)
-        return true
+        return createdComment
     },
     deleteComment: async (id: string) => {
         return commentsRepository.deleteComment(id)
