@@ -9,14 +9,16 @@ export const loginUserController = async (req: Request, res: Response) => {
         res.status(401).end()
         return
     }
-
+console.debug('result', result)
     res.status(200).json({accessToken: result})
 }
 
 export const userCheck = async (req: Request, res: Response<authMeType | null>) => {
+    console.debug('req.userId', req.userId)
     const user = await authService.getMe(req.userId!)
     if (!user) {
         res.status(401).end()
+        return
     }
     res.status(200).json(user)
 }
