@@ -86,10 +86,10 @@ export const getPostCommentsController = async (req: Request, res: Response) => 
 }
 
 export const createPostComment = async (req: Request, res: Response) => {
-    const comments = await commentsService.createPostCommentService(req.params.id, req.body, req.headers.authorization as string)
+    const comments = await commentsService.createPostCommentService(req.params.id, req.body, req.headers.authorization as string, req.userId!)
     if (!comments) {
         res.status(404).end()
         return
     }
-    res.status(200).json(comments)
+    res.status(201).json(comments)
 }

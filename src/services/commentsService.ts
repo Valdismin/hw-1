@@ -3,8 +3,8 @@ import {JWTService} from "./JWTService";
 import {commentsRepository} from "../repositories/commentsRepository";
 
 export const commentsService = {
-    createPostCommentService: async (postId: string, comment: string, token: string) => {
-        const userId = JWTService.getUserIdByToken(token)
+    createPostCommentService: async (postId: string, comment: string, token: string, userId: string) => {
+        console.debug(userId)
         const user = await usersQueryRepository.getUserById(userId)
         if (!user) {
             return null

@@ -10,6 +10,7 @@ import {authMiddleware} from "../middlewares/auth";
 import {postValidation} from "../validation/posts";
 import {inputCheckErrorsMiddleware} from "../middlewares/createErrorMiddleware";
 import {commentValidation} from "../validation/comments";
+import {checkJWT} from "../middlewares/checkJWT";
 
 export const postsRouter = Router()
 
@@ -19,4 +20,4 @@ postsRouter.get('/:id', getPostByIdController)
 postsRouter.put('/:id', [authMiddleware, ...postValidation], inputCheckErrorsMiddleware, updatePostController)
 postsRouter.delete('/:id', authMiddleware, deletePostController)
 postsRouter.get('/:id/comments', getPostCommentsController)
-postsRouter.post('/:id/comments', authMiddleware, commentValidation, inputCheckErrorsMiddleware, createPostComment)
+postsRouter.post('/:id/comments', checkJWT, commentValidation, inputCheckErrorsMiddleware, createPostComment)
