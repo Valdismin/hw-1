@@ -1,5 +1,4 @@
 import {usersQueryRepository} from "../repositories/usersQueryRepository";
-import {JWTService} from "./JWTService";
 import {commentsRepository} from "../repositories/commentsRepository";
 import {commentsQueryRepository} from "../repositories/commentsQueryRepository";
 
@@ -20,8 +19,7 @@ export const commentsService = {
             postId: postId
         }
         const createdCommentResult = await commentsRepository.createComment(newComment)
-        const createdComment = await commentsQueryRepository.getCommentByDBId(createdCommentResult.insertedId)
-        return createdComment
+        return await commentsQueryRepository.getCommentByDBId(createdCommentResult.insertedId)
     },
     deleteComment: async (id: string) => {
         return commentsRepository.deleteComment(id)
