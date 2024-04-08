@@ -1,6 +1,7 @@
 import {usersQueryRepository} from "../repositories/usersQueryRepository";
 import {JWTService} from "./JWTService";
 import {OutputUsersType} from "../types/usersTypes";
+import bcrypt from "bcrypt";
 
 export const authService = {
     authUser: async (loginOrEmail: string, password: string) => {
@@ -8,7 +9,10 @@ export const authService = {
         if (!user) {
             return false
         }
-        return JWTService.createToken(user);
+        const hashedPassword = await bcrypt.hash(password, user?.salt!)
+        if (hashedPassword === user?.hash) {
+            return JWTService.createToken(user);
+        }
     },
     getMe: async (userId: string) => {
         const user: OutputUsersType | null = await usersQueryRepository.getUserById(userId)
