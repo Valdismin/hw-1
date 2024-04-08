@@ -10,11 +10,7 @@ export const authService = {
         }
         return JWTService.createToken(user);
     },
-    getMe: async (token: string) => {
-        const userId = JWTService.getUserIdByToken(token)
-        if (!userId) {
-            return null
-        }
+    getMe: async (userId: string) => {
         const user: OutputUsersType | null = await usersQueryRepository.getUserById(userId)
         if (!user) {
             return null

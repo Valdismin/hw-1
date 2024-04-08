@@ -13,11 +13,7 @@ export const loginUserController = async (req: Request, res: Response) => {
 }
 
 export const userCheck = async (req: Request, res: Response<authMeType | null>) => {
-    const token = req.headers['authorization'] as string
-    if (!token) {
-        res.status(401).end()
-    }
-    const user = await authService.getMe(token)
+    const user = await authService.getMe(req.userId!)
     if (!user) {
         res.status(401).end()
     }
