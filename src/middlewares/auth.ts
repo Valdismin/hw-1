@@ -3,7 +3,7 @@ import {SETTINGS} from "../settings";
 
 export const ADMIN_AUTH = `${SETTINGS.AUTH.LOGIN}:${SETTINGS.AUTH.PASSWORD}`
 export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
-    const auth = req.headers['authorization'] as string
+    const auth = req.headers.authorization
     if (!auth) {
         res
             .status(401)
