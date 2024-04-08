@@ -76,6 +76,11 @@ export const deletePostController = async (req: Request, res: Response) => {
 }
 
 export const getPostCommentsController = async (req: Request, res: Response) => {
+    const post = await postQueryRepository.getPostById(req.params.id)
+    if (!post) {
+        res.status(404).end()
+        return
+    }
     const sanitizedQuery = queryHelper(req.query)
     const comments = await commentsQueryRepository.getPostComments(req.params.id, sanitizedQuery)
     if (!comments) {
