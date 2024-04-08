@@ -13,6 +13,17 @@ export const getCommentById = async (req: Request, res: Response) => {
 
 export const deleteComment = async (req: Request, res: Response) => {
     const id = req.params.id
+    const comment = await commentsQueryRepository.getCommentById(id)
+    if(!comment) {
+        res
+            .status(404).end()
+        return
+    }
+    if (comment.commentatorInfo.userId !== req.userId) {
+        res
+            .status(403).end()
+        return
+    }
     const result = await commentsService.deleteComment(id)
     if (!result) {
         res
@@ -24,6 +35,17 @@ export const deleteComment = async (req: Request, res: Response) => {
 }
 export const updateComment = async (req: Request, res: Response) => {
     const id = req.params.id
+    const comment = await commentsQueryRepository.getCommentById(id)
+    if(!comment) {
+        res
+            .status(404).end()
+        return
+    }
+    if (comment.commentatorInfo.userId !== req.userId) {
+        res
+            .status(403).end()
+        return
+    }
     const result = await commentsService.updateComment(id, req.body.content)
     if (!result) {
         res
