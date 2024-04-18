@@ -3,6 +3,9 @@ import {usersQueryRepository} from "../repositories/usersQueryRepository";
 
 export const confirmUserValidation = body('code').trim().isString().custom(async (value) => {
     const user = await usersQueryRepository.getUserByConfirmCode(value)
+    if(!user){
+        throw new Error('User not found');
+    }
     if(user!.userConfirmation.confirmed){
         throw new Error('User already confirmed');
     }
@@ -16,7 +19,10 @@ export const confirmUserValidation = body('code').trim().isString().custom(async
 
 export const resendEmailValidation = body('email').trim().matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/).bail().custom(async (value) => {
     const user = await usersQueryRepository.getUserForAuth(value)
-    if(user!.userConfirmation.confirmed){
+    if(!user){
+        throw new Error('User not found');
+    }
+    if(user.userConfirmation.confirmed){
         throw new Error('User already confirmed');
     }
 })
