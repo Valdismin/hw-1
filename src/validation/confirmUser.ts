@@ -16,13 +16,7 @@ export const confirmUserValidation = body('code').trim().isString().custom(async
 
 export const resendEmailValidation = body('email').trim().matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/).bail().custom(async (value) => {
     const user = await usersQueryRepository.getUserForAuth(value)
-    if(!user){
-        throw new Error('User not found');
-    }
-    if(user.userConfirmation.confirmed){
+    if(user?.userConfirmation.confirmed){
         throw new Error('User already confirmed');
-    }
-    if(user.userConfirmation.expirationTime > new Date()){
-        throw new Error('Code not expired');
     }
 })

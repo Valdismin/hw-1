@@ -68,8 +68,15 @@ export const authService = {
         if (!user) {
             return
         }
+        const userConfirmation = {
+            confirmed: false,
+            confirmCode: uuid(),
+            expirationTime: add(new Date(), {seconds: 10})
+        }
+
+        await usersRepository.updateUserConfirmation(user.id, userConfirmation)
         try {
-            await sendEmail(email, user.userConfirmation.confirmCode)
+            await sendEmail(email, userConfirmation.confirmCode)
         } catch (e) {
             return
         }

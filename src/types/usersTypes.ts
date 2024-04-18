@@ -25,7 +25,7 @@ export type UsersDBType = {
     createdAt: string,
 }
 
-type userConfirmationType = {
+export type userConfirmationType = {
     confirmed: boolean,
     confirmCode: string,
     expirationTime: Date

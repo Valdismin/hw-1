@@ -1,8 +1,8 @@
 import {userCollection} from "../db/mongo-db";
-import {OutputUsersType, UsersDBType} from "../types/usersTypes";
+import {OutputUsersType, userConfirmationType, UsersDBType} from "../types/usersTypes";
 
 export const usersRepository = {
-    async create(user: UsersDBType): Promise<OutputUsersType | null>{
+    async create(user: UsersDBType): Promise<OutputUsersType | null> {
         await userCollection.insertOne(user);
         return userCollection.findOne({id: user.id}, {projection: {_id: 0, hash: 0, salt: 0}})
     },
@@ -15,6 +15,13 @@ export const usersRepository = {
     },
     async confirmUser(id: string): Promise<OutputUsersType | null> {
         const result = await userCollection.updateOne({id: id}, {$set: {'userConfirmation.confirmed': true}});
+        if (result.modifiedCount === 0) {
+            return null
+        }
+        return userCollection.findOne({id: id}, {projection: {_id: 0, hash: 0, salt: 0}})
+    },
+    async updateUserConfirmation(id: string, userConfirmation: userConfirmationType): Promise<OutputUsersType | null> {
+        const result = await userCollection.updateOne({id: id}, {$set: {userConfirmation}});
         if (result.modifiedCount === 0) {
             return null
         }
