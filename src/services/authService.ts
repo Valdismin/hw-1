@@ -74,9 +74,9 @@ export const authService = {
             expirationTime: add(new Date(), {hours: 1})
         }
 
-        await usersRepository.updateUserConfirmation(user.id, userConfirmation)
         try {
             await sendEmail(email, userConfirmation.confirmCode)
+            await usersRepository.updateUserConfirmation(user.id, userConfirmation)
         } catch (e) {
             return
         }
