@@ -3,16 +3,13 @@ import {usersQueryRepository} from "../repositories/usersQueryRepository";
 
 export const confirmUserValidation = body('code').trim().isString().custom(async (value) => {
     const user = await usersQueryRepository.getUserByConfirmCode(value)
-    if (!user) {
-        throw new Error('User not found');
-    }
-    if(user.userConfirmation.confirmed){
+    if(user!.userConfirmation.confirmed){
         throw new Error('User already confirmed');
     }
-    if(user.userConfirmation.expirationTime < new Date()){
+    if(user!.userConfirmation.expirationTime < new Date()){
         throw new Error('Code expired');
     }
-    if(user.userConfirmation.confirmCode !== value){
+    if(user!.userConfirmation.confirmCode !== value){
         throw new Error('Invalid code');
     }
 })
