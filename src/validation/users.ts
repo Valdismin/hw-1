@@ -3,12 +3,14 @@ import {usersQueryRepository} from "../repositories/usersQueryRepository";
 
 const userLoginValidation = body('login').trim().isString().bail().isLength({min: 3, max:10}).bail().matches(/^[a-zA-Z0-9_-]*$/).bail().custom(async (value) => {
     const user = await usersQueryRepository.getUserForAuth(value)
+    console.debug(user)
     if(user){
         throw new Error('User already exists');
     }
 })
 const userEmailValidation = body('email').trim().isString().bail().matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/).bail().custom(async (value) => {
     const user = await usersQueryRepository.getUserForAuth(value)
+    console.debug(user)
     if(user){
         throw new Error('User already exists');
     }
