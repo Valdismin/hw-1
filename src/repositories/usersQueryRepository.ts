@@ -6,18 +6,18 @@ export const usersQueryRepository = {
 
         if (query.searchLoginTerm) {
             const searchLoginRegex = new RegExp(query.searchLoginTerm, 'i');
-            searchConditions.push({login: searchLoginRegex});
+            searchConditions.push({'userInfo.login': searchLoginRegex});
         }
 
         if (query.searchEmailTerm) {
             const searchEmailRegex = new RegExp(query.searchEmailTerm, 'i');
-            searchConditions.push({email: searchEmailRegex});
+            searchConditions.push({'userInfo.email': searchEmailRegex});
         }
 
         const findQuery = searchConditions.length ? {$or: searchConditions} : {};
 
         try {
-            const items: any = await userCollection.find(findQuery).project({_id: 0, hash: 0, salt: 0}).sort(
+            const items: any = await userCollection.find(findQuery).project({_id: 0, 'userInfo.hash': 0, 'userInfo.salt': 0}).sort(
                 query.sortBy,
                 query.sortDirection)
                 .skip((query.pageNumber - 1) * query.pageSize)
@@ -41,7 +41,7 @@ export const usersQueryRepository = {
         return await userCollection.findOne({$or: [{'userInfo.login': loginOrEmail}, {'userInfo.email': loginOrEmail}]})
     },
     async getUserById(id: string) {
-        return await userCollection.findOne({id: id}, {projection: {_id: 0, hash: 0, salt: 0, createdAt: 0}})
+        return await userCollection.findOne({id: id}, {projection: {_id: 0, 'userInfo.hash': 0, 'userInfo.salt': 0, createdAt: 0}})
     },
     async getUserByConfirmCode(code: string) {
         return await userCollection.findOne({'userConfirmation.confirmCode': code})

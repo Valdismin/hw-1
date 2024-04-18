@@ -4,7 +4,7 @@ import {OutputUsersType, userConfirmationType, UsersDBType} from "../types/users
 export const usersRepository = {
     async create(user: UsersDBType): Promise<OutputUsersType | null> {
         await userCollection.insertOne(user);
-        return userCollection.findOne({id: user.id}, {projection: {_id: 0, hash: 0, salt: 0}})
+        return userCollection.findOne({id: user.id}, {projection: {_id: 0,'userInfo.hash': 0, 'userInfo.salt': 0}})
     },
     async deleteUser(id: string): Promise<OutputUsersType[]> {
         const result = await userCollection.deleteOne({id: id});
@@ -18,7 +18,7 @@ export const usersRepository = {
         if (result.modifiedCount === 0) {
             return null
         }
-        return userCollection.findOne({id: id}, {projection: {_id: 0, hash: 0, salt: 0}})
+        return userCollection.findOne({id: id}, {projection: {_id: 0, 'userInfo.hash': 0, 'userInfo.salt': 0}})
     },
     async updateUserConfirmation(id: string, userConfirmation: userConfirmationType): Promise<OutputUsersType | null> {
         const result = await userCollection.updateOne({id: id}, {$set: {userConfirmation:userConfirmation}});
