@@ -46,7 +46,7 @@ export const authService = {
             userConfirmation: {
                 confirmed: false,
                 confirmCode: uuid(),
-                expirationTime: add(new Date(), {seconds: 10})
+                expirationTime: add(new Date(), {hours: 1})
             }
         }
         await usersRepository.create(newUser)
@@ -71,7 +71,7 @@ export const authService = {
         const userConfirmation = {
             confirmed: false,
             confirmCode: uuid(),
-            expirationTime: add(new Date(), {seconds: 10})
+            expirationTime: add(new Date(), {hours: 1})
         }
 
         await usersRepository.updateUserConfirmation(user.id, userConfirmation)

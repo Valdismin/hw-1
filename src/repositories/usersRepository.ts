@@ -21,10 +21,10 @@ export const usersRepository = {
         return userCollection.findOne({id: id}, {projection: {_id: 0, hash: 0, salt: 0}})
     },
     async updateUserConfirmation(id: string, userConfirmation: userConfirmationType): Promise<OutputUsersType | null> {
-        const result = await userCollection.updateOne({id: id}, {$set: {'userConfirmation':userConfirmation}});
+        const result = await userCollection.updateOne({id: id}, {$set: {userConfirmation:userConfirmation}});
         if (result.modifiedCount === 0) {
             return null
         }
-        return userCollection.findOne({id: id}, {projection: {_id: 0, hash: 0, salt: 0}})
+        return userCollection.findOne({id: id}, {projection: {_id: 0, 'userInfo.hash': 0, 'userInfo.salt': 0}})
     }
 }
