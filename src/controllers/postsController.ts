@@ -1,7 +1,7 @@
 import {Request, Response} from 'express'
 import {postsRepository} from "../repositories/postsRepository";
 import {OutputPaginatedPostType, OutputPostType} from "../types/postsTypes";
-import {queryHelper} from "../helpers";
+import {queryHelper} from "../utils/helpers";
 import {postQueryRepository} from "../repositories/postQueryRepository";
 import {blogsQueryRepository} from "../repositories/blogsQueryRepository";
 import {postService} from "../services/postService";

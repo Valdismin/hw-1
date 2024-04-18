@@ -3,7 +3,7 @@ import {blogsRepository} from "../repositories/blogsRepository";
 import {OutputBlogType, OutputPaginatedBlogsType} from "../types/blogsTypes";
 import {OutputErrorsType} from "../types/videosTypes";
 import {blogsQueryRepository} from "../repositories/blogsQueryRepository";
-import {queryHelper} from "../helpers";
+import {queryHelper} from "../utils/helpers";
 import {blogService} from "../services/blogService";
 
 export const createBlogController = async (req: Request, res: Response<OutputBlogType | OutputErrorsType>) => {

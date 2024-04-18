@@ -1,6 +1,6 @@
 import {Request, Response} from 'express'
 import {usersQueryRepository} from "../repositories/usersQueryRepository";
-import {queryHelper} from "../helpers";
+import {queryHelper} from "../utils/helpers";
 import {OutputUsersType} from "../types/usersTypes";
 import {usersService} from "../services/usersService";
 

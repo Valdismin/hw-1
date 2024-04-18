@@ -12,5 +12,12 @@ export const usersRepository = {
             return []
         }
         return userCollection.find({}, {projection: {_id: 0}}).toArray()
+    },
+    async confirmUser(id: string): Promise<OutputUsersType | null> {
+        const result = await userCollection.updateOne({id: id}, {$set: {'userConfirmation.confirmed': true}});
+        if (result.modifiedCount === 0) {
+            return null
+        }
+        return userCollection.findOne({id: id}, {projection: {_id: 0, hash: 0, salt: 0}})
     }
 }

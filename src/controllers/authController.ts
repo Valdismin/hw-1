@@ -20,3 +20,19 @@ export const userCheck = async (req: Request, res: Response<authMeType | null>) 
     }
     res.status(200).json(user)
 }
+
+export const registrationConfirmationController = async (req: Request, res: Response) => {
+    await authService.registrationConfirmation(req.body.code)
+    res.status(204).end()
+
+}
+
+export const registrationUserController = async (req: Request, res: Response) => {
+    await authService.registration(req.body.email, req.body.login, req.body.password)
+    res.status(204).end()
+
+}
+export const registerEmailResendingController = async (req: Request, res: Response) => {
+    await authService.resendEmail(req.body.email)
+    res.status(204).end()
+}

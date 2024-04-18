@@ -20,9 +20,20 @@ export type OutputPaginatedUsersType = {
 
 export type UsersDBType = {
     id: string,
+    userInfo: UserInfoType,
+    userConfirmation: userConfirmationType,
+    createdAt: string,
+}
+
+type userConfirmationType = {
+    confirmed: boolean,
+    confirmCode: string,
+    expirationTime: Date
+}
+
+type UserInfoType = {
     email: string,
     login: string,
-    createdAt: string,
     hash: string,
     salt: string
 }

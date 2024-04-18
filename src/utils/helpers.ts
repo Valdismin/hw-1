@@ -1,4 +1,4 @@
-import {OutputUsersType, UsersDBType} from "./types/usersTypes";
+import {OutputUsersType, UsersDBType} from "../types/usersTypes";
 
 export const queryHelper = (query: any) => {
     return {
@@ -16,8 +16,8 @@ export const sanitizeUser = (user: UsersDBType): OutputUsersType => {
 
     return {
         id: user.id,
-        email: user.email,
-        login: user.login,
+        email: user.userInfo.email,
+        login: user.userInfo.login,
         createdAt: user.createdAt
     }
 

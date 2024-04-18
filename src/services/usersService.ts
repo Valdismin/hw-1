@@ -9,10 +9,17 @@ export const usersService = {
         const newUser = {
             id: `${Date.now() + Math.random()}`,
             createdAt: new Date().toISOString(),
-            login: user.login,
-            email: user.email,
-            hash: hashedPassword,
-            salt: salt,
+            userInfo: {
+                login: user.login,
+                email: user.email,
+                hash: hashedPassword,
+                salt: salt,
+            },
+            userConfirmation: {
+                confirmed: true,
+                confirmCode: '',
+                expirationTime: new Date(Date.now() + 1000 * 60 * 60 * 24)
+            }
         }
         return await usersRepository.create(newUser)
     },

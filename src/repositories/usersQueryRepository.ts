@@ -43,4 +43,7 @@ export const usersQueryRepository = {
     async getUserById(id: string) {
         return await userCollection.findOne({id: id}, {projection: {_id: 0, hash: 0, salt: 0, createdAt: 0}})
     },
+    async getUserByConfirmCode(code: string) {
+        return await userCollection.findOne({'userConfirmation.confirmCode': code})
+    }
 }
