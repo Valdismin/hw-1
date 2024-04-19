@@ -8,10 +8,11 @@ export const checkJWT = (req: Request, res: Response, next: NextFunction) => {
         return
     }
 
-    if (req.headers.authorization.split(' ')[0] === 'Bearer') {
+    if (req.headers.authorization.split(' ')[0] === 'Basic') {
         res.status(401).end()
         return
     }
+
 
     const token = req.headers.authorization.split(' ')[1]
     const userId = JWTService.getUserIdByToken(token)
@@ -24,4 +25,5 @@ export const checkJWT = (req: Request, res: Response, next: NextFunction) => {
         req.userId = userId
         next()
     }
+    res.status(401).end()
 }
