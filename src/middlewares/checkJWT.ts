@@ -8,6 +8,11 @@ export const checkJWT = (req: Request, res: Response, next: NextFunction) => {
         return
     }
 
+    if (req.headers.authorization.split(' ')[0] !== 'Bearer') {
+        res.status(401).end()
+        return
+    }
+
     const token = req.headers.authorization.split(' ')[1]
     const userId = JWTService.getUserIdByToken(token)
     if (userId) {
