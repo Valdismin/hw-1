@@ -8,10 +8,10 @@ export const checkJWT = (req: Request, res: Response, next: NextFunction) => {
         return
     }
 
-    if (req.headers.authorization.split(' ')[0] === 'Basic') {
-        res.status(401).end()
-        return
-    }
+    // if (req.headers.authorization.split(' ')[0] === 'Basic') {
+    //     res.status(401).end()
+    //     return
+    // }
 
 
     const token = req.headers.authorization.split(' ')[1]
