@@ -8,7 +8,7 @@ export const checkJWT = (req: Request, res: Response, next: NextFunction) => {
         return
     }
 
-    if (req.headers.authorization.split(' ')[0] !== 'Bearer') {
+    if (req.headers.authorization.split(' ')[0] === 'Bearer') {
         res.status(401).end()
         return
     }
