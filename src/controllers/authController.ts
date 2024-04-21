@@ -10,7 +10,7 @@ export const loginUserController = async (req: Request, res: Response) => {
         return
     }
     res.cookie('refreshToken', result.refreshToken, {httpOnly: true, secure: true})
-    res.status(200).json({accessToken: result})
+    res.status(200).json({accessToken: result.accessToken})
 }
 export const logoutUserController = async (req: Request, res: Response) => {
     const result = await authService.logoutUser(req.cookies.refreshToken)
