@@ -30,7 +30,7 @@ export const updateTokenController = async (req: Request, res: Response) => {
         return
     }
     res.cookie('refreshToken', result.refreshToken, {httpOnly: true, secure: true})
-    res.status(200).json({accessToken: result})
+    res.status(200).json({accessToken: result.accessToken})
 }
 
 export const userCheck = async (req: Request, res: Response<authMeType | null>) => {
