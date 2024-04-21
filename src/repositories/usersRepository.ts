@@ -2,7 +2,7 @@ import {userCollection} from "../db/mongo-db";
 import {OutputUsersType, userConfirmationType, UsersDBType} from "../types/usersTypes";
 
 export const usersRepository = {
-    async create(user: UsersDBType): Promise<OutputUsersType | null> {
+    async create(user: UsersDBType): Promise<UsersDBType | null> {
         await userCollection.insertOne(user);
         return userCollection.findOne({id: user.id}, {projection: {_id: 0,'userInfo.hash': 0, 'userInfo.salt': 0}})
     },

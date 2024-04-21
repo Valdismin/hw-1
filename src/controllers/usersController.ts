@@ -1,13 +1,18 @@
 import {Request, Response} from 'express'
 import {usersQueryRepository} from "../repositories/usersQueryRepository";
-import {queryHelper} from "../utils/helpers";
+import {queryHelper, sanitizeUser} from "../utils/helpers";
 import {OutputUsersType} from "../types/usersTypes";
 import {usersService} from "../services/usersService";
 
 export const createUserController = async (req: Request, res: Response<OutputUsersType | null>) => {
     const {login, email, password} = req.body
     const user = await usersService.createUserService({login, email, password})
-    res.status(201).json(user)
+    if(!user) {
+        res.status(400).end()
+        return
+    }
+    const sanitizedUser = sanitizeUser(user)
+    res.status(201).json(sanitizedUser)
 }
 
 export const getUsersController = async (req: Request, res: Response) => {
