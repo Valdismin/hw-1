@@ -1,6 +1,6 @@
 import {usersQueryRepository} from "../repositories/usersQueryRepository";
 import {JWTService} from "./JWTService";
-import {OutputUsersType} from "../types/usersTypes";
+import {OutputUsersType, UsersDBType} from "../types/usersTypes";
 import bcrypt from "bcrypt";
 import {usersRepository} from "../repositories/usersRepository";
 import {uuid} from "uuidv4";
@@ -40,13 +40,13 @@ export const authService = {
         return {refreshToken: newRefreshToken, accessToken: newAccessToken}
     },
     getMe: async (userId: string) => {
-        const user: OutputUsersType | null = await usersQueryRepository.getUserById(userId)
+        const user: UsersDBType | null = await usersQueryRepository.getUserById(userId)
         if (!user) {
             return null
         }
         return {
-            email: user.email,
-            login: user.login,
+            email: user.userInfo.email,
+            login: user.userInfo.login,
             userId: user.id
         }
     },
