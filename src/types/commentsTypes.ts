@@ -1,5 +1,3 @@
-import {OutputPostType} from "./postsTypes";
-
 export type CommentsDBType = {
     id:string,
     content:string,

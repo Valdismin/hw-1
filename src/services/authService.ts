@@ -7,18 +7,37 @@ import {uuid} from "uuidv4";
 import {add} from "date-fns/add";
 import {sendEmail} from "../managers/emailManager";
 
+export type authResultType = {
+    refreshToken: string
+    accessToken: string
+}
 export const authService = {
-    authUser: async (loginOrEmail: string, password: string) => {
+    authUser: async (loginOrEmail: string, password: string): Promise<authResultType | null> => {
         const user = await usersQueryRepository.getUserForAuth(loginOrEmail)
         if (!user) {
-            return false
+            return null
         }
         const hashedPassword = await bcrypt.hash(password, user?.userInfo.salt!)
         if (hashedPassword === user?.userInfo.hash) {
-            return JWTService.createToken(user);
+            const refreshToken = JWTService.createRefreshToken(user)
+            const accessToken = JWTService.createToken(user)
+            return {refreshToken:refreshToken, accessToken:accessToken}
         } else {
-            return false
+            return null
         }
+    },
+    updateTokens: async (refreshToken: string, userId: string | null): Promise<authResultType | null> => {
+        if (!userId) {
+            return null
+        }
+        const user = await usersQueryRepository.getUserById(userId)
+        if (!user) {
+            return null
+        }
+        const newRefreshToken = JWTService.createRefreshToken(user)
+        const newAccessToken = JWTService.createToken(user)
+        await JWTService.killRefreshToken(refreshToken)
+        return {refreshToken: newRefreshToken, accessToken: newAccessToken}
     },
     getMe: async (userId: string) => {
         const user: OutputUsersType | null = await usersQueryRepository.getUserById(userId)
@@ -61,7 +80,7 @@ export const authService = {
         if (!user) {
             return
         }
-       return await usersRepository.confirmUser(user.id)
+        return await usersRepository.confirmUser(user.id)
     },
     resendEmail: async (email: string) => {
         const user = await usersQueryRepository.getUserForAuth(email)
@@ -80,5 +99,8 @@ export const authService = {
         } catch (e) {
             return
         }
+    },
+    logoutUser: async (token: string) => {
+        return await JWTService.killRefreshToken(token)
     }
 }

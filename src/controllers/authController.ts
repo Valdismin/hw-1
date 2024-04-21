@@ -1,4 +1,4 @@
-import {authService} from "../services/authService";
+import {authResultType, authService} from "../services/authService";
 import {Request, Response} from "express";
 import {authMeType} from "../types/authTypes";
 
@@ -9,6 +9,27 @@ export const loginUserController = async (req: Request, res: Response) => {
         res.status(401).end()
         return
     }
+    res.cookie('refreshToken', result.refreshToken, {httpOnly: true, secure: true})
+    res.status(200).json({accessToken: result})
+}
+export const logoutUserController = async (req: Request, res: Response) => {
+    const result = await authService.logoutUser(req.cookies.refreshToken)
+    if (!result) {
+        res.status(401).end()
+        return
+    }
+    res.status(204).json()
+}
+
+export const updateTokenController = async (req: Request, res: Response) => {
+    const refreshToken = req.cookies.refreshToken
+    const userId = req.userId
+    const result = await authService.updateTokens(refreshToken, userId)
+    if (!result) {
+        res.status(401).end()
+        return
+    }
+    res.cookie('refreshToken', result.refreshToken, {httpOnly: true, secure: true})
     res.status(200).json({accessToken: result})
 }
 
