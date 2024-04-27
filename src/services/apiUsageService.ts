@@ -3,7 +3,7 @@ import {apiUsageRepository} from "../repositories/apiUsageRepository";
 export const apiUsageService = {
     setRecord: async (IP: string, URL: string) => {
         const date = new Date();
-        await apiUsageRepository.setRecord(IP, URL, date);
+        return await apiUsageRepository.setRecord(IP, URL, date);
     },
     findRecords: async (IP: string, URL: string, date: Date) => {
         const currentDate = new Date();
