@@ -16,7 +16,7 @@ import {updateSession} from "../middlewares/updateSession";
 export const authRouter = Router()
 
 authRouter.post('/login', apiUsageMiddleware, ...inputAuthValidation, inputCheckErrorsMiddleware, loginUserController)
-authRouter.post('/refresh-token', checkRefreshToken, updateTokenController)
+authRouter.post('/refresh-token', checkRefreshToken, updateSession, updateTokenController)
 authRouter.post('/logout', checkRefreshToken, logoutUserController)
 authRouter.get('/me', checkJWT, updateSession, userCheck)
 authRouter.post('/registration-confirmation', apiUsageMiddleware, confirmUserValidation, inputCheckErrorsMiddleware, registrationConfirmationController)
