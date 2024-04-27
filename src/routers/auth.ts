@@ -16,7 +16,7 @@ import {setApiUsage} from "../middlewares/setApiUsage";
 
 export const authRouter = Router()
 
-authRouter.post('/login', setApiUsage,apiUsageMiddleware, ...inputAuthValidation, inputCheckErrorsMiddleware, loginUserController)
+authRouter.post('/login', setApiUsage, apiUsageMiddleware, ...inputAuthValidation, inputCheckErrorsMiddleware, loginUserController)
 authRouter.post('/refresh-token', setApiUsage,checkRefreshToken, updateSession, updateTokenController)
 authRouter.post('/logout', setApiUsage, checkRefreshToken, logoutUserController)
 authRouter.get('/me', checkJWT, updateSession, userCheck)

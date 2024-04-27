@@ -10,7 +10,7 @@ export const securityService = {
         if(!result) {
             return null
         }
-        await securityRepository.deleteSpecificSession(userId, deviceId);
+        return await securityRepository.deleteSpecificSession(userId, deviceId);
     },
     createDeviceSession: async (refreshToken: string, ip: string, title: string) => {
         const tokenFields = JWTService.getFieldsForDeviceSession(refreshToken)
