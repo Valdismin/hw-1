@@ -1,6 +1,7 @@
 import {securityQueryRepository} from "../repositories/securityQueryRepository";
 import {Request, Response} from "express";
 import {securityService} from "../services/securityService";
+import {JWTService} from "../services/JWTService";
 
 export const getDevicesSessions = async (req: Request, res: Response) => {
     const devicesSessions = await securityQueryRepository.getDevicesSessions(req.userId!);
@@ -14,6 +15,7 @@ export const deleteDevicesSessions = async (req: Request, res: Response) => {
 
 export const deleteDeviceSession = async (req: Request, res: Response) => {
     const deviceId = req.params.deviceId;
+    const token = req.cookies.refreshToken;
     const result = await securityService.deleteSpecificDeviceSession(req.userId!, deviceId);
     if (result === null) {
         res.status(404).end();
@@ -23,5 +25,6 @@ export const deleteDeviceSession = async (req: Request, res: Response) => {
         res.status(403).end();
         return;
     }
+    await JWTService.killRefreshToken(token);
     res.status(204).end();
 }
