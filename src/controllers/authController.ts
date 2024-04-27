@@ -1,14 +1,20 @@
 import {authResultType, authService} from "../services/authService";
 import {Request, Response} from "express";
 import {authMeType} from "../types/authTypes";
+import {securityService} from "../services/securityService";
 
 export const loginUserController = async (req: Request, res: Response) => {
     const {loginOrEmail, password} = req.body
     const result = await authService.authUser(loginOrEmail, password)
+    let deviceTitle = req.headers["user-agent"] as string
+    if(!deviceTitle) {
+        deviceTitle = "Unknown"
+    }
     if (!result) {
         res.status(401).end()
         return
     }
+    await securityService.createDeviceSession(result.refreshToken, req.ip!, deviceTitle)
     res.cookie('refreshToken', result.refreshToken, {httpOnly: true, secure: true})
     res.status(200).json({accessToken: result.accessToken})
 }

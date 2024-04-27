@@ -5,6 +5,8 @@ import {PostDBType} from "../types/postsTypes";
 import {UsersDBType} from "../types/usersTypes";
 import {CommentsDBType} from "../types/commentsTypes";
 import {expiredTokenDBType} from "../types/tokensTypes";
+import {apiUsageDBType} from "../types/apiUsageTypes";
+import {devicesSessionsDBType} from "../types/devicesSessionsTypes";
 
 
 const client: MongoClient = new MongoClient(SETTINGS.MONGO_URL)
@@ -15,6 +17,8 @@ export const postCollection: Collection<PostDBType> = db.collection<PostDBType>(
 export const userCollection: Collection<UsersDBType> = db.collection<UsersDBType>(SETTINGS.USERS_COLLECTION_NAME)
 export const commentsCollection: Collection<CommentsDBType> = db.collection<CommentsDBType>(SETTINGS.COMMENTS_COLLECTION_NAME)
 export const expiredTokensCollection: Collection<expiredTokenDBType> = db.collection<expiredTokenDBType>(SETTINGS.EXPIRED_TOKENS_COLLECTION_NAME)
+export const apiUsageCollection: Collection<apiUsageDBType> = db.collection<apiUsageDBType>(SETTINGS.API_USAGE_COLLECTION_NAME)
+export const devicesSessionsCollection: Collection<devicesSessionsDBType> = db.collection<devicesSessionsDBType>(SETTINGS.SECURITY_COLLECTION_NAME)
 
 export const connectToDB = async () => {
     try {

@@ -16,6 +16,7 @@ export const checkRefreshToken = async (req: Request, res: Response, next: NextF
     }
 
     const userId = JWTService.getUserIdByRefreshToken(token)
+    const deviceId = JWTService.getDeviceIdByRefreshToken(token)
 
     if (userId) {
         const user = usersRepository.getUserById(userId)
@@ -24,6 +25,7 @@ export const checkRefreshToken = async (req: Request, res: Response, next: NextF
             return
         }
         req.userId = userId
+        req.deviceId = deviceId
         return next()
     }
     res.status(401).end()

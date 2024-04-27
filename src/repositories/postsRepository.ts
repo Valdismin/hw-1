@@ -1,9 +1,5 @@
-import {InputForBlogsPostType, InputPostType, OutputPostType, PostDBType, UpdatePostType} from "../types/postsTypes";
-import {blogsRepository} from "./blogsRepository";
+import {OutputPostType, PostDBType, UpdatePostType} from "../types/postsTypes";
 import {postCollection} from "../db/mongo-db";
-import {blogsQueryRepository} from "./blogsQueryRepository";
-import {OutputBlogType} from "../types/blogsTypes";
-import {postService} from "../services/postService";
 
 export const postsRepository = {
     async createPost(post: PostDBType): Promise<OutputPostType | null> {

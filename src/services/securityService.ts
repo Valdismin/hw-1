@@ -1,0 +1,20 @@
+import {securityRepository} from "../repositories/securityRepository";
+import {JWTService} from "./JWTService";
+
+export const securityService = {
+    deleteDevicesSessions: async (userId: string, deviceId: string) => {
+        await securityRepository.deleteAllSessions(userId, deviceId);
+    },
+    deleteSpecificDeviceSession: async (userId: string, deviceId: string) => {
+        await securityRepository.deleteSpecificSession(userId, deviceId);
+    },
+    createDeviceSession: async (refreshToken: string, ip: string, title: string) => {
+        const tokenFields = JWTService.getFieldsForDeviceSession(refreshToken)
+        const lastActiveDate = new Date().toISOString();
+        await securityRepository.createDeviceSession(tokenFields.userId, tokenFields.deviceId, tokenFields.issuedAt, tokenFields.expiredAt, ip, lastActiveDate, title);
+    },
+    updateLastActiveDate: async (userId: string, deviceId: string) => {
+        const lastActiveDate = new Date().toISOString();
+        await securityRepository.updateLastActiveDate(userId, deviceId, lastActiveDate);
+    }
+}
