@@ -12,7 +12,7 @@ export const securityService = {
         }
 
         const deleteOperationResult = await securityRepository.deleteSpecificSession(userId, deviceId);
-        if(!deleteOperationResult) {
+        if(deleteOperationResult) {
             await JWTService.killRefreshToken(token);
         }
         return deleteOperationResult
