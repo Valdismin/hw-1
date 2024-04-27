@@ -16,5 +16,9 @@ export const securityService = {
     updateLastActiveDate: async (userId: string, deviceId: string) => {
         const lastActiveDate = new Date().toISOString();
         await securityRepository.updateLastActiveDate(userId, deviceId, lastActiveDate);
+    },
+    updateAfterRefreshToken: async (refreshToken: string) => {
+        const tokenFields = JWTService.getFieldsForDeviceSession(refreshToken)
+        await securityRepository.updateAfterRefreshToken(tokenFields.userId, tokenFields.deviceId, tokenFields.issuedAt, tokenFields.expiredAt);
     }
 }

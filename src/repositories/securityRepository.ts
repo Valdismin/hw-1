@@ -12,5 +12,8 @@ export const securityRepository = {
     },
     updateLastActiveDate: async (userId: string, deviceId: string, lastActiveDate: string) => {
         await devicesSessionsCollection.updateOne({userId: userId, deviceId: deviceId}, {$set: {lastActiveDate: lastActiveDate}});
+    },
+    updateAfterRefreshToken: async (userId: string, deviceId: string, issuedAt: string, expiredAt: string) => {
+        await devicesSessionsCollection.updateOne({userId: userId, deviceId: deviceId}, {$set: {issuedAt: issuedAt, expiredAt: expiredAt}});
     }
 }
