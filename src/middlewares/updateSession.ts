@@ -4,6 +4,7 @@ import {securityService} from "../services/securityService";
 
 export const updateSession = async (req: Request, res: Response, next: NextFunction) => {
     const refreshToken = req.cookies.refreshToken
+
     if (!refreshToken) {
         next()
         return
@@ -11,4 +12,5 @@ export const updateSession = async (req: Request, res: Response, next: NextFunct
     const tokenFields = JWTService.getFieldsForDeviceSession(refreshToken)
 
     await securityService.updateLastActiveDate(tokenFields.userId, tokenFields.deviceId)
+    next()
 }
