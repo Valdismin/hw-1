@@ -14,6 +14,10 @@ export const deleteDevicesSessions = async (req: Request, res: Response) => {
 
 export const deleteDeviceSession = async (req: Request, res: Response) => {
     const deviceId = req.params.deviceId;
-    await securityService.deleteSpecificDeviceSession(req.userId!, deviceId);
+    const result = await securityService.deleteSpecificDeviceSession(req.userId!, deviceId);
+    if (!result) {
+        res.status(404).end();
+        return;
+    }
     res.status(200).end();
 }
