@@ -1,10 +1,9 @@
-import {usersQueryRepository} from "../repositories/usersQueryRepository";
 import {commentsRepository} from "../repositories/commentsRepository";
-import {commentsQueryRepository} from "../repositories/commentsQueryRepository";
+import {usersRepository} from "../repositories/usersRepository";
 
 export const commentsService = {
     createPostCommentService: async (postId: string, comment: string, token: string, userId: string) => {
-        const user = await usersQueryRepository.getUserById(userId)
+        const user = await usersRepository.getUserById(userId)
         if (!user) {
             return null
         }
@@ -19,7 +18,7 @@ export const commentsService = {
             postId: postId
         }
         const createdCommentResult = await commentsRepository.createComment(newComment)
-        return await commentsQueryRepository.getCommentByDBId(createdCommentResult.insertedId)
+        return await commentsRepository.getCommentByDBId(createdCommentResult.insertedId)
     },
     deleteComment: async (id: string) => {
         return commentsRepository.deleteComment(id)

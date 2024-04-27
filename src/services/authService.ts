@@ -1,6 +1,6 @@
 import {usersQueryRepository} from "../repositories/usersQueryRepository";
 import {JWTService} from "./JWTService";
-import {OutputUsersType, UsersDBType} from "../types/usersTypes";
+import {UsersDBType} from "../types/usersTypes";
 import bcrypt from "bcrypt";
 import {usersRepository} from "../repositories/usersRepository";
 import {uuid} from "uuidv4";
@@ -13,7 +13,7 @@ export type authResultType = {
 }
 export const authService = {
     authUser: async (loginOrEmail: string, password: string): Promise<authResultType | null> => {
-        const user = await usersQueryRepository.getUserForAuth(loginOrEmail)
+        const user = await usersRepository.getUserForAuth(loginOrEmail)
         if (!user) {
             return null
         }
@@ -30,7 +30,7 @@ export const authService = {
         if (!userId) {
             return null
         }
-        const user = await usersQueryRepository.getUserById(userId)
+        const user = await usersRepository.getUserById(userId)
         if (!user) {
             return null
         }
@@ -40,7 +40,7 @@ export const authService = {
         return {refreshToken: newRefreshToken, accessToken: newAccessToken}
     },
     getMe: async (userId: string) => {
-        const user: UsersDBType | null = await usersQueryRepository.getUserById(userId)
+        const user: UsersDBType | null = await usersRepository.getUserById(userId)
         if (!user) {
             return null
         }
@@ -76,14 +76,14 @@ export const authService = {
         }
     },
     registrationConfirmation: async (code: string) => {
-        const user = await usersQueryRepository.getUserByConfirmCode(code)
+        const user = await usersRepository.getUserByConfirmCode(code)
         if (!user) {
             return
         }
         return await usersRepository.confirmUser(user.id)
     },
     resendEmail: async (email: string) => {
-        const user = await usersQueryRepository.getUserForAuth(email)
+        const user = await usersRepository.getUserForAuth(email)
         if (!user) {
             return
         }

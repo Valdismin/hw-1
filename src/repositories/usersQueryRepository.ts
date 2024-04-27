@@ -36,14 +36,5 @@ export const usersQueryRepository = {
         } catch (e) {
             return undefined
         }
-    },
-    async getUserForAuth(loginOrEmail: string) {
-        return await userCollection.findOne({$or: [{'userInfo.login': loginOrEmail}, {'userInfo.email': loginOrEmail}]})
-    },
-    async getUserById(id: string) {
-        return await userCollection.findOne({id: id}, {projection: {_id: 0, 'userInfo.hash': 0, 'userInfo.salt': 0, createdAt: 0}})
-    },
-    async getUserByConfirmCode(code: string) {
-        return await userCollection.findOne({'userConfirmation.confirmCode': code})
     }
 }

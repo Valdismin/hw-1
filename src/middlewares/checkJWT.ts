@@ -1,6 +1,6 @@
 import {NextFunction, Request, Response} from "express";
 import {JWTService} from "../services/JWTService";
-import {usersQueryRepository} from "../repositories/usersQueryRepository";
+import {usersRepository} from "../repositories/usersRepository";
 
 export const checkJWT = (req: Request, res: Response, next: NextFunction) => {
     if (!req.headers.authorization) {
@@ -12,7 +12,7 @@ export const checkJWT = (req: Request, res: Response, next: NextFunction) => {
     const userId = JWTService.getUserIdByToken(token)
 
     if (userId) {
-        const user = usersQueryRepository.getUserById(userId)
+        const user = usersRepository.getUserById(userId)
         if (!user) {
             res.status(401).end()
             return

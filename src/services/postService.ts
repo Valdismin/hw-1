@@ -1,12 +1,11 @@
 import {InputForBlogsPostType, InputPostType, UpdatePostType} from "../types/postsTypes";
 import {OutputBlogType} from "../types/blogsTypes";
 import {postsRepository} from "../repositories/postsRepository";
-import {blogsQueryRepository} from "../repositories/blogsQueryRepository";
-import {postCollection} from "../db/mongo-db";
+import {blogsRepository} from "../repositories/blogsRepository";
 
 export const postService = {
     createPostService: async (post: InputPostType) => {
-        const blog = await blogsQueryRepository.getBlogById(post.blogId)
+        const blog = await blogsRepository.getBlogById(post.blogId)
         const newPost = {
             blogName: blog?.name || '',
             id: `${Date.now() + Math.random()}`,

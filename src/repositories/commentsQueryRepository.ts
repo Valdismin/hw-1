@@ -31,12 +31,5 @@ export const commentsQueryRepository = {
             return null
         }
         return comment
-    },
-    getCommentByDBId: async (id: ObjectId): Promise<OutputCommentType | null> => {
-        const comment = await commentsCollection.findOne({_id: id}, {projection: {_id: 0, acknowledged: 0, insertedId: 0, postId: 0}})
-        if (!comment) {
-            return null
-        }
-        return comment
     }
 }

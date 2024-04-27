@@ -20,5 +20,8 @@ export const blogsRepository = {
             return []
         }
         return blogCollection.find({}, { projection: { _id: 0 } }).toArray()
-    }
+    },
+    async getBlogById(id: string): Promise<OutputBlogType | null> {
+    return await blogCollection.findOne({id: id}, {projection: {_id: 0}})
+}
 }
