@@ -5,12 +5,17 @@ export const securityService = {
     deleteDevicesSessions: async (userId: string, deviceId: string) => {
         await securityRepository.deleteAllSessions(userId, deviceId);
     },
-    deleteSpecificDeviceSession: async (userId: string, deviceId: string) => {
+    deleteSpecificDeviceSession: async (userId: string, deviceId: string, token:string) => {
         const result = await securityRepository.findSession(deviceId);
         if(!result) {
             return null
         }
-        return await securityRepository.deleteSpecificSession(userId, deviceId);
+
+        const deleteOperationResult = await securityRepository.deleteSpecificSession(userId, deviceId);
+        if(!deleteOperationResult) {
+            await JWTService.killRefreshToken(token);
+        }
+        return deleteOperationResult
     },
     createDeviceSession: async (refreshToken: string, ip: string, title: string) => {
         const tokenFields = JWTService.getFieldsForDeviceSession(refreshToken)

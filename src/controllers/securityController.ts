@@ -16,7 +16,7 @@ export const deleteDevicesSessions = async (req: Request, res: Response) => {
 export const deleteDeviceSession = async (req: Request, res: Response) => {
     const deviceId = req.params.deviceId;
     const token = req.cookies.refreshToken;
-    const result = await securityService.deleteSpecificDeviceSession(req.userId!, deviceId);
+    const result = await securityService.deleteSpecificDeviceSession(req.userId!, deviceId, token);
     if (result === null) {
         res.status(404).end();
         return;
@@ -25,6 +25,5 @@ export const deleteDeviceSession = async (req: Request, res: Response) => {
         res.status(403).end();
         return;
     }
-    await JWTService.killRefreshToken(token);
     res.status(204).end();
 }
