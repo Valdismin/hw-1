@@ -7,6 +7,7 @@ export const apiUsageMiddleware = async (req: Request, res: Response, next: Next
     const date = new Date();
     const result = await apiUsageService.findRecords(IP!, URL, date);
     if(result.length > 5) {
+        console.log("API usage limit exceeded")
         res.status(429).end();
         return;
     }

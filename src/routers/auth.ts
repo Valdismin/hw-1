@@ -12,13 +12,14 @@ import {confirmUserValidation, resendEmailValidation} from "../validation/confir
 import {checkRefreshToken} from "../middlewares/checkRefreshToken";
 import {apiUsageMiddleware} from "../middlewares/apiUsage";
 import {updateSession} from "../middlewares/updateSession";
+import {setApiUsage} from "../middlewares/setApiUsage";
 
 export const authRouter = Router()
 
-authRouter.post('/login', apiUsageMiddleware, ...inputAuthValidation, inputCheckErrorsMiddleware, loginUserController)
-authRouter.post('/refresh-token', checkRefreshToken, updateSession, updateTokenController)
-authRouter.post('/logout', checkRefreshToken, logoutUserController)
+authRouter.post('/login', setApiUsage,apiUsageMiddleware, ...inputAuthValidation, inputCheckErrorsMiddleware, loginUserController)
+authRouter.post('/refresh-token', setApiUsage,checkRefreshToken, updateSession, updateTokenController)
+authRouter.post('/logout', setApiUsage, checkRefreshToken, logoutUserController)
 authRouter.get('/me', checkJWT, updateSession, userCheck)
-authRouter.post('/registration-confirmation', apiUsageMiddleware, confirmUserValidation, inputCheckErrorsMiddleware, registrationConfirmationController)
-authRouter.post('/registration', apiUsageMiddleware, ...inputUserValidation, inputCheckErrorsMiddleware, registrationUserController)
-authRouter.post('/registration-email-resending', apiUsageMiddleware, resendEmailValidation, inputCheckErrorsMiddleware, registerEmailResendingController)
+authRouter.post('/registration-confirmation', setApiUsage, apiUsageMiddleware, confirmUserValidation, inputCheckErrorsMiddleware, registrationConfirmationController)
+authRouter.post('/registration', setApiUsage, apiUsageMiddleware, ...inputUserValidation, inputCheckErrorsMiddleware, registrationUserController)
+authRouter.post('/registration-email-resending', setApiUsage, apiUsageMiddleware, resendEmailValidation, inputCheckErrorsMiddleware, registerEmailResendingController)
