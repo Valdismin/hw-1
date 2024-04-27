@@ -9,7 +9,7 @@ export const getDevicesSessions = async (req: Request, res: Response) => {
 
 export const deleteDevicesSessions = async (req: Request, res: Response) => {
     await securityService.deleteDevicesSessions(req.userId!, req.deviceId!);
-    res.status(200).end();
+    res.status(204).end();
 }
 
 export const deleteDeviceSession = async (req: Request, res: Response) => {
@@ -19,5 +19,5 @@ export const deleteDeviceSession = async (req: Request, res: Response) => {
         res.status(404).end();
         return;
     }
-    res.status(200).end();
+    res.status(204).end();
 }
