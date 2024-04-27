@@ -6,6 +6,7 @@ import {usersRouter} from "./routers/users";
 import {authRouter} from "./routers/auth";
 import {commentsRouter} from "./routers/comments";
 import cookieParser from "cookie-parser";
+import {securityRouter} from "./routers/security";
 
 export const app = express()
 app.use(express.json())
@@ -22,3 +23,4 @@ app.use('/posts', postsRouter)
 app.use('/users', usersRouter)
 app.use('/auth', authRouter)
 app.use('/comments', commentsRouter)
+app.use('/security', securityRouter)
