@@ -6,9 +6,11 @@ export const securityRepository = {
     },
     deleteSpecificSession: async (userId: string, deviceId: string): Promise<boolean> => {
         const result = await devicesSessionsCollection.deleteOne({userId: userId, deviceId: deviceId});
-
         return result.deletedCount !== 0;
 
+    },
+    findSession: async (deviceId: string) => {
+        return await devicesSessionsCollection.findOne({deviceId: deviceId});
     },
     createDeviceSession: async (userId: string, deviceId: string, issuedAt: string, expiredAt: string, ip: string, lastActiveDate: string, title: string) => {
         await devicesSessionsCollection.insertOne({userId, deviceId, issuedAt, expiredAt, ip, lastActiveDate, title});

@@ -6,6 +6,10 @@ export const securityService = {
         await securityRepository.deleteAllSessions(userId, deviceId);
     },
     deleteSpecificDeviceSession: async (userId: string, deviceId: string) => {
+        const result = securityRepository.findSession(deviceId);
+        if(!result) {
+            return null
+        }
         await securityRepository.deleteSpecificSession(userId, deviceId);
     },
     createDeviceSession: async (refreshToken: string, ip: string, title: string) => {
