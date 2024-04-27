@@ -2,6 +2,7 @@ import {authResultType, authService} from "../services/authService";
 import {Request, Response} from "express";
 import {authMeType} from "../types/authTypes";
 import {securityService} from "../services/securityService";
+import {JWTService} from "../services/JWTService";
 
 export const loginUserController = async (req: Request, res: Response) => {
     const {loginOrEmail, password} = req.body
@@ -24,6 +25,8 @@ export const logoutUserController = async (req: Request, res: Response) => {
         res.status(401).end()
         return
     }
+    const tokenFields = JWTService.getFieldsForDeviceSession(req.cookies.refreshToken)
+    await securityService.deleteSpecificDeviceSession(tokenFields.userId, tokenFields.deviceId)
     res.status(204).json()
 }
 
