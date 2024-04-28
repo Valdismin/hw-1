@@ -11,6 +11,9 @@ export const securityRepository = {
     findSession: async (deviceId: string) => {
         return await devicesSessionsCollection.findOne({deviceId: deviceId});
     },
+    findSessionByManuParams: async (deviceId: string, issuedAt: string) => {
+        return await devicesSessionsCollection.findOne({deviceId: deviceId, issuedAt: issuedAt});
+    },
     createDeviceSession: async (userId: string, deviceId: string, issuedAt: string, expiredAt: string, ip: string, lastActiveDate: string, title: string) => {
         await devicesSessionsCollection.insertOne({userId, deviceId, issuedAt, expiredAt, ip, lastActiveDate, title});
     },

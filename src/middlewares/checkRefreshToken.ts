@@ -1,6 +1,7 @@
 import {NextFunction, Request, Response} from "express";
 import {JWTService} from "../services/JWTService";
 import {usersRepository} from "../repositories/usersRepository";
+import {securityRepository} from "../repositories/securityRepository";
 
 export const checkRefreshToken = async (req: Request, res: Response, next: NextFunction) => {
     const token = req.cookies.refreshToken
@@ -8,9 +9,9 @@ export const checkRefreshToken = async (req: Request, res: Response, next: NextF
         res.status(401).end()
         return
     }
-    const isTokenExpired = await JWTService.checkRefreshTokenExpire(token)
-
-    if (isTokenExpired) {
+    const tokenFields = JWTService.getFieldsForDeviceSession(token)
+    const isTokenExpired = await securityRepository.findSessionByManuParams(tokenFields.deviceId,tokenFields.issuedAt)
+    if (!isTokenExpired) {
         res.status(401).end()
         return
     }
