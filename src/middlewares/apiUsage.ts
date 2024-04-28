@@ -3,7 +3,8 @@ import {apiUsageService} from "../services/apiUsageService";
 
 export const apiUsageMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     const IP = req.ip;
-    const URL =  req.baseUrl || req.originalUrl
+    const URL =  req.originalUrl || req.baseUrl
+
     const date = new Date();
     const result = await apiUsageService.findRecords(IP!, URL, date);
     console.log(result.length, "result.length")
