@@ -6,6 +6,7 @@ import {usersRepository} from "../repositories/usersRepository";
 import {uuid} from "uuidv4";
 import {add} from "date-fns/add";
 import {sendEmail} from "../managers/emailManager";
+import {securityRepository} from "../repositories/securityRepository";
 
 export type authResultType = {
     refreshToken: string
@@ -21,7 +22,7 @@ export const authService = {
         if (hashedPassword === user?.userInfo.hash) {
             const refreshToken = JWTService.createRefreshToken(user)
             const accessToken = JWTService.createToken(user)
-            return {refreshToken:refreshToken, accessToken:accessToken}
+            return {refreshToken: refreshToken, accessToken: accessToken}
         } else {
             return null
         }
@@ -36,6 +37,11 @@ export const authService = {
         }
         const newRefreshToken = JWTService.createRefreshToken(user)
         const newAccessToken = JWTService.createToken(user)
+        const tokenFields = await JWTService.getFieldsForDeviceSession(newRefreshToken)
+        if (!tokenFields) {
+            return null
+        }
+        await securityRepository.updateAfterRefreshToken(userId, tokenFields.deviceId, tokenFields.issuedAt, tokenFields.expiredAt)
         await JWTService.killRefreshToken(refreshToken)
         return {refreshToken: newRefreshToken, accessToken: newAccessToken}
     },
