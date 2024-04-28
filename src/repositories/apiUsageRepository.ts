@@ -5,6 +5,6 @@ export const apiUsageRepository = {
         await apiUsageCollection.insertOne({IP, URL, date});
     },
     findRecords: async (IP: string, URL: string, date: Date, currentDate: Date) => {
-        return await apiUsageCollection.find({IP, URL, date: {$gte: currentDate}}).toArray();
+        return await apiUsageCollection.find({IP:IP, URL:URL, date: {$gte: currentDate}}).toArray();
     }
 }
