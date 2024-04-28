@@ -1,7 +1,6 @@
 import {securityQueryRepository} from "../repositories/securityQueryRepository";
 import {Request, Response} from "express";
 import {securityService} from "../services/securityService";
-import {JWTService} from "../services/JWTService";
 
 export const getDevicesSessions = async (req: Request, res: Response) => {
     const devicesSessions = await securityQueryRepository.getDevicesSessions(req.userId!);
