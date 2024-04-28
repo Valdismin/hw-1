@@ -26,8 +26,11 @@ export const logoutUserController = async (req: Request, res: Response) => {
         return
     }
     const tokenFields = JWTService.getFieldsForDeviceSession(req.cookies.refreshToken)
+    if(!tokenFields) {
+        return null
+    }
     await securityService.deleteSpecificDeviceSession(tokenFields.userId, tokenFields.deviceId, req.cookies.refreshToken)
-    res.status(204).json()
+    return res.status(204).json()
 }
 
 export const updateTokenController = async (req: Request, res: Response) => {

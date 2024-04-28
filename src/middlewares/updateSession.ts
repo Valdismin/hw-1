@@ -10,7 +10,9 @@ export const updateSession = async (req: Request, res: Response, next: NextFunct
         return
     }
     const tokenFields = JWTService.getFieldsForDeviceSession(refreshToken)
-
+    if(!tokenFields) {
+        return null
+    }
     await securityService.updateLastActiveDate(tokenFields.userId, tokenFields.deviceId)
-    next()
+    return next()
 }

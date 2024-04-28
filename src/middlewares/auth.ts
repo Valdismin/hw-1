@@ -21,5 +21,5 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
         return
     }
 
-    next()
+    return next()
 }

@@ -60,13 +60,18 @@ export const JWTService = {
         deviceId: string,
         issuedAt: string,
         expiredAt: string
-    } => {
-        const decoded: any = jwt.verify(token, SETTINGS.JWT_REFRESH_SECRET);
-        return {
-            userId: decoded.id,
-            deviceId: decoded.deviceId,
-            issuedAt: decoded.iat,
-            expiredAt: decoded.exp
+    } | null => {
+        try{
+            const decoded: any = jwt.verify(token, SETTINGS.JWT_REFRESH_SECRET);
+            return {
+                userId: decoded.id,
+                deviceId: decoded.deviceId,
+                issuedAt: decoded.iat,
+                expiredAt: decoded.exp
+            }
+        } catch (e) {
+            return null
         }
+
     }
 }

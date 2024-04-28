@@ -19,8 +19,11 @@ export const securityService = {
     },
     createDeviceSession: async (refreshToken: string, ip: string, title: string) => {
         const tokenFields = JWTService.getFieldsForDeviceSession(refreshToken)
+        if(!tokenFields) {
+            return null
+        }
         const lastActiveDate = new Date().toISOString();
-        await securityRepository.createDeviceSession(tokenFields.userId, tokenFields.deviceId, tokenFields.issuedAt, tokenFields.expiredAt, ip, lastActiveDate, title);
+        return await securityRepository.createDeviceSession(tokenFields.userId, tokenFields.deviceId, tokenFields.issuedAt, tokenFields.expiredAt, ip, lastActiveDate, title);
     },
     updateLastActiveDate: async (userId: string, deviceId: string) => {
         const lastActiveDate = new Date().toISOString();
@@ -28,6 +31,9 @@ export const securityService = {
     },
     updateAfterRefreshToken: async (refreshToken: string) => {
         const tokenFields = JWTService.getFieldsForDeviceSession(refreshToken)
-        await securityRepository.updateAfterRefreshToken(tokenFields.userId, tokenFields.deviceId, tokenFields.issuedAt, tokenFields.expiredAt);
+        if(!tokenFields) {
+            return null
+        }
+        return await securityRepository.updateAfterRefreshToken(tokenFields.userId, tokenFields.deviceId, tokenFields.issuedAt, tokenFields.expiredAt);
     }
 }
