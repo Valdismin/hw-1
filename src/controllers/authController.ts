@@ -41,7 +41,7 @@ export const updateTokenController = async (req: Request, res: Response) => {
         res.status(401).end()
         return
     }
-    await securityService.updateAfterRefreshToken(result.refreshToken)
+    //await securityService.updateAfterRefreshToken(result.refreshToken)
     res.cookie('refreshToken', result.refreshToken, {httpOnly: true, secure: true})
     res.status(200).json({accessToken: result.accessToken})
 }
