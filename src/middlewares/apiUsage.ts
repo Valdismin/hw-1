@@ -6,6 +6,7 @@ export const apiUsageMiddleware = async (req: Request, res: Response, next: Next
     const URL =  req.baseUrl || req.originalUrl
     const date = new Date();
     const result = await apiUsageService.findRecords(IP!, URL, date);
+    console.log(result)
     if(result.length > 5) {
         res.status(429).end();
         return;

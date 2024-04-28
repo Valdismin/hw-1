@@ -9,7 +9,7 @@ export const JWTService = {
         return jwt.sign({
             id: user.id,
         }, SETTINGS.JWT_SECRET, {
-            expiresIn: '10m'
+            expiresIn: '10s'
         });
     },
     createRefreshToken: (user: UsersDBType) => {
@@ -18,7 +18,7 @@ export const JWTService = {
             id: user.id,
             deviceId: deviceId,
         }, SETTINGS.JWT_REFRESH_SECRET, {
-            expiresIn: '20m'
+            expiresIn: '20s'
         });
     },
     getUserIdByToken: (token: string) => {
