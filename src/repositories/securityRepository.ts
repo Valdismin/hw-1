@@ -24,11 +24,15 @@ export const securityRepository = {
         }, {$set: {lastActiveDate: lastActiveDate}});
     },
     updateAfterRefreshToken: async (userId: string, deviceId: string, issuedAt: string, expiredAt: string) => {
-        await devicesSessionsCollection.updateOne({userId: userId, deviceId: deviceId}, {
+        console.log(userId, deviceId, issuedAt, expiredAt);
+        const res = await devicesSessionsCollection.findOne({userId: userId, deviceId: deviceId})
+        console.log(res, 'res')
+        const result = await devicesSessionsCollection.updateOne({userId: userId, deviceId: deviceId}, {
             $set: {
                 issuedAt: issuedAt,
                 expiredAt: expiredAt
             }
         });
+        console.log(result)
     }
 }

@@ -12,11 +12,11 @@ export const JWTService = {
             expiresIn: '10s'
         });
     },
-    createRefreshToken: (user: UsersDBType) => {
-        const deviceId = uuid()
+    createRefreshToken: (user: UsersDBType, deviceId?: string) => {
+        const newDeviceId = deviceId || uuid()
         return jwt.sign({
             id: user.id,
-            deviceId: deviceId,
+            deviceId: newDeviceId,
         }, SETTINGS.JWT_REFRESH_SECRET, {
             expiresIn: '20s'
         });

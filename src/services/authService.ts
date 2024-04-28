@@ -35,7 +35,8 @@ export const authService = {
         if (!user) {
             return null
         }
-        const newRefreshToken = JWTService.createRefreshToken(user)
+        const oldTokenFields = await JWTService.getFieldsForDeviceSession(refreshToken)
+        const newRefreshToken = JWTService.createRefreshToken(user, oldTokenFields?.deviceId)
         const newAccessToken = JWTService.createToken(user)
         const tokenFields = await JWTService.getFieldsForDeviceSession(newRefreshToken)
         if (!tokenFields) {
