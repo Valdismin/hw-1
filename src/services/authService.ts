@@ -115,7 +115,7 @@ export const authService = {
         const user = await usersRepository.getUserForAuth(email)
 
         const recoveryCodeInfo = {
-            userId: user!.id ?? "",
+            userId: user ? user.id : "",
             expirationTime: add(new Date(), {hours: 1}),
             recoveryCode: uuid(),
             isUsed: false
