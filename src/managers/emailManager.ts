@@ -24,7 +24,7 @@ export const sendPasswordRecoveryEmail = async (email: string, recoveryCode: str
         from: '"New app" <vladislavincubatorfortests@gmail.com>',
         to: email,
         subject: "Password Recovery",
-        html: `<a href=\'https://somesite.com/confirm-email?code=${recoveryCode}\'>recover password</a>`
+        html: `<a href=\'https://somesite.com/confirm-email?recoveryCode=${recoveryCode}\'>recover password</a>`
     }
     return await transporter.sendMail(mailOptions)
 }
