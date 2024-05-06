@@ -1,4 +1,4 @@
-import {authResultType, authService} from "../services/authService";
+import {authService} from "../services/authService";
 import {Request, Response} from "express";
 import {authMeType} from "../types/authTypes";
 import {securityService} from "../services/securityService";
@@ -68,5 +68,15 @@ export const registrationUserController = async (req: Request, res: Response) =>
 }
 export const registerEmailResendingController = async (req: Request, res: Response) => {
     await authService.resendEmail(req.body.email)
+    res.status(204).end()
+}
+
+export const sendPasswordRecoveryController = async (req: Request, res: Response) => {
+    await authService.passwordRecovery(req.body.email)
+    res.status(204).end()
+}
+
+export const submitPasswordRecoveryController = async (req: Request, res: Response) => {
+    await authService.submitPasswordRecovery(req.body.recoveryCode, req.body.newPassword)
     res.status(204).end()
 }

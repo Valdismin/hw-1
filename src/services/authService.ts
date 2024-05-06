@@ -5,8 +5,9 @@ import bcrypt from "bcrypt";
 import {usersRepository} from "../repositories/usersRepository";
 import {uuid} from "uuidv4";
 import {add} from "date-fns/add";
-import {sendEmail} from "../managers/emailManager";
+import {sendConfirmationEmail, sendPasswordRecoveryEmail} from "../managers/emailManager";
 import {securityRepository} from "../repositories/securityRepository";
+import {recoveryPasswordRepository} from "../repositories/recoveryPasswordRepository";
 
 export type authResultType = {
     refreshToken: string
@@ -77,7 +78,7 @@ export const authService = {
         }
         await usersRepository.create(newUser)
         try {
-            await sendEmail(email, newUser.userConfirmation.confirmCode)
+            await sendConfirmationEmail(email, newUser.userConfirmation.confirmCode)
         } catch (e) {
             await usersRepository.deleteUser(newUser.id)
         }
@@ -101,7 +102,7 @@ export const authService = {
         }
 
         try {
-            await sendEmail(email, userConfirmation.confirmCode)
+            await sendConfirmationEmail(email, userConfirmation.confirmCode)
             await usersRepository.updateUserConfirmation(user.id, userConfirmation)
         } catch (e) {
             return
@@ -109,5 +110,34 @@ export const authService = {
     },
     logoutUser: async (token: string) => {
         return await JWTService.killRefreshToken(token)
+    },
+    passwordRecovery: async (email: string) => {
+        const user = await usersRepository.getUserForAuth(email)
+
+        const recoveryCodeInfo = {
+            userId: user!.id ?? "",
+            expirationTime: add(new Date(), {hours: 1}),
+            recoveryCode: uuid(),
+            isUsed: false
+        }
+
+        await recoveryPasswordRepository.addRecoveryCode(recoveryCodeInfo.recoveryCode, recoveryCodeInfo.userId, recoveryCodeInfo.expirationTime, recoveryCodeInfo.isUsed)
+
+        try {
+            await sendPasswordRecoveryEmail(email, recoveryCodeInfo.recoveryCode)
+        } catch (e) {
+            return
+        }
+    },
+    submitPasswordRecovery: async (recoveryCode: string, newPassword: string) => {
+        const recoveryCodeInfo = await recoveryPasswordRepository.findRecoveryCode(recoveryCode)
+        const salt = await bcrypt.genSalt(10)
+        const hash = await bcrypt.hash(newPassword, salt)
+        if (!recoveryCodeInfo?.userId) {
+            return null
+        }
+        await usersRepository.updateUserPassword(recoveryCodeInfo.userId, hash, salt)
+        await recoveryPasswordRepository.updateRecoveryCode(recoveryCode, true)
+        return
     }
 }

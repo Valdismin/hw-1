@@ -21,6 +21,7 @@ export const SETTINGS = {
     USERS_COLLECTION_NAME: 'users',
     COMMENTS_COLLECTION_NAME: 'comments',
     EXPIRED_TOKENS_COLLECTION_NAME: 'expiredTokens',
+    EXPIRED_RECOVERY_CODES_COLLECTION_NAME: 'expiredRecoveryCodes',
     API_USAGE_COLLECTION_NAME: 'apiUsage',
     AUTH_COLLECTION_NAME: 'auth',
     SECURITY_COLLECTION_NAME: 'security',

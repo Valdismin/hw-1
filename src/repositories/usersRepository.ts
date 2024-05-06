@@ -35,5 +35,12 @@ export const usersRepository = {
     },
     async getUserByConfirmCode(code: string) {
         return await userCollection.findOne({'userConfirmation.confirmCode': code})
+    },
+    async updateUserPassword(id: string, hash: string, salt: string) {
+        const result = await userCollection.updateOne({id: id}, {$set: {'userInfo.hash': hash, 'userInfo.salt': salt}});
+        if (result.modifiedCount === 0) {
+            return null
+        }
+        return userCollection.findOne({id: id}, {projection: {_id: 0, 'userInfo.hash': 0, 'userInfo.salt': 0}})
     }
 }

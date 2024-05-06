@@ -8,12 +8,23 @@ const transporter = nodemailer.createTransport({
     }
 })
 
-export const sendEmail = async (email: string, confirmationCode: string) => {
+export const sendConfirmationEmail = async (email: string, confirmationCode: string) => {
     const mailOptions = {
         from: '"New app" <vladislavincubatorfortests@gmail.com>',
         to: email,
         subject: "Email Confirmation",
         html: `<a href=\'https://somesite.com/confirm-email?code=${confirmationCode}\'>complete registration</a>`
+    }
+    return await transporter.sendMail(mailOptions)
+}
+
+
+export const sendPasswordRecoveryEmail = async (email: string, recoveryCode: string) => {
+    const mailOptions = {
+        from: '"New app" <vladislavincubatorfortests@gmail.com>',
+        to: email,
+        subject: "Password Recovery",
+        html: `<a href=\'https://somesite.com/confirm-email?code=${recoveryCode}\'>recover password</a>`
     }
     return await transporter.sendMail(mailOptions)
 }
