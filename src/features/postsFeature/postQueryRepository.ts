@@ -1,22 +1,19 @@
-import {postCollection} from "../../db/mongo-db";
-import {OutputPaginatedPostType} from "./postsTypes";
+import {OutputPaginatedPostType, PostDBType, PostModel} from "./postsTypes";
 import {ObjectId} from "mongoose";
 
-export const postQueryRepository = {
+export class PostsQueryRepository {
     async getPosts() {
-        return await postCollection.find({}).project({_id: 0}).toArray()
-    },
+        return PostModel.find({})
+    }
+
     async getManyPosts(query: any, blogId: ObjectId): Promise<OutputPaginatedPostType | undefined> {
         const id = blogId ? {blogId: blogId} : {}
         try {
-            const items: any = await postCollection.find(id).project({_id: 0}).sort(
-                query.sortBy,
-                query.sortDirection)
+            const items: any = await PostModel.find(id).sort({[query.sortBy]: query.sortDirection})
                 .skip((query.pageNumber - 1) * query.pageSize)
                 .limit(query.pageSize)
-                .toArray()
 
-            const c = await postCollection.countDocuments(id)
+            const c = await PostModel.countDocuments(id).exec()
 
             return {
                 items,
@@ -28,12 +25,9 @@ export const postQueryRepository = {
         } catch (e) {
             return undefined
         }
-    },
-    getPostById: async (id: string) => {
-        const post = await postCollection.findOne({id: id}, {projection: {_id: 0}})
-        if (!post) {
-            return null
-        }
-        return post
+    }
+
+    async getPostById(id: ObjectId):Promise<PostDBType | null> {
+        return PostModel.findOne({_id: id})
     }
 }

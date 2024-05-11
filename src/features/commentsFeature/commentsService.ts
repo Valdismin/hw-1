@@ -1,8 +1,9 @@
 import {commentsRepository} from "./commentsRepository";
 import {usersRepository} from "../usersFeature/usersRepository";
+import {ObjectId} from "mongoose";
 
 export const commentsService = {
-    createPostCommentService: async (postId: string, comment: string, token: string, userId: string) => {
+    createPostCommentService: async (postId: ObjectId, comment: string, token: string, userId: string) => {
         const user = await usersRepository.getUserById(userId)
         if (!user) {
             return null

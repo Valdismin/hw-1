@@ -1,114 +1,133 @@
 import {Request, Response} from 'express'
-import {postsRepository} from "./postsRepository";
-import {OutputPaginatedPostType, OutputPostType} from "./postsTypes";
+import {OutputPaginatedPostType, OutputPostType, PostDBType} from "./postsTypes";
 import {queryHelper} from "../../utils/helpers";
-import {postQueryRepository} from "./postQueryRepository";
-import {blogsQueryRepository} from "../blogFeature/blogsQueryRepository";
-import {postService} from "./postService";
+import {PostsQueryRepository} from "./postQueryRepository";
 import {commentsQueryRepository} from "../commentsFeature/commentsQueryRepository";
 import {commentsService} from "../commentsFeature/commentsService";
 import {Schema} from "mongoose";
+import {PostService} from "./postService";
+import {BlogsQueryRepository} from "../blogFeature/blogsQueryRepository";
 
-export const getPostsController = async (req: Request, res: Response<OutputPaginatedPostType | undefined>) => {
-    const sanitizedQuery = queryHelper(req.query)
-    if (req.params.blogId) {
+export class PostsController {
+    constructor(protected postService: PostService, protected blogsQueryRepository: BlogsQueryRepository, protected postQueryRepository: PostsQueryRepository) {
+    }
+
+    async getPosts(req: Request, res: Response<OutputPaginatedPostType | undefined>) {
+        const sanitizedQuery = queryHelper(req.query)
+        if (req.params.blogId) {
+            //@ts-ignore
+            //TODO: ask at the lesson
+            const id = req.params.blogId as Schema.Types.ObjectId
+            const blog = await this.blogsQueryRepository.getBlogById(id)
+            if (!blog) {
+                res.status(404).end()
+                return
+            }
+        }
         //@ts-ignore
         //TODO: ask at the lesson
         const id = req.params.blogId as Schema.Types.ObjectId
-        const blog = await blogsQueryRepository.getBlogById(id)
+        const posts = await this.postQueryRepository.getManyPosts(sanitizedQuery, id)
+        if (!posts) {
+            res.status(404).end()
+            return
+        }
+        res.status(200).json(posts)
+    }
+
+    async createPost(req: Request, res: Response<PostDBType>) {
+        const post = await this.postService.createPostService(req.body)
+
+        res.status(201).json(post as PostDBType)
+    }
+
+    async createPostForBlog(req: Request, res: Response<PostDBType>) {
+        //@ts-ignore
+        //TODO: ask on the lesson
+        const id = req.params.blogId as Schema.Types.ObjectId
+        const blog = await this.blogsQueryRepository.getBlogById(id)
         if (!blog) {
             res.status(404).end()
             return
         }
-    }
-    //@ts-ignore
-    //TODO: ask at the lesson
-    const id = req.params.blogId as Schema.Types.ObjectId
-    const posts = await postQueryRepository.getManyPosts(sanitizedQuery, id)
-    if (!posts) {
-        res.status(404).end()
-        return
-    }
-    res.status(200).json(posts)
-}
+        const post = await this.postService.createPostForBlogService(req.body, blog)
 
-export const createPostController = async (req: Request, res: Response<OutputPostType>) => {
-    const post = await postService.createPostService(req.body)
-
-    res.status(201).json(post as OutputPostType)
-}
-
-export const createPostForBlogController = async (req: Request, res: Response<OutputPostType>) => {
-    //@ts-ignore
-    //TODO: ask on the lesson
-    const id = req.params.blogId as Schema.Types.ObjectId
-    const blog = await blogsQueryRepository.getBlogById(id)
-    if (!blog) {
-        res.status(404).end()
-        return
-    }
-    const post = await postService.createPostForBlogService(req.body, blog)
-
-    res.status(201).json(post as OutputPostType)
-}
-
-export const getPostByIdController = async (req: Request, res: Response<OutputPostType>) => {
-    const post = await postQueryRepository.getPostById(req.params.id)
-    if (!post) {
-        res.status(404).end()
-        return
+        res.status(201).json(post as PostDBType)
     }
 
-    res.status(200).json(post)
-}
+    async getPostById(req: Request, res: Response<PostDBType>) {
+        //@ts-ignore
+        //TODO: ask on the lesson
+        const id = req.params.id as Schema.Types.ObjectId
+        const post = await this.postQueryRepository.getPostById(id)
+        if (!post) {
+            res.status(404).end()
+            return
+        }
 
-export const updatePostController = async (req: Request, res: Response) => {
-    const updatedPost = await postService.updatePostService(req.body, req.params.id)
-    if (!updatedPost) {
+        res.status(200).json(post)
+    }
+
+    async updatePost(req: Request, res: Response) {
+        //@ts-ignore
+        //TODO: ask on the lesson
+        const id = req.params.id as Schema.Types.ObjectId
+        const updatedPost = await this.postService.updatePostService(req.body, id)
+        if (!updatedPost) {
+            res
+                .status(404).end()
+            return
+        }
         res
-            .status(404).end()
-        return
+            .status(204).end()
     }
-    res
-        .status(204).end()
-}
 
-export const deletePostController = async (req: Request, res: Response) => {
-    const deletedPost = await postService.deletePostService(req.params.id)
-    if (!deletedPost) {
+    async deletePost(req: Request, res: Response) {
+        //@ts-ignore
+        //TODO: ask on the lesson
+        const id = req.params.id as Schema.Types.ObjectId
+        const deletedPost = await this.postService.deletePostService(id)
+        if (!deletedPost) {
+            res
+                .status(404).end()
+            return
+        }
         res
-            .status(404).end()
-        return
+            .status(204).end()
     }
-    res
-        .status(204).end()
-}
 
-export const getPostCommentsController = async (req: Request, res: Response) => {
-    const post = await postQueryRepository.getPostById(req.params.id)
-    if (!post) {
-        res.status(404).end()
-        return
+    async getPostComments(req: Request, res: Response) {
+        //@ts-ignore
+        //TODO: ask on the lesson
+        const id = req.params.id as Schema.Types.ObjectId
+        const post = await this.postQueryRepository.getPostById(id)
+        if (!post) {
+            res.status(404).end()
+            return
+        }
+        const sanitizedQuery = queryHelper(req.query)
+        const comments = await commentsQueryRepository.getPostComments(req.params.id, sanitizedQuery)
+        if (!comments) {
+            res.status(404).end()
+            return
+        }
+        res.status(200).json(comments)
     }
-    const sanitizedQuery = queryHelper(req.query)
-    const comments = await commentsQueryRepository.getPostComments(req.params.id, sanitizedQuery)
-    if (!comments) {
-        res.status(404).end()
-        return
-    }
-    res.status(200).json(comments)
-}
 
-export const createPostComment = async (req: Request, res: Response) => {
-    const post = await postQueryRepository.getPostById(req.params.id)
-    if (!post) {
-        res.status(404).end()
-        return
+     async createPostComment(req: Request, res: Response) {
+         //@ts-ignore
+         //TODO: ask on the lesson
+         const id = req.params.id as Schema.Types.ObjectId
+        const post = await this.postQueryRepository.getPostById(id)
+        if (!post) {
+            res.status(404).end()
+            return
+        }
+        const comments = await commentsService.createPostCommentService(id, req.body.content, req.headers.authorization as string, req.userId!)
+        if (!comments) {
+            res.status(404).end()
+            return
+        }
+        res.status(201).json(comments)
     }
-    const comments = await commentsService.createPostCommentService(req.params.id, req.body.content, req.headers.authorization as string, req.userId!)
-    if (!comments) {
-        res.status(404).end()
-        return
-    }
-    res.status(201).json(comments)
 }
