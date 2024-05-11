@@ -25,7 +25,7 @@ export const SETTINGS = {
     API_USAGE_COLLECTION_NAME: 'apiUsage',
     AUTH_COLLECTION_NAME: 'auth',
     SECURITY_COLLECTION_NAME: 'security',
-    MONGO_URL: process.env.MONGO_URL || 'mongodb://localhost:27017',
+    MONGO_URL: process.env.MONGO_URL || 'mongodb://localhost:27017/localhost',
     JWT_SECRET: process.env.SECRET_KEY || 'secret',
     JWT_REFRESH_SECRET: process.env.REFRESH_SECRET_KEY || 'secretRefresh',
     DB_NAME: process.env.DB_NAME || 'test'

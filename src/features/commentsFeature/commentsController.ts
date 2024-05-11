@@ -1,0 +1,57 @@
+import {Request, Response} from "express";
+import {commentsQueryRepository} from "./commentsQueryRepository";
+import {commentsService} from "./commentsService";
+
+export const getCommentById = async (req: Request, res: Response) => {
+    const id = req.params.id
+    const comment = await commentsQueryRepository.getCommentById(id)
+    if (!comment) {
+        return res.status(404).json({message: "Comment not found"})
+    }
+    return res.status(200).json(comment)
+}
+
+export const deleteComment = async (req: Request, res: Response) => {
+    const id = req.params.id
+    const comment = await commentsQueryRepository.getCommentById(id)
+    if(!comment) {
+        res
+            .status(404).end()
+        return
+    }
+    if (comment.commentatorInfo.userId !== req.userId) {
+        res
+            .status(403).end()
+        return
+    }
+    const result = await commentsService.deleteComment(id)
+    if (!result) {
+        res
+            .status(404).end()
+        return
+    }
+    res
+        .status(204).end()
+}
+export const updateComment = async (req: Request, res: Response) => {
+    const id = req.params.id
+    const comment = await commentsQueryRepository.getCommentById(id)
+    if(!comment) {
+        res
+            .status(404).end()
+        return
+    }
+    if (comment.commentatorInfo.userId !== req.userId) {
+        res
+            .status(403).end()
+        return
+    }
+    const result = await commentsService.updateComment(id, req.body.content)
+    if (!result) {
+        res
+            .status(404).end()
+        return
+    }
+    res
+        .status(204).end()
+}

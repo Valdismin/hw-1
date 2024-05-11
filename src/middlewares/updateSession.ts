@@ -1,6 +1,6 @@
 import {NextFunction, Request, Response} from "express";
-import {JWTService} from "../services/JWTService";
-import {securityService} from "../services/securityService";
+import {JWTService} from "../features/authFeature/JWTService";
+import {securityService} from "../features/securityFeature/securityService";
 
 export const updateSession = async (req: Request, res: Response, next: NextFunction) => {
     const refreshToken = req.cookies.refreshToken

@@ -1,4 +1,4 @@
-import {OutputUsersType, UsersDBType} from "../types/usersTypes";
+import {OutputUsersType, UsersDBType} from "../features/usersFeature/usersTypes";
 
 export const queryHelper = (query: any) => {
     return {

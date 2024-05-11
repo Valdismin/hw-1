@@ -1,6 +1,6 @@
 import {FieldValidationError, validationResult} from "express-validator";
 import {NextFunction, Request, Response} from "express";
-import {OutputErrorsType} from "../types/videosTypes";
+import {OutputErrorsType} from "../types/errorsTypes";
 
 export const inputCheckErrorsMiddleware = (req: Request, res: Response<OutputErrorsType>, next: NextFunction) => {
     const e = validationResult(req)

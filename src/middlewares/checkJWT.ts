@@ -1,6 +1,6 @@
 import {NextFunction, Request, Response} from "express";
-import {JWTService} from "../services/JWTService";
-import {usersRepository} from "../repositories/usersRepository";
+import {JWTService} from "../features/authFeature/JWTService";
+import {usersRepository} from "../features/usersFeature/usersRepository";
 
 export const checkJWT = (req: Request, res: Response, next: NextFunction) => {
     if (!req.headers.authorization) {

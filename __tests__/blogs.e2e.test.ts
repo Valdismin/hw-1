@@ -1,11 +1,11 @@
 import {req} from "./test-helpers";
 import {SETTINGS} from "../src/settings";
-import {InputBlogType, UpdateBlogType} from "../src/types/blogsTypes";
+import {InputBlogType, UpdateBlogType} from "../src/features/blogFeature/blogsTypes";
 import {ADMIN_AUTH} from "../src/middlewares/auth";
 import {blogCollection, connectToDB} from "../src/db/mongo-db";
-import {blogsRepository} from "../src/repositories/blogsRepository";
+import {blogsRepository} from "../src/features/blogFeature/blogsRepository";
 import {ObjectId} from "mongodb";
-import {blogsQueryRepository} from "../src/repositories/blogsQueryRepository";
+import {blogsQueryRepository} from "../src/features/blogFeature/blogsQueryRepository";
 
 describe('/blogs', () => {
     beforeAll(async () => {

@@ -1,12 +1,12 @@
 import {req} from "./test-helpers";
 import {SETTINGS} from "../src/settings";
-import {InputPostType, UpdatePostType} from "../src/types/postsTypes";
+import {InputPostType, UpdatePostType} from "../src/features/postsFeature/postsTypes";
 import {ADMIN_AUTH} from "../src/middlewares/auth";
 import {connectToDB, postCollection} from "../src/db/mongo-db";
 import {ObjectId} from "mongodb";
-import {blogsRepository} from "../src/repositories/blogsRepository";
-import {postQueryRepository} from "../src/repositories/postQueryRepository";
-import {blogsQueryRepository} from "../src/repositories/blogsQueryRepository";
+import {blogsRepository} from "../src/features/blogFeature/blogsRepository";
+import {postQueryRepository} from "../src/features/postsFeature/postQueryRepository";
+import {blogsQueryRepository} from "../src/features/blogFeature/blogsQueryRepository";
 
 describe('/posts', () => {
     beforeAll(async () => {

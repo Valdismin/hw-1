@@ -1,7 +1,7 @@
 import {NextFunction, Request, Response} from "express";
-import {JWTService} from "../services/JWTService";
-import {usersRepository} from "../repositories/usersRepository";
-import {securityRepository} from "../repositories/securityRepository";
+import {JWTService} from "../features/authFeature/JWTService";
+import {usersRepository} from "../features/usersFeature/usersRepository";
+import {securityRepository} from "../features/securityFeature/securityRepository";
 
 export const checkRefreshToken = async (req: Request, res: Response, next: NextFunction) => {
     const token = req.cookies.refreshToken

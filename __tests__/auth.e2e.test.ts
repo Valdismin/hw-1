@@ -1,6 +1,6 @@
 import {blogCollection, connectToDB} from "../src/db/mongo-db";
 import {ADMIN_AUTH} from "../src/middlewares/auth";
-import {InputBlogType} from "../src/types/blogsTypes";
+import {InputBlogType} from "../src/features/blogFeature/blogsTypes";
 import {req} from "./test-helpers";
 import {SETTINGS} from "../src/settings";
 

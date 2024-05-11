@@ -1,5 +1,5 @@
 import {NextFunction, Request, Response} from "express";
-import {apiUsageService} from "../services/apiUsageService";
+import {apiUsageService} from "../features/securityFeature/apiUsageService";
 
 export const setApiUsage = async (req: Request, res: Response, next: NextFunction) => {
     const IP = req.ip;

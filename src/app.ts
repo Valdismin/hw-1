@@ -1,12 +1,12 @@
 import express from 'express'
-import {blogsRouter} from "./routers/blogs";
-import {postsRouter} from "./routers/posts";
-import {testsRouter} from "./routers/testing";
-import {usersRouter} from "./routers/users";
-import {authRouter} from "./routers/auth";
-import {commentsRouter} from "./routers/comments";
+import {blogsRouter} from "./features/blogFeature/blogsRouter";
+import {postsRouter} from "./features/postsFeature/postsRouter";
+import {testsRouter} from "./features/testingFeature/testingRouter";
+import {usersRouter} from "./features/usersFeature/usersRouter";
+import {authRouter} from "./features/authFeature/authRouter";
+import {commentsRouter} from "./features/commentsFeature/commentsRouter";
 import cookieParser from "cookie-parser";
-import {securityRouter} from "./routers/security";
+import {securityRouter} from "./features/securityFeature/securityRouter";
 
 export const app = express()
 app.use(express.json())
