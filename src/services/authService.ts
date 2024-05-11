@@ -1,4 +1,3 @@
-import {usersQueryRepository} from "../repositories/usersQueryRepository";
 import {JWTService} from "./JWTService";
 import {UsersDBType} from "../types/usersTypes";
 import bcrypt from "bcrypt";
