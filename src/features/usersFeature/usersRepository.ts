@@ -1,4 +1,3 @@
-import {userCollection} from "../../db/mongo-db";
 import {OutputUsersType, userConfirmationType, UsersDBType, UsersModel} from "./usersTypes";
 import {ObjectId} from "mongoose";
 
@@ -19,7 +18,7 @@ export class UsersRepository {
         if (result.modifiedCount === 0) {
             return null
         }
-        return userCollection.findOne({id: id}, {projection: {'userInfo.hash': 0, 'userInfo.salt': 0}})
+        return UsersModel.findOne({id: id}, {projection: {'userInfo.hash': 0, 'userInfo.salt': 0}})
     }
     async updateUserConfirmation(id: ObjectId, userConfirmation: userConfirmationType): Promise<OutputUsersType | null> {
         const result: any = await UsersModel.updateOne({_id: id}, {$set: {userConfirmation:userConfirmation}});

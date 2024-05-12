@@ -1,5 +1,4 @@
-import {OutputPostType, PostDBType, PostModel, UpdatePostType} from "./postsTypes";
-import {postCollection} from "../../db/mongo-db";
+import {PostDBType, PostModel, UpdatePostType} from "./postsTypes";
 import {ObjectId} from "mongoose";
 
 export class PostsRepository {

@@ -5,9 +5,9 @@ import {add} from "date-fns/add";
 import {sendConfirmationEmail, sendPasswordRecoveryEmail} from "../../managers/emailManager";
 import {UsersRepository} from "../usersFeature/usersRepository";
 import {JWTService} from "./JWTService";
-import {recoveryPasswordRepository} from "../passwordRecoveryFeature/recoveryPasswordRepository";
-import mongoose, {ObjectId} from "mongoose";
+import {ObjectId} from "mongoose";
 import {SecurityRepository} from "../securityFeature/securityRepository";
+import {RecoveryPasswordRepository} from "../passwordRecoveryFeature/recoveryPasswordRepository";
 
 export type authResultType = {
     refreshToken: string
@@ -16,7 +16,8 @@ export type authResultType = {
 export class AuthService {
     constructor(protected usersRepository: UsersRepository,
                 protected JWTService: JWTService,
-                protected securityRepository: SecurityRepository) {}
+                protected securityRepository: SecurityRepository,
+                protected recoveryPasswordRepository: RecoveryPasswordRepository) {}
 
 
     async authUser(loginOrEmail: string, password: string): Promise<authResultType | null> {
@@ -127,7 +128,7 @@ export class AuthService {
             isUsed: false
         }
 
-        await recoveryPasswordRepository.addRecoveryCode(recoveryCodeInfo.recoveryCode, recoveryCodeInfo.userId, recoveryCodeInfo.expirationTime, recoveryCodeInfo.isUsed)
+        await this.recoveryPasswordRepository.addRecoveryCode(recoveryCodeInfo.recoveryCode, recoveryCodeInfo.userId, recoveryCodeInfo.expirationTime, recoveryCodeInfo.isUsed)
 
         try {
             await sendPasswordRecoveryEmail(email, recoveryCodeInfo.recoveryCode)
@@ -136,14 +137,14 @@ export class AuthService {
         }
     }
     async submitPasswordRecovery(recoveryCode: string, newPassword: string) {
-        const recoveryCodeInfo = await recoveryPasswordRepository.findRecoveryCode(recoveryCode)
+        const recoveryCodeInfo = await this.recoveryPasswordRepository.findRecoveryCode(recoveryCode)
         const salt = await bcrypt.genSalt(10)
         const hash = await bcrypt.hash(newPassword, salt)
         if (!recoveryCodeInfo?.userId) {
             return null
         }
         await this.usersRepository.updateUserPassword(recoveryCodeInfo.userId, hash, salt)
-        await recoveryPasswordRepository.updateRecoveryCode(recoveryCode, true)
+        await this.recoveryPasswordRepository.updateRecoveryCode(recoveryCode, true)
         return
     }
 }
