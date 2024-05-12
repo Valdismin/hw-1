@@ -1,15 +1,20 @@
 import {Request, Response} from 'express'
-import {OutputPaginatedPostType, OutputPostType, PostDBType} from "./postsTypes";
+import {OutputPaginatedPostType, PostDBType} from "./postsTypes";
 import {queryHelper} from "../../utils/helpers";
 import {PostsQueryRepository} from "./postQueryRepository";
-import {commentsQueryRepository} from "../commentsFeature/commentsQueryRepository";
-import {commentsService} from "../commentsFeature/commentsService";
 import {Schema} from "mongoose";
 import {PostService} from "./postService";
 import {BlogsQueryRepository} from "../blogFeature/blogsQueryRepository";
+import {CommentsService} from "../commentsFeature/commentsService";
+import {CommentsQueryRepository} from "../commentsFeature/commentsQueryRepository";
 
 export class PostsController {
-    constructor(protected postService: PostService, protected blogsQueryRepository: BlogsQueryRepository, protected postQueryRepository: PostsQueryRepository) {
+    constructor(protected postService: PostService,
+                protected blogsQueryRepository: BlogsQueryRepository,
+                protected postQueryRepository: PostsQueryRepository,
+                protected commentsService: CommentsService,
+                protected commentsQueryRepository: CommentsQueryRepository
+    ) {
     }
 
     async getPosts(req: Request, res: Response<OutputPaginatedPostType | undefined>) {
@@ -106,7 +111,7 @@ export class PostsController {
             return
         }
         const sanitizedQuery = queryHelper(req.query)
-        const comments = await commentsQueryRepository.getPostComments(req.params.id, sanitizedQuery)
+        const comments = await this.commentsQueryRepository.getPostComments(id, sanitizedQuery)
         if (!comments) {
             res.status(404).end()
             return
@@ -123,7 +128,7 @@ export class PostsController {
             res.status(404).end()
             return
         }
-        const comments = await commentsService.createPostCommentService(id, req.body.content, req.headers.authorization as string, req.userId!)
+        const comments = await this.commentsService.createPostCommentService(id, req.body.content, req.headers.authorization as string, req.userId!)
         if (!comments) {
             res.status(404).end()
             return

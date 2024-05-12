@@ -1,19 +1,46 @@
+import mongoose, {Model, ObjectId} from "mongoose";
+
+
+const commentsSchema = new mongoose.Schema<CommentsDBType>({
+    content: {type: String, required: true},
+    createdAt: {type: String, required: true},
+    commentatorInfo: {
+        userId: {type: String, required: true},
+        userLogin: {type: String, required: true}
+    },
+    postId: {type: mongoose.Schema.ObjectId, required: true}
+})
+
+type CommentModel = Model<CommentsDBType>;
+
+export const CommentModel = mongoose.model<CommentsDBType, CommentModel>('Comment', commentsSchema)
+
 export type CommentsDBType = {
-    id:string,
-    content:string,
-    createdAt:string,
+    _id: ObjectId,
+    content: string,
+    createdAt: string,
     commentatorInfo: CommentatorInfoType,
-    postId:string
+    postId: ObjectId
+}
+
+export type CommentInputType = {
+    content: string,
+    createdAt: string,
+    commentatorInfo: {
+        userId: string,
+        userLogin: string
+    },
+    postId: ObjectId
 }
 
 type CommentatorInfoType = {
-    userId:string,
-    userLogin:string
+    userId: string,
+    userLogin: string
 }
 
 
 export type OutputCommentType = {
-    id: string,
+    _id: ObjectId,
     content: string,
     commentatorInfo: CommentatorInfoType,
     createdAt: string

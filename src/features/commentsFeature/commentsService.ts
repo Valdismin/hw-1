@@ -1,15 +1,16 @@
-import {commentsRepository} from "./commentsRepository";
 import {usersRepository} from "../usersFeature/usersRepository";
 import {ObjectId} from "mongoose";
+import {CommentsRepository} from "./commentsRepository";
 
-export const commentsService = {
-    createPostCommentService: async (postId: ObjectId, comment: string, token: string, userId: string) => {
+export class CommentsService {
+    constructor(protected commentsRepository: CommentsRepository) {
+    }
+    async createPostCommentService(postId: ObjectId, comment: string, token: string, userId: string) {
         const user = await usersRepository.getUserById(userId)
         if (!user) {
             return null
         }
         const newComment = {
-            id: `${Date.now() + Math.random()}`,
             content: comment,
             createdAt: new Date().toISOString(),
             commentatorInfo: {
@@ -18,13 +19,15 @@ export const commentsService = {
             },
             postId: postId
         }
-        const createdCommentResult = await commentsRepository.createComment(newComment)
-        return await commentsRepository.getCommentByDBId(createdCommentResult.insertedId)
-    },
-    deleteComment: async (id: string) => {
-        return commentsRepository.deleteComment(id)
-    },
-    updateComment: async (id: string, comment: string) => {
-        return commentsRepository.updateComment(id, comment)
+        return await this.commentsRepository.createComment(newComment)
+        //return await this.commentsRepository.getCommentByDBId(createdCommentResult.insertedId)
+    }
+
+    async deleteComment(id: ObjectId) {
+        return this.commentsRepository.deleteComment(id)
+    }
+
+    async updateComment(id: ObjectId, comment: string) {
+        return this.commentsRepository.updateComment(id, comment)
     }
 }
