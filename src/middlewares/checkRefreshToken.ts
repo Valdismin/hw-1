@@ -1,7 +1,13 @@
 import {NextFunction, Request, Response} from "express";
+import {UsersRepository} from "../features/usersFeature/usersRepository";
 import {JWTService} from "../features/authFeature/JWTService";
-import {usersRepository} from "../features/usersFeature/usersRepository";
 import {securityRepository} from "../features/securityFeature/securityRepository";
+import {RefreshTokenRepository} from "../features/authFeature/refreshTokenRepository";
+
+//TODO ask how to use
+const usersRepository = new UsersRepository()
+const refreshTokenRepository = new RefreshTokenRepository()
+const jwtService = new JWTService(refreshTokenRepository)
 
 export const checkRefreshToken = async (req: Request, res: Response, next: NextFunction) => {
     const token = req.cookies.refreshToken
@@ -9,7 +15,7 @@ export const checkRefreshToken = async (req: Request, res: Response, next: NextF
         res.status(401).end()
         return
     }
-    const tokenFields = JWTService.getFieldsForDeviceSession(token)
+    const tokenFields = jwtService.getFieldsForDeviceSession(token)
     if (!tokenFields) {
         res.status(401).end()
         return
@@ -20,8 +26,8 @@ export const checkRefreshToken = async (req: Request, res: Response, next: NextF
         return
     }
 
-    const userId = JWTService.getUserIdByRefreshToken(token)
-    const deviceId = JWTService.getDeviceIdByRefreshToken(token)
+    const userId = jwtService.getUserIdByRefreshToken(token)
+    const deviceId = jwtService.getDeviceIdByRefreshToken(token)
 
     if (userId) {
         const user = usersRepository.getUserById(userId)

@@ -1,14 +1,4 @@
 import {Router} from "express";
-import {
-    loginUserController,
-    logoutUserController,
-    registerEmailResendingController,
-    registrationConfirmationController,
-    registrationUserController,
-    sendPasswordRecoveryController, submitPasswordRecoveryController,
-    updateTokenController,
-    userCheck
-} from "./authController";
 import {inputAuthValidation} from "./authValidation";
 import {checkJWT} from "../../middlewares/checkJWT";
 import {inputCheckErrorsMiddleware} from "../../middlewares/createErrorMiddleware";
@@ -20,18 +10,18 @@ import {updateSession} from "../../middlewares/updateSession";
 import {setApiUsage} from "../../middlewares/setApiUsage";
 import {
     passwordRecoveryEmailValidation,
-    passwordRecoveryPasswordValidation,
     passwordRecoveryValidation
 } from "../passwordRecoveryFeature/passwordRecoveryValidation";
+import {authController} from "./compositionRoot";
 
 export const authRouter = Router()
 
-authRouter.post('/login', setApiUsage, apiUsageMiddleware, ...inputAuthValidation, inputCheckErrorsMiddleware, loginUserController)
-authRouter.post('/refresh-token', setApiUsage, checkRefreshToken, updateSession, updateTokenController)
-authRouter.post('/logout', setApiUsage, checkRefreshToken, logoutUserController)
-authRouter.get('/me', checkJWT, updateSession, userCheck)
-authRouter.post('/registration-confirmation', setApiUsage, apiUsageMiddleware, confirmUserValidation, inputCheckErrorsMiddleware, registrationConfirmationController)
-authRouter.post('/registration', setApiUsage, apiUsageMiddleware, ...inputUserValidation, inputCheckErrorsMiddleware, registrationUserController)
-authRouter.post('/registration-email-resending', setApiUsage, apiUsageMiddleware, resendEmailValidation, inputCheckErrorsMiddleware, registerEmailResendingController)
-authRouter.post('/password-recovery', setApiUsage, apiUsageMiddleware, passwordRecoveryEmailValidation, inputCheckErrorsMiddleware, sendPasswordRecoveryController)
-authRouter.post('/new-password', setApiUsage, apiUsageMiddleware, ...passwordRecoveryValidation, inputCheckErrorsMiddleware, submitPasswordRecoveryController)
+authRouter.post('/login', setApiUsage, apiUsageMiddleware, ...inputAuthValidation, inputCheckErrorsMiddleware, authController.loginUser.bind(authController))
+authRouter.post('/refresh-token', setApiUsage, checkRefreshToken, updateSession, authController.updateToken.bind(authController))
+authRouter.post('/logout', setApiUsage, checkRefreshToken, authController.logoutUser.bind(authController))
+authRouter.get('/me', checkJWT, updateSession, authController.userCheck.bind(authController))
+authRouter.post('/registration-confirmation', setApiUsage, apiUsageMiddleware, confirmUserValidation, inputCheckErrorsMiddleware, authController.registrationConfirmation.bind(authController))
+authRouter.post('/registration', setApiUsage, apiUsageMiddleware, ...inputUserValidation, inputCheckErrorsMiddleware, authController.registrationUser.bind(authController))
+authRouter.post('/registration-email-resending', setApiUsage, apiUsageMiddleware, resendEmailValidation, inputCheckErrorsMiddleware, authController.registerEmailResending.bind(authController))
+authRouter.post('/password-recovery', setApiUsage, apiUsageMiddleware, passwordRecoveryEmailValidation, inputCheckErrorsMiddleware, authController.sendPasswordRecovery.bind(authController))
+authRouter.post('/new-password', setApiUsage, apiUsageMiddleware, ...passwordRecoveryValidation, inputCheckErrorsMiddleware, authController.submitPasswordRecovery.bind(authController))

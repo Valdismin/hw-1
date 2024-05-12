@@ -1,7 +1,8 @@
-import {userCollection} from "../../db/mongo-db";
+import {OutputPaginatedUsersType, UsersDBType, UsersModel} from "./usersTypes";
+import {sanitizeUser} from "../../utils/helpers";
 
-export const usersQueryRepository = {
-    async getAllUsers(query: any) {
+export class UsersQueryRepository {
+    async getAllUsers(query: any): Promise<OutputPaginatedUsersType | undefined> {
         const searchConditions = [];
 
         if (query.searchLoginTerm) {
@@ -17,17 +18,18 @@ export const usersQueryRepository = {
         const findQuery = searchConditions.length ? {$or: searchConditions} : {};
 
         try {
-            const items: any = await userCollection.find(findQuery).project({_id: 0, 'userInfo.hash': 0, 'userInfo.salt': 0}).sort(
-                query.sortBy,
-                query.sortDirection)
+            const items: any = await UsersModel.find(findQuery).sort({[query.sortBy]: query.sortDirection})
                 .skip((query.pageNumber - 1) * query.pageSize)
                 .limit(query.pageSize)
-                .toArray()
 
-            const c = await userCollection.countDocuments(findQuery)
+            let mappedItems = items.map((item: UsersDBType) => {
+                return sanitizeUser(item)
+            })
+
+            const c = await UsersModel.countDocuments(findQuery).exec();
 
             return {
-                items,
+                items:mappedItems,
                 totalCount: c,
                 pagesCount: Math.ceil(c / query.pageSize),
                 page: query.pageNumber,

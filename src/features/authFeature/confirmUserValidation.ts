@@ -1,5 +1,7 @@
 import {body} from "express-validator";
-import {usersRepository} from "../usersFeature/usersRepository";
+import {UsersRepository} from "../usersFeature/usersRepository";
+
+const usersRepository = new UsersRepository();
 
 export const confirmUserValidation = body('code').trim().isString().custom(async (value) => {
     const user = await usersRepository.getUserByConfirmCode(value)

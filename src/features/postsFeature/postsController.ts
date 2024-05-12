@@ -119,16 +119,18 @@ export class PostsController {
         res.status(200).json(comments)
     }
 
-     async createPostComment(req: Request, res: Response) {
-         //@ts-ignore
-         //TODO: ask on the lesson
-         const id = req.params.id as Schema.Types.ObjectId
+    async createPostComment(req: Request, res: Response) {
+        //@ts-ignore
+        //TODO: ask on the lesson
+        const id = req.params.id as Schema.Types.ObjectId
+        //@ts-ignore
+        const userId = req.userId as Schema.Types.ObjectId
         const post = await this.postQueryRepository.getPostById(id)
         if (!post) {
             res.status(404).end()
             return
         }
-        const comments = await this.commentsService.createPostCommentService(id, req.body.content, req.headers.authorization as string, req.userId!)
+        const comments = await this.commentsService.createPostCommentService(id, req.body.content, req.headers.authorization as string, userId)
         if (!comments) {
             res.status(404).end()
             return

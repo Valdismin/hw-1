@@ -1,11 +1,12 @@
-import {expiredTokensCollection} from "../../db/mongo-db";
-import {expiredTokenDBType} from "./tokensTypes";
+import {expiredTokenDBType, ExpiredTokensModel} from "./tokensTypes";
 
-export const refreshTokenRepository = {
-    addToken: async (token: string) => {
-      return  await expiredTokensCollection.insertOne({expiredToken: token})
-    },
-    checkToken: async (token: string): Promise<expiredTokenDBType | null> => {
-        return await expiredTokensCollection.findOne({expiredToken:token})
+export class RefreshTokenRepository {
+    async addToken(dto: string) {
+        const token = new ExpiredTokensModel({expiredToken: dto})
+        return await token.save()
+    }
+
+    async checkToken(token: string): Promise<expiredTokenDBType | null> {
+        return ExpiredTokensModel.findOne({expiredToken: token})
     }
 }

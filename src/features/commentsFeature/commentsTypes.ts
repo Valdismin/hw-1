@@ -27,7 +27,7 @@ export type CommentInputType = {
     content: string,
     createdAt: string,
     commentatorInfo: {
-        userId: string,
+        userId?: ObjectId,
         userLogin: string
     },
     postId: ObjectId

@@ -7,6 +7,7 @@ import {BlogsQueryRepository} from "../blogFeature/blogsQueryRepository";
 import {CommentsRepository} from "../commentsFeature/commentsRepository";
 import {CommentsService} from "../commentsFeature/commentsService";
 import {CommentsQueryRepository} from "../commentsFeature/commentsQueryRepository";
+import {UsersRepository} from "../usersFeature/usersRepository";
 
 const postsRepository = new PostsRepository();
 const postsQueryRepository = new PostsQueryRepository();
@@ -14,6 +15,7 @@ const blogsRepository = new BlogsRepository();
 const blogsQueryRepository = new BlogsQueryRepository();
 const postService = new PostService(postsRepository, blogsRepository);
 const commentsRepository = new CommentsRepository();
+const usersRepository = new UsersRepository();
 const commentsQueryRepository = new CommentsQueryRepository();
-const commentsService = new CommentsService(commentsRepository);
+const commentsService = new CommentsService(commentsRepository, usersRepository);
 export const postsController = new PostsController(postService, blogsQueryRepository, postsQueryRepository, commentsService, commentsQueryRepository);

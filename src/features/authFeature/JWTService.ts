@@ -1,66 +1,67 @@
 import jwt from 'jsonwebtoken';
 import {SETTINGS} from "../../settings";
 import {UsersDBType} from "../usersFeature/usersTypes";
-import {refreshTokenRepository} from "./refreshTokenRepository";
 import {uuid} from "uuidv4";
+import {RefreshTokenRepository} from "./refreshTokenRepository";
 
-export const JWTService = {
-    createToken: (user: UsersDBType) => {
+export class JWTService {
+    constructor(protected refreshTokenRepository: RefreshTokenRepository) {}
+    createToken(user: UsersDBType) {
         return jwt.sign({
-            id: user.id,
+            id: user._id,
         }, SETTINGS.JWT_SECRET, {
             expiresIn: '30m'
         });
-    },
-    createRefreshToken: (user: UsersDBType, deviceId?: string) => {
+    }
+    createRefreshToken(user: UsersDBType, deviceId?: string){
         const newDeviceId = deviceId || uuid()
         return jwt.sign({
-            id: user.id,
+            id: user._id,
             deviceId: newDeviceId,
         }, SETTINGS.JWT_REFRESH_SECRET, {
             expiresIn: '1h'
         });
-    },
-    getUserIdByToken: (token: string) => {
+    }
+    getUserIdByToken(token: string) {
         try {
             const decoded: any = jwt.verify(token, SETTINGS.JWT_SECRET);
             return decoded.id;
         } catch (e) {
             return null;
         }
-    },
-    getUserIdByRefreshToken: (token: string) => {
+    }
+    getUserIdByRefreshToken(token: string) {
         try {
             const decoded: any = jwt.verify(token, SETTINGS.JWT_REFRESH_SECRET);
             return decoded.id;
         } catch (e) {
             return null;
         }
-    },
-    getDeviceIdByRefreshToken: (token: string) => {
+    }
+    getDeviceIdByRefreshToken(token: string) {
         try {
             const decoded: any = jwt.verify(token, SETTINGS.JWT_REFRESH_SECRET);
             return decoded.deviceId;
         } catch (e) {
             return null;
         }
-    },
-    checkRefreshTokenExpire: (token: string) => {
+    }
+    checkRefreshTokenExpire(token: string) {
         try {
-            return refreshTokenRepository.checkToken(token)
+            return this.refreshTokenRepository.checkToken(token)
         } catch (e) {
             return true;
         }
-    },
-    killRefreshToken: (token: string) => {
-        return refreshTokenRepository.addToken(token)
-    },
-    getFieldsForDeviceSession: (token: string): {
+    }
+    killRefreshToken(token: string)  {
+        return this.refreshTokenRepository.addToken(token)
+    }
+    getFieldsForDeviceSession(token: string): {
         userId: string,
         deviceId: string,
         issuedAt: string,
         expiredAt: string
-    } | null => {
+    } | null {
         try{
             const decoded: any = jwt.verify(token, SETTINGS.JWT_REFRESH_SECRET);
             return {

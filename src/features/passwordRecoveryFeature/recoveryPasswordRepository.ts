@@ -1,7 +1,8 @@
 import {expiredRecoveryCodesCollection} from "../../db/mongo-db";
+import {ObjectId} from "mongoose";
 
 export const recoveryPasswordRepository = {
-    addRecoveryCode: async (recoveryCode: string, userId: string, expiredAt: Date, isUsed: boolean) => {
+    addRecoveryCode: async (recoveryCode: string, userId: ObjectId, expiredAt: Date, isUsed: boolean) => {
        await expiredRecoveryCodesCollection.insertOne({recoveryCode, userId, expiredAt, isUsed})
     },
     findRecoveryCode: async (recoveryCode: string) => {

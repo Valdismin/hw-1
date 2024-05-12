@@ -1,12 +1,12 @@
-import {usersRepository} from "../usersFeature/usersRepository";
+import {UsersRepository} from "../usersFeature/usersRepository";
 import {ObjectId} from "mongoose";
 import {CommentsRepository} from "./commentsRepository";
 
 export class CommentsService {
-    constructor(protected commentsRepository: CommentsRepository) {
+    constructor(protected commentsRepository: CommentsRepository, protected usersRepository: UsersRepository) {
     }
-    async createPostCommentService(postId: ObjectId, comment: string, token: string, userId: string) {
-        const user = await usersRepository.getUserById(userId)
+    async createPostCommentService(postId: ObjectId, comment: string, token: string, userId: ObjectId) {
+        const user = await this.usersRepository.getUserById(userId)
         if (!user) {
             return null
         }
@@ -14,7 +14,7 @@ export class CommentsService {
             content: comment,
             createdAt: new Date().toISOString(),
             commentatorInfo: {
-                userId: user.id,
+                userId: user._id,
                 userLogin: user.userInfo.login
             },
             postId: postId

@@ -15,7 +15,7 @@ export const queryHelper = (query: any) => {
 export const sanitizeUser = (user: UsersDBType): OutputUsersType => {
 
     return {
-        id: user.id,
+        id: user._id,
         email: user.userInfo.email,
         login: user.userInfo.login,
         createdAt: user.createdAt

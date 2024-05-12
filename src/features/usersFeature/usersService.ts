@@ -1,13 +1,15 @@
 import bcrypt from 'bcrypt';
 import {InputUsersType} from "./usersTypes";
-import {usersRepository} from "./usersRepository";
+import {UsersRepository} from "./usersRepository";
+import {ObjectId} from "mongoose";
 
-export const usersService = {
-    createUserService: async (user: InputUsersType) => {
+export class UsersService {
+    constructor(protected usersRepository: UsersRepository) {
+    }
+    async createUserService(user: InputUsersType) {
         const salt = await bcrypt.genSalt(10)
         const hashedPassword = await bcrypt.hash(user.password, salt)
         const newUser = {
-            id: `${Date.now() + Math.random()}`,
             createdAt: new Date().toISOString(),
             userInfo: {
                 login: user.login,
@@ -21,7 +23,9 @@ export const usersService = {
                 expirationTime: new Date(Date.now() + 1000 * 60 * 60 * 24)
             }
         }
-        return await usersRepository.create(newUser)
-    },
-    deleteUser: async (id: string) => await usersRepository.deleteUser(id)
+        return await this.usersRepository.create(newUser)
+    }
+    async deleteUser(id: ObjectId){
+        return await this.usersRepository.deleteUser(id)
+    }
 }

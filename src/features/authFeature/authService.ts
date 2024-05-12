@@ -1,67 +1,71 @@
-import {JWTService} from "./JWTService";
 import {UsersDBType} from "../usersFeature/usersTypes";
 import bcrypt from "bcrypt";
-import {usersRepository} from "../usersFeature/usersRepository";
 import {uuid} from "uuidv4";
 import {add} from "date-fns/add";
 import {sendConfirmationEmail, sendPasswordRecoveryEmail} from "../../managers/emailManager";
 import {securityRepository} from "../securityFeature/securityRepository";
+import {UsersRepository} from "../usersFeature/usersRepository";
+import {JWTService} from "./JWTService";
 import {recoveryPasswordRepository} from "../passwordRecoveryFeature/recoveryPasswordRepository";
+import mongoose, {ObjectId} from "mongoose";
 
 export type authResultType = {
     refreshToken: string
     accessToken: string
 }
-export const authService = {
-    authUser: async (loginOrEmail: string, password: string): Promise<authResultType | null> => {
-        const user = await usersRepository.getUserForAuth(loginOrEmail)
+export class AuthService {
+    constructor(protected usersRepository: UsersRepository,
+                protected JWTService: JWTService) {}
+
+
+    async authUser(loginOrEmail: string, password: string): Promise<authResultType | null> {
+        const user = await this.usersRepository.getUserForAuth(loginOrEmail)
         if (!user) {
             return null
         }
         const hashedPassword = await bcrypt.hash(password, user?.userInfo.salt!)
         if (hashedPassword === user?.userInfo.hash) {
-            const refreshToken = JWTService.createRefreshToken(user)
-            const accessToken = JWTService.createToken(user)
+            const refreshToken = this.JWTService.createRefreshToken(user)
+            const accessToken = this.JWTService.createToken(user)
             return {refreshToken: refreshToken, accessToken: accessToken}
         } else {
             return null
         }
-    },
-    updateTokens: async (refreshToken: string, userId: string | null): Promise<authResultType | null> => {
+    }
+    async updateTokens(refreshToken: string, userId: ObjectId | null): Promise<authResultType | null> {
         if (!userId) {
             return null
         }
-        const user = await usersRepository.getUserById(userId)
+        const user = await this.usersRepository.getUserById(userId)
         if (!user) {
             return null
         }
-        const oldTokenFields = await JWTService.getFieldsForDeviceSession(refreshToken)
-        const newRefreshToken = JWTService.createRefreshToken(user, oldTokenFields?.deviceId)
-        const newAccessToken = JWTService.createToken(user)
-        const tokenFields = await JWTService.getFieldsForDeviceSession(newRefreshToken)
+        const oldTokenFields = await this.JWTService.getFieldsForDeviceSession(refreshToken)
+        const newRefreshToken = this.JWTService.createRefreshToken(user, oldTokenFields?.deviceId)
+        const newAccessToken = this.JWTService.createToken(user)
+        const tokenFields = await this.JWTService.getFieldsForDeviceSession(newRefreshToken)
         if (!tokenFields) {
             return null
         }
         await securityRepository.updateAfterRefreshToken(userId, tokenFields.deviceId, tokenFields.issuedAt, tokenFields.expiredAt)
-        await JWTService.killRefreshToken(refreshToken)
+        await this.JWTService.killRefreshToken(refreshToken)
         return {refreshToken: newRefreshToken, accessToken: newAccessToken}
-    },
-    getMe: async (userId: string) => {
-        const user: UsersDBType | null = await usersRepository.getUserById(userId)
+    }
+    async getMe(userId: ObjectId) {
+        const user: UsersDBType | null = await this.usersRepository.getUserById(userId)
         if (!user) {
             return null
         }
         return {
             email: user.userInfo.email,
             login: user.userInfo.login,
-            userId: user.id
+            userId: user._id
         }
-    },
-    registration: async (email: string, login: string, password: string) => {
+    }
+    async registration(email: string, login: string, password: string) {
         const salt = await bcrypt.genSalt(10)
         const hash = await bcrypt.hash(password, salt)
         const newUser = {
-            id: `${Date.now() + Math.random()}`,
             createdAt: new Date().toISOString(),
             userInfo: {
                 login: login,
@@ -75,22 +79,24 @@ export const authService = {
                 expirationTime: add(new Date(), {hours: 1})
             }
         }
-        await usersRepository.create(newUser)
+        const result = await this.usersRepository.create(newUser)
         try {
             await sendConfirmationEmail(email, newUser.userConfirmation.confirmCode)
         } catch (e) {
-            await usersRepository.deleteUser(newUser.id)
+            if(result) {
+                await this.usersRepository.deleteUser(result._id!)
+            }
         }
-    },
-    registrationConfirmation: async (code: string) => {
-        const user = await usersRepository.getUserByConfirmCode(code)
+    }
+    async registrationConfirmation(code: string) {
+        const user = await this.usersRepository.getUserByConfirmCode(code)
         if (!user) {
             return
         }
-        return await usersRepository.confirmUser(user.id)
-    },
-    resendEmail: async (email: string) => {
-        const user = await usersRepository.getUserForAuth(email)
+        return await this.usersRepository.confirmUser(user._id!)
+    }
+    async resendEmail(email: string) {
+        const user = await this.usersRepository.getUserForAuth(email)
         if (!user) {
             return
         }
@@ -102,19 +108,19 @@ export const authService = {
 
         try {
             await sendConfirmationEmail(email, userConfirmation.confirmCode)
-            await usersRepository.updateUserConfirmation(user.id, userConfirmation)
+            await this.usersRepository.updateUserConfirmation(user._id!, userConfirmation)
         } catch (e) {
             return
         }
-    },
-    logoutUser: async (token: string) => {
-        return await JWTService.killRefreshToken(token)
-    },
-    passwordRecovery: async (email: string) => {
-        const user = await usersRepository.getUserForAuth(email)
-
+    }
+    async logoutUser(token: string) {
+        return await this.JWTService.killRefreshToken(token)
+    }
+    async passwordRecovery(email: string) {
+        const user = await this.usersRepository.getUserForAuth(email)
+        //const userId: ObjectId =
         const recoveryCodeInfo = {
-            userId: user ? user.id : "",
+            userId: user!._id! as ObjectId,
             expirationTime: add(new Date(), {hours: 1}),
             recoveryCode: uuid(),
             isUsed: false
@@ -127,15 +133,15 @@ export const authService = {
         } catch (e) {
             return
         }
-    },
-    submitPasswordRecovery: async (recoveryCode: string, newPassword: string) => {
+    }
+    async submitPasswordRecovery(recoveryCode: string, newPassword: string) {
         const recoveryCodeInfo = await recoveryPasswordRepository.findRecoveryCode(recoveryCode)
         const salt = await bcrypt.genSalt(10)
         const hash = await bcrypt.hash(newPassword, salt)
         if (!recoveryCodeInfo?.userId) {
             return null
         }
-        await usersRepository.updateUserPassword(recoveryCodeInfo.userId, hash, salt)
+        await this.usersRepository.updateUserPassword(recoveryCodeInfo.userId, hash, salt)
         await recoveryPasswordRepository.updateRecoveryCode(recoveryCode, true)
         return
     }

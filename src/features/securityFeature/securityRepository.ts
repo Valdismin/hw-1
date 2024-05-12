@@ -1,4 +1,5 @@
 import {devicesSessionsCollection} from "../../db/mongo-db";
+import {ObjectId} from "mongoose";
 
 export const securityRepository = {
     deleteAllSessions: async (userId: string, deviceId: string) => {
@@ -23,16 +24,13 @@ export const securityRepository = {
             deviceId: deviceId
         }, {$set: {lastActiveDate: lastActiveDate}});
     },
-    updateAfterRefreshToken: async (userId: string, deviceId: string, issuedAt: string, expiredAt: string) => {
-        console.log(userId, deviceId, issuedAt, expiredAt);
+    updateAfterRefreshToken: async (userId: ObjectId, deviceId: string, issuedAt: string, expiredAt: string) => {
         const res = await devicesSessionsCollection.findOne({userId: userId, deviceId: deviceId})
-        console.log(res, 'res')
         const result = await devicesSessionsCollection.updateOne({userId: userId, deviceId: deviceId}, {
             $set: {
                 issuedAt: issuedAt,
                 expiredAt: expiredAt
             }
         });
-        console.log(result)
     }
 }

@@ -1,14 +1,14 @@
 import {Router} from "express";
 import {inputUserValidation} from "./usersValidation";
 import {inputCheckErrorsMiddleware} from "../../middlewares/createErrorMiddleware";
-import {createUserController, deleteUserController, getUsersController} from "./usersController";
 import {authMiddleware} from "../../middlewares/auth";
 import {updateSession} from "../../middlewares/updateSession";
+import {usersController} from "./compositionRoots";
 
 export const usersRouter = Router()
 
-usersRouter.get('/', updateSession, getUsersController)
+usersRouter.get('/', updateSession, usersController.getUsers.bind(usersController))
 
-usersRouter.post('/', [authMiddleware, ...inputUserValidation], inputCheckErrorsMiddleware, updateSession, createUserController)
+usersRouter.post('/', [authMiddleware, ...inputUserValidation], inputCheckErrorsMiddleware, updateSession, usersController.createUser.bind(usersController))
 
-usersRouter.delete('/:id', authMiddleware, updateSession, deleteUserController)
+usersRouter.delete('/:id', authMiddleware, updateSession, usersController.deleteUser.bind(usersController))

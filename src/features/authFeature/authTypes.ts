@@ -1,3 +1,5 @@
+import {ObjectId} from "mongoose";
+
 export type authDBType = {
     loginOrEmail: string,
     password: string,
@@ -8,5 +10,5 @@ export type authDBType = {
 export type authMeType = {
     email?: string,
     login?: string,
-    userId?: string
+    userId?: ObjectId
 }
