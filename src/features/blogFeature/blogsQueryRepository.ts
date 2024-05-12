@@ -1,5 +1,6 @@
 import {BlogDBType, BlogModel, OutputPaginatedBlogsType} from "./blogsTypes";
 import {ObjectId} from "mongoose";
+import {blogsMapper} from "./utils/blogMapper";
 
 export class BlogsQueryRepository {
     async getBlogs(query: any): Promise<OutputPaginatedBlogsType | undefined> {
@@ -10,8 +11,10 @@ export class BlogsQueryRepository {
                 .limit(query.pageSize)
             const c = await BlogModel.countDocuments(search).exec()
 
+            const mappedBlogs = blogsMapper(items)
+
             return {
-                items,
+                items: mappedBlogs,
                 totalCount: c,
                 pagesCount: Math.ceil(c / query.pageSize),
                 page: query.pageNumber,

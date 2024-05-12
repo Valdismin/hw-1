@@ -7,13 +7,15 @@ import {PostService} from "./postService";
 import {BlogsQueryRepository} from "../blogFeature/blogsQueryRepository";
 import {CommentsService} from "../commentsFeature/commentsService";
 import {CommentsQueryRepository} from "../commentsFeature/commentsQueryRepository";
+import {JWTService} from "../authFeature/JWTService";
 
 export class PostsController {
     constructor(protected postService: PostService,
                 protected blogsQueryRepository: BlogsQueryRepository,
                 protected postQueryRepository: PostsQueryRepository,
                 protected commentsService: CommentsService,
-                protected commentsQueryRepository: CommentsQueryRepository
+                protected commentsQueryRepository: CommentsQueryRepository,
+                protected JWTService: JWTService
     ) {
     }
 
@@ -55,6 +57,7 @@ export class PostsController {
             res.status(404).end()
             return
         }
+
         const post = await this.postService.createPostForBlogService(req.body, blog)
 
         res.status(201).json(post as PostDBType)
@@ -111,7 +114,17 @@ export class PostsController {
             return
         }
         const sanitizedQuery = queryHelper(req.query)
-        const comments = await this.commentsQueryRepository.getPostComments(id, sanitizedQuery)
+
+        let token
+        let userId
+        if(req.headers.authorization) {
+            token = req.headers.authorization.split(' ')[1]
+            userId = await this.JWTService.getUserIdByToken(token)
+        }
+
+
+
+        const comments = await this.commentsQueryRepository.getPostComments(id, sanitizedQuery, userId)
         if (!comments) {
             res.status(404).end()
             return

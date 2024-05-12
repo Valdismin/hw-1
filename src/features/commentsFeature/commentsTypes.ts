@@ -8,7 +8,11 @@ const commentsSchema = new mongoose.Schema<CommentsDBType>({
         userId: {type: String, required: true},
         userLogin: {type: String, required: true}
     },
-    postId: {type: mongoose.Schema.ObjectId, required: true}
+    postId: {type: mongoose.Schema.ObjectId, required: true},
+    likes: [{
+        likeStatus: {type: String, required: true},
+        userId: {type: mongoose.Schema.ObjectId, required: true}
+    }]
 })
 
 type CommentModel = Model<CommentsDBType>;
@@ -20,7 +24,19 @@ export type CommentsDBType = {
     content: string,
     createdAt: string,
     commentatorInfo: CommentatorInfoType,
-    postId: ObjectId
+    postId: ObjectId,
+    likes: LikesAndDislikesType[]
+}
+
+export enum LikeStatus {
+    None = 'None',
+    Like = 'Like',
+    Dislike = 'Dislike'
+}
+
+export type LikesAndDislikesType = {
+    likeStatus: LikeStatus,
+    userId: ObjectId
 }
 
 export type CommentInputType = {
@@ -40,11 +56,19 @@ type CommentatorInfoType = {
 
 
 export type OutputCommentType = {
-    _id: ObjectId,
+    id: ObjectId,
     content: string,
     commentatorInfo: CommentatorInfoType,
     createdAt: string
+    likesInfo: LikesInfoType
 }
+
+type LikesInfoType = {
+    likesCount: number,
+    dislikesCount: number,
+    myStatus: LikeStatus
+}
+
 export type OutputPaginatedCommentsType = {
     items: OutputCommentType[],
     totalCount: number,

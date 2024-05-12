@@ -1,10 +1,21 @@
 import {ObjectId} from "mongoose";
-import {CommentInputType, CommentModel, OutputCommentType} from "./commentsTypes";
+import {CommentInputType, CommentModel, LikeStatus, OutputCommentType} from "./commentsTypes";
 
 export class CommentsRepository {
     async createComment(dto: CommentInputType): Promise<OutputCommentType | null>  {
         const comment = new CommentModel(dto)
-        return await comment.save()
+        const result = await comment.save()
+        return {
+            id: result._id,
+            content: result.content,
+            createdAt: result.createdAt,
+            commentatorInfo: result.commentatorInfo,
+            likesInfo: {
+                likesCount: 0,
+                dislikesCount: 0,
+                myStatus: LikeStatus.None
+            }
+        }
     }
     async deleteComment(id: ObjectId): Promise<boolean | null> {
        const result: any = await CommentModel.deleteOne({_id:id})
@@ -20,11 +31,24 @@ export class CommentsRepository {
         }
         return true
     }
-    async getCommentByDBId(id: ObjectId): Promise<OutputCommentType | null> {
-        const comment = await CommentModel.findOne({_id: id})
-        if (!comment) {
+    async addLikeToComment(commentId: ObjectId,userId: ObjectId, likeStatus: string): Promise<boolean | null> {
+        const result: any =  await CommentModel.updateOne({_id: commentId}, {$push: {likes: {likeStatus: likeStatus, userId: userId}}})
+        if (result.modifiedCount === 0) {
             return null
         }
-        return comment
+        return true
+    }
+
+    async updateLikeToComment(commentId: ObjectId,userId: ObjectId, likeStatus: string): Promise<boolean | null> {
+        const result: any =  await CommentModel.updateOne({_id: commentId, "likes.userId": userId}, {$set: {likes: {likeStatus: likeStatus}}})
+        if (result.modifiedCount === 0) {
+            return null
+        }
+        return true
+    }
+
+    async checkUserLike(commentId: ObjectId, userId: ObjectId): Promise<boolean> {
+        const comment = await CommentModel.findOne({_id: commentId, likes: {$elemMatch: {userId: userId}}})
+        return !!comment
     }
 }

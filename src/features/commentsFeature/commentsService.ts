@@ -30,4 +30,12 @@ export class CommentsService {
     async updateComment(id: ObjectId, comment: string) {
         return this.commentsRepository.updateComment(id, comment)
     }
+
+    async addLikeToComment(commentId: ObjectId, userId: ObjectId, likeStatus: string) {
+        const checkResult = await this.commentsRepository.checkUserLike(commentId, userId)
+        if(checkResult) {
+            return this.commentsRepository.updateLikeToComment(commentId, userId, likeStatus)
+        }
+        return this.commentsRepository.addLikeToComment(commentId, userId, likeStatus)
+    }
 }

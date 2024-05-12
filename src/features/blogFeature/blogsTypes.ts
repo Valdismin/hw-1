@@ -27,7 +27,7 @@ export type UpdateBlogType = {
 }
 
 export type OutputBlogType = {
-    _id: string,
+    id: string,
     name: string,
     description: string,
     websiteUrl: string,
@@ -36,7 +36,7 @@ export type OutputBlogType = {
 }
 
 export type OutputPaginatedBlogType = {
-    _id: ObjectId,
+    id: ObjectId,
     title: string,
     description: string,
     websiteUrl: string,

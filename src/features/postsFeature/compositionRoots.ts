@@ -8,6 +8,8 @@ import {CommentsRepository} from "../commentsFeature/commentsRepository";
 import {CommentsService} from "../commentsFeature/commentsService";
 import {CommentsQueryRepository} from "../commentsFeature/commentsQueryRepository";
 import {UsersRepository} from "../usersFeature/usersRepository";
+import {JWTService} from "../authFeature/JWTService";
+import {RefreshTokenRepository} from "../authFeature/refreshTokenRepository";
 
 const postsRepository = new PostsRepository();
 const postsQueryRepository = new PostsQueryRepository();
@@ -16,6 +18,8 @@ const blogsQueryRepository = new BlogsQueryRepository();
 const postService = new PostService(postsRepository, blogsRepository);
 const commentsRepository = new CommentsRepository();
 const usersRepository = new UsersRepository();
+const refreshTokenRepository = new RefreshTokenRepository();
 const commentsQueryRepository = new CommentsQueryRepository();
 const commentsService = new CommentsService(commentsRepository, usersRepository);
-export const postsController = new PostsController(postService, blogsQueryRepository, postsQueryRepository, commentsService, commentsQueryRepository);
+const jwtService = new JWTService(refreshTokenRepository);
+export const postsController = new PostsController(postService, blogsQueryRepository, postsQueryRepository, commentsService, commentsQueryRepository, jwtService);
