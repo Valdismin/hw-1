@@ -1,9 +1,9 @@
 import {Router} from "express";
-import {deleteDeviceSession, deleteDevicesSessions, getDevicesSessions} from "./securityController";
 import {checkRefreshToken} from "../../middlewares/checkRefreshToken";
+import {securityController} from "./compositionRoot";
 
 export const securityRouter = Router()
 
-securityRouter.get('/devices', checkRefreshToken, getDevicesSessions)
-securityRouter.delete('/devices', checkRefreshToken, deleteDevicesSessions)
-securityRouter.delete('/devices/:deviceId', checkRefreshToken, deleteDeviceSession)
+securityRouter.get('/devices', checkRefreshToken, securityController.getDevicesSessions.bind(securityController))
+securityRouter.delete('/devices', checkRefreshToken, securityController.deleteDevicesSessions.bind(securityController))
+securityRouter.delete('/devices/:deviceId', checkRefreshToken, securityController.deleteDeviceSession.bind(securityController))

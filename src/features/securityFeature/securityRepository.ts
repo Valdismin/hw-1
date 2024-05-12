@@ -1,32 +1,34 @@
-import {devicesSessionsCollection} from "../../db/mongo-db";
 import {ObjectId} from "mongoose";
+import {DevicesSessionsModel} from "./devicesSessionsTypes";
 
-export const securityRepository = {
-    deleteAllSessions: async (userId: string, deviceId: string) => {
-        await devicesSessionsCollection.deleteMany({userId: userId, deviceId: {$ne: deviceId}});
-    },
-    deleteSpecificSession: async (userId: string, deviceId: string): Promise<boolean> => {
-        const result = await devicesSessionsCollection.deleteOne({userId: userId, deviceId: deviceId});
+export class SecurityRepository {
+    async deleteAllSessions(userId: ObjectId, deviceId: string) {
+        await DevicesSessionsModel.deleteMany({userId: userId, deviceId: {$ne: deviceId}});
+    }
+    async deleteSpecificSession(userId: ObjectId, deviceId: string): Promise<boolean> {
+        const result: any = await DevicesSessionsModel.deleteOne({userId: userId, deviceId: deviceId});
         return result.deletedCount !== 0;
-    },
-    findSession: async (deviceId: string) => {
-        return await devicesSessionsCollection.findOne({deviceId: deviceId});
-    },
-    findSessionByManuParams: async (deviceId: string, issuedAt: string) => {
-        return await devicesSessionsCollection.findOne({deviceId: deviceId, issuedAt: issuedAt});
-    },
-    createDeviceSession: async (userId: string, deviceId: string, issuedAt: string, expiredAt: string, ip: string, lastActiveDate: string, title: string) => {
-        await devicesSessionsCollection.insertOne({userId, deviceId, issuedAt, expiredAt, ip, lastActiveDate, title});
-    },
-    updateLastActiveDate: async (userId: string, deviceId: string, lastActiveDate: string) => {
-        await devicesSessionsCollection.updateOne({
+    }
+    async findSession(deviceId: string) {
+        return DevicesSessionsModel.findOne({deviceId: deviceId});
+    }
+    async findSessionByManuParams(deviceId: string, issuedAt: string) {
+        return DevicesSessionsModel.findOne({deviceId: deviceId, issuedAt: issuedAt});
+    }
+    async createDeviceSession(userId: ObjectId, deviceId: string, issuedAt: string, expiredAt: string, ip: string, lastActiveDate: string, title: string) {
+        const session = new DevicesSessionsModel({userId, deviceId, issuedAt, expiredAt, ip, lastActiveDate, title})
+
+        await session.save();
+    }
+    async updateLastActiveDate(userId: ObjectId, deviceId: string, lastActiveDate: string) {
+        await DevicesSessionsModel.updateOne({
             userId: userId,
             deviceId: deviceId
         }, {$set: {lastActiveDate: lastActiveDate}});
-    },
-    updateAfterRefreshToken: async (userId: ObjectId, deviceId: string, issuedAt: string, expiredAt: string) => {
-        const res = await devicesSessionsCollection.findOne({userId: userId, deviceId: deviceId})
-        const result = await devicesSessionsCollection.updateOne({userId: userId, deviceId: deviceId}, {
+    }
+    async updateAfterRefreshToken(userId: ObjectId, deviceId: string, issuedAt: string, expiredAt: string) {
+        const res = await DevicesSessionsModel.findOne({userId: userId, deviceId: deviceId})
+        const result = await DevicesSessionsModel.updateOne({userId: userId, deviceId: deviceId}, {
             $set: {
                 issuedAt: issuedAt,
                 expiredAt: expiredAt

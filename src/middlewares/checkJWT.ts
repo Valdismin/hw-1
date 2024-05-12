@@ -1,11 +1,7 @@
 import {NextFunction, Request, Response} from "express";
-import {JWTService} from "../features/authFeature/JWTService";
-import {UsersRepository} from "../features/usersFeature/usersRepository";
-import {RefreshTokenRepository} from "../features/authFeature/refreshTokenRepository";
+import {jwtService, usersRepository} from "./compositionRoot";
 
-const usersRepository = new UsersRepository()
-const refreshTokenRepository = new RefreshTokenRepository()
-const jwtService = new JWTService(refreshTokenRepository)
+
 
 export const checkJWT = (req: Request, res: Response, next: NextFunction) => {
     if (!req.headers.authorization) {

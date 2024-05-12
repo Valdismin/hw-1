@@ -1,13 +1,15 @@
 import {Request, Response} from "express";
 import {authMeType} from "./authTypes";
-import {securityService} from "../securityFeature/securityService";
 import {JWTService} from "./JWTService";
 import {AuthService} from "./authService";
 import {Schema} from "mongoose";
+import {SecurityService} from "../securityFeature/securityService";
 
 export class AuthController {
     constructor(protected authService: AuthService,
-                protected JWTService: JWTService) {}
+                protected JWTService: JWTService,
+                protected securityService:SecurityService
+                ) {}
 
     async loginUser(req: Request, res: Response) {
         const {loginOrEmail, password} = req.body
@@ -20,7 +22,7 @@ export class AuthController {
             res.status(401).end()
             return
         }
-        await securityService.createDeviceSession(result.refreshToken, req.ip!, deviceTitle)
+        await this.securityService.createDeviceSession(result.refreshToken, req.ip!, deviceTitle)
         res.cookie('refreshToken', result.refreshToken, {httpOnly: true, secure: true})
         res.status(200).json({accessToken: result.accessToken})
     }
@@ -35,7 +37,7 @@ export class AuthController {
         if (!tokenFields) {
             return null
         }
-        await securityService.deleteSpecificDeviceSession(tokenFields.userId, tokenFields.deviceId, req.cookies.refreshToken)
+        await this.securityService.deleteSpecificDeviceSession(tokenFields.userId, tokenFields.deviceId, req.cookies.refreshToken)
         return res.status(204).json()
     }
 
@@ -49,7 +51,7 @@ export class AuthController {
             res.status(401).end()
             return
         }
-        await securityService.updateAfterRefreshToken(result.refreshToken)
+        await this.securityService.updateAfterRefreshToken(result.refreshToken)
         res.cookie('refreshToken', result.refreshToken, {httpOnly: true, secure: true})
         res.status(200).json({accessToken: result.accessToken})
     }

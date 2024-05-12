@@ -3,11 +3,11 @@ import bcrypt from "bcrypt";
 import {uuid} from "uuidv4";
 import {add} from "date-fns/add";
 import {sendConfirmationEmail, sendPasswordRecoveryEmail} from "../../managers/emailManager";
-import {securityRepository} from "../securityFeature/securityRepository";
 import {UsersRepository} from "../usersFeature/usersRepository";
 import {JWTService} from "./JWTService";
 import {recoveryPasswordRepository} from "../passwordRecoveryFeature/recoveryPasswordRepository";
 import mongoose, {ObjectId} from "mongoose";
+import {SecurityRepository} from "../securityFeature/securityRepository";
 
 export type authResultType = {
     refreshToken: string
@@ -15,7 +15,8 @@ export type authResultType = {
 }
 export class AuthService {
     constructor(protected usersRepository: UsersRepository,
-                protected JWTService: JWTService) {}
+                protected JWTService: JWTService,
+                protected securityRepository: SecurityRepository) {}
 
 
     async authUser(loginOrEmail: string, password: string): Promise<authResultType | null> {
@@ -47,7 +48,7 @@ export class AuthService {
         if (!tokenFields) {
             return null
         }
-        await securityRepository.updateAfterRefreshToken(userId, tokenFields.deviceId, tokenFields.issuedAt, tokenFields.expiredAt)
+        await this.securityRepository.updateAfterRefreshToken(userId, tokenFields.deviceId, tokenFields.issuedAt, tokenFields.expiredAt)
         await this.JWTService.killRefreshToken(refreshToken)
         return {refreshToken: newRefreshToken, accessToken: newAccessToken}
     }

@@ -1,13 +1,5 @@
 import {NextFunction, Request, Response} from "express";
-import {UsersRepository} from "../features/usersFeature/usersRepository";
-import {JWTService} from "../features/authFeature/JWTService";
-import {securityRepository} from "../features/securityFeature/securityRepository";
-import {RefreshTokenRepository} from "../features/authFeature/refreshTokenRepository";
-
-//TODO ask how to use
-const usersRepository = new UsersRepository()
-const refreshTokenRepository = new RefreshTokenRepository()
-const jwtService = new JWTService(refreshTokenRepository)
+import {jwtService, securityRepository, usersRepository} from "./compositionRoot";
 
 export const checkRefreshToken = async (req: Request, res: Response, next: NextFunction) => {
     const token = req.cookies.refreshToken

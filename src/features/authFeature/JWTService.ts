@@ -3,6 +3,7 @@ import {SETTINGS} from "../../settings";
 import {UsersDBType} from "../usersFeature/usersTypes";
 import {uuid} from "uuidv4";
 import {RefreshTokenRepository} from "./refreshTokenRepository";
+import {ObjectId} from "mongoose";
 
 export class JWTService {
     constructor(protected refreshTokenRepository: RefreshTokenRepository) {}
@@ -57,7 +58,7 @@ export class JWTService {
         return this.refreshTokenRepository.addToken(token)
     }
     getFieldsForDeviceSession(token: string): {
-        userId: string,
+        userId: ObjectId,
         deviceId: string,
         issuedAt: string,
         expiredAt: string
