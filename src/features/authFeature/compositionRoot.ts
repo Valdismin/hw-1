@@ -6,13 +6,15 @@ import {AuthController} from "./authController";
 import {SecurityService} from "../securityFeature/securityService";
 import {SecurityRepository} from "../securityFeature/securityRepository";
 import {RecoveryPasswordRepository} from "../passwordRecoveryFeature/recoveryPasswordRepository";
+import {UsersQueryRepository} from "../usersFeature/usersQueryRepository";
 
 const refreshTokenRepository = new RefreshTokenRepository();
 const jwtService = new JWTService(refreshTokenRepository);
 const usersRepository = new UsersRepository();
+const usersQueryRepository = new UsersQueryRepository();
 const securityRepository = new SecurityRepository();
 const securityService = new SecurityService(securityRepository, jwtService);
 const recoveryPasswordRepository = new RecoveryPasswordRepository();
-const authService = new AuthService(usersRepository, jwtService, securityRepository, recoveryPasswordRepository);
+const authService = new AuthService(usersRepository, jwtService,usersQueryRepository, securityRepository, recoveryPasswordRepository);
 
 export const authController = new AuthController(authService, jwtService, securityService);

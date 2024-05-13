@@ -1,4 +1,4 @@
-import {OutputPaginatedPostType, PostDBType, PostModel} from "./postsTypes";
+import {OutputPaginatedPostType, PostModel, PostViewModelType} from "./postsTypes";
 import {ObjectId} from "mongoose";
 
 export class PostsQueryRepository {
@@ -27,7 +27,21 @@ export class PostsQueryRepository {
         }
     }
 
-    async getPostById(id: ObjectId):Promise<PostDBType | null> {
-        return PostModel.findOne({_id: id})
+    async getPostById(id: string):Promise<PostViewModelType | null> {
+        const post = await PostModel.findOne({_id: id}).exec()
+
+        if (!post) {
+            return null
+        }
+
+        return {
+            id: post._id.toString(),
+            title: post.title,
+            shortDescription: post.shortDescription,
+            content: post.content,
+            blogId: post.blogId,
+            blogName: post.blogName,
+            createdAt: post.createdAt
+        }
     }
 }

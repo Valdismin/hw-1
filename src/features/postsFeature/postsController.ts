@@ -1,5 +1,5 @@
 import {Request, Response} from 'express'
-import {OutputPaginatedPostType, PostDBType} from "./postsTypes";
+import {OutputPaginatedPostType, PostDBType, PostViewModelType} from "./postsTypes";
 import {queryHelper} from "../../utils/helpers";
 import {PostsQueryRepository} from "./postQueryRepository";
 import {Schema} from "mongoose";
@@ -22,9 +22,7 @@ export class PostsController {
     async getPosts(req: Request, res: Response<OutputPaginatedPostType | undefined>) {
         const sanitizedQuery = queryHelper(req.query)
         if (req.params.blogId) {
-            //@ts-ignore
-            //TODO: ask at the lesson
-            const id = req.params.blogId as Schema.Types.ObjectId
+            const id = req.params.blogId
             const blog = await this.blogsQueryRepository.getBlogById(id)
             if (!blog) {
                 res.status(404).end()
@@ -42,31 +40,31 @@ export class PostsController {
         res.status(200).json(posts)
     }
 
-    async createPost(req: Request, res: Response<PostDBType>) {
+    async createPost(req: Request, res: Response<PostViewModelType>) {
         const post = await this.postService.createPostService(req.body)
 
-        res.status(201).json(post as PostDBType)
+        const createdPost = await this.postQueryRepository.getPostById(post)
+
+        res.status(201).json(createdPost!)
     }
 
     async createPostForBlog(req: Request, res: Response<PostDBType>) {
-        //@ts-ignore
-        //TODO: ask on the lesson
-        const id = req.params.blogId as Schema.Types.ObjectId
+        const id = req.params.blogId
         const blog = await this.blogsQueryRepository.getBlogById(id)
         if (!blog) {
             res.status(404).end()
             return
         }
 
-        const post = await this.postService.createPostForBlogService(req.body, blog)
+        const postId = await this.postService.createPostForBlogService(req.body, blog)
 
-        res.status(201).json(post as PostDBType)
+        const createdPost = await this.postQueryRepository.getPostById(postId)
+
+        res.status(201).json(createdPost!)
     }
 
     async getPostById(req: Request, res: Response<PostDBType>) {
-        //@ts-ignore
-        //TODO: ask on the lesson
-        const id = req.params.id as Schema.Types.ObjectId
+        const id = req.params.id
         const post = await this.postQueryRepository.getPostById(id)
         if (!post) {
             res.status(404).end()
@@ -105,9 +103,7 @@ export class PostsController {
     }
 
     async getPostComments(req: Request, res: Response) {
-        //@ts-ignore
-        //TODO: ask on the lesson
-        const id = req.params.id as Schema.Types.ObjectId
+        const id = req.params.id
         const post = await this.postQueryRepository.getPostById(id)
         if (!post) {
             res.status(404).end()
@@ -133,21 +129,19 @@ export class PostsController {
     }
 
     async createPostComment(req: Request, res: Response) {
-        //@ts-ignore
-        //TODO: ask on the lesson
-        const id = req.params.id as Schema.Types.ObjectId
-        //@ts-ignore
-        const userId = req.userId as Schema.Types.ObjectId
+        const id = req.params.id
+        const userId = req.userId
         const post = await this.postQueryRepository.getPostById(id)
         if (!post) {
             res.status(404).end()
             return
         }
-        const comments = await this.commentsService.createPostCommentService(id, req.body.content, req.headers.authorization as string, userId)
-        if (!comments) {
+        const commentId = await this.commentsService.createPostCommentService(id, req.body.content, req.headers.authorization as string, userId!)
+        if (!commentId) {
             res.status(404).end()
             return
         }
-        res.status(201).json(comments)
+        const comment = await this.commentsQueryRepository.getCommentById(commentId)
+        res.status(201).json(comment)
     }
 }

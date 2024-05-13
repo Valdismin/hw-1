@@ -1,8 +1,7 @@
 import {DevicesSessionsModel} from "./devicesSessionsTypes";
-import {ObjectId} from "mongoose";
 
 export class SecurityQueryRepository {
-    async getDevicesSessions(userId: ObjectId) {
+    async getDevicesSessions(userId: string) {
         const sessions = await DevicesSessionsModel.find({userId: userId}).lean().exec()
 
         return sessions.map(session => {

@@ -27,7 +27,7 @@ export type InputUsersType = {
 }
 
 export type OutputUsersType = {
-    id?: ObjectId,
+    id: string,
     email?: string,
     login?: string,
     createdAt: string
@@ -39,6 +39,13 @@ export type OutputPaginatedUsersType = {
     pagesCount: number,
     page: string,
     pageSize: string
+}
+
+export type UserViewModelType = {
+    id: string,
+    userInfo: UserInfoType,
+    userConfirmation: userConfirmationType,
+    createdAt: string,
 }
 
 export type UsersDBType = {

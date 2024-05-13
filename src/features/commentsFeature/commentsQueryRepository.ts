@@ -5,10 +5,9 @@ import {
     OutputCommentType,
     OutputPaginatedCommentsType
 } from "./commentsTypes";
-import {ObjectId} from "mongoose";
 
 export class CommentsQueryRepository {
-    async getPostComments(postId: ObjectId, query: any, userId?: ObjectId): Promise<OutputPaginatedCommentsType | undefined> {
+    async getPostComments(postId: string, query: any, userId?: string): Promise<OutputPaginatedCommentsType | undefined> {
 
         try {
             const items: any = await CommentModel.find({postId}).sort({[query.sortBy]: query.sortDirection})
@@ -18,7 +17,7 @@ export class CommentsQueryRepository {
             const sanitizedItems = items.map((item: CommentsDBType) => {
                 const likesCount = item.likes.filter((like: LikesAndDislikesType) => like.likeStatus === LikeStatus.Like).length
                 const dislikesCount = item.likes.filter((like: LikesAndDislikesType) => like.likeStatus === LikeStatus.Dislike).length
-                const myStatus = item.likes.find((like: LikesAndDislikesType) => like.userId === userId)?.likeStatus || LikeStatus.None
+                const myStatus = item.likes.find((like: any) => like.userId === userId)?.likeStatus || LikeStatus.None
 
                 return {
                     id: item._id,
@@ -48,28 +47,42 @@ export class CommentsQueryRepository {
         }
     }
 
-    async getCommentById(id: ObjectId, userId?: ObjectId): Promise<OutputCommentType | null> {
+    async getCommentById(id: string, userId?: string): Promise<OutputCommentType | null> {
         const comment = await CommentModel.findOne({_id: id}).lean().exec()
 
         if (!comment) {
             return null
         }
 
+        const commentLikeStatus = await CommentModel.findOne({_id: id, 'likes.userId': userId}).lean().exec()
+        const likesCount = comment.likes.filter((like: LikesAndDislikesType) => like.likeStatus === LikeStatus.Like).length
+        const dislikesCount = comment.likes.filter((like: LikesAndDislikesType) => like.likeStatus === LikeStatus.Dislike).length
 
-        const likesCount = await CommentModel.countDocuments({"likes.likeStatus": LikeStatus.Like}).where("likes.likesStatus").lean().exec()
-        const dislikesCount = await CommentModel.countDocuments({"likes.likeStatus": LikeStatus.Dislike}).where("likes.likesStatus").lean().exec()
-        const userStatus = await CommentModel.findOne({_id: id, likes: {$elemMatch: {userId: userId}}}).lean().exec()
+        if (!userId || !commentLikeStatus) {
+            return {
+                id: comment._id.toString(),
+                content: comment.content,
+                commentatorInfo: comment.commentatorInfo,
+                createdAt: comment.createdAt,
+                likesInfo: {
+                    likesCount: likesCount,
+                    dislikesCount: dislikesCount,
+                    myStatus: LikeStatus.None
+                }
+            }
+        }
 
         return {
-            id: comment._id,
+            id: comment._id.toString(),
             content: comment.content,
             commentatorInfo: comment.commentatorInfo,
             createdAt: comment.createdAt,
             likesInfo: {
                 likesCount: likesCount,
                 dislikesCount: dislikesCount,
-                myStatus: userStatus?.likes[0].likeStatus || LikeStatus.None
+                myStatus: commentLikeStatus.likes[0].likeStatus
             }
         }
+
     }
 }

@@ -48,6 +48,16 @@ export type OutputPaginatedPostType = {
     pageSize: string
 }
 
+export type PostViewModelType = {
+    id: string,
+    title: string,
+    shortDescription: string,
+    content: string,
+    blogId?: ObjectId,
+    blogName: string
+    createdAt?: string,
+}
+
 export type PostDBType = {
     _id?: ObjectId,
     title: string,

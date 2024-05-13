@@ -1,4 +1,4 @@
-import mongoose, {Model, ObjectId} from "mongoose";
+import mongoose, {Model} from "mongoose";
 
 export type devicesSessionsDBType = {
     deviceId: string,
@@ -6,7 +6,7 @@ export type devicesSessionsDBType = {
     lastActiveDate: string,
     expiredAt: string,
     issuedAt: string,
-    userId: ObjectId,
+    userId: string,
     ip: string
 }
 
@@ -23,7 +23,7 @@ const devicesSessionsSchema = new mongoose.Schema<devicesSessionsDBType>({
     lastActiveDate: {type: String, required: true},
     expiredAt: {type: String, required: true},
     issuedAt: {type: String, required: true},
-    userId: {type: mongoose.Schema.ObjectId, required: true},
+    userId: {type: String, required: true},
     ip: {type: String, required: true}
 })
 

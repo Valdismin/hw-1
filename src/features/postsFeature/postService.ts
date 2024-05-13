@@ -8,11 +8,10 @@ export class PostService {
     constructor(protected postsRepository: PostsRepository, protected blogsRepository: BlogsRepository) {
     }
 
-    async createPostService(post: InputPostType) {
+    async createPostService(post: InputPostType): Promise<string> {
         const blog = await this.blogsRepository.getBlogById(post.blogId)
         const newPost = {
             blogName: blog?.name || '',
-            id: `${Date.now() + Math.random()}`,
             createdAt: new Date().toISOString(),
             ...post
         }

@@ -1,37 +1,26 @@
-import {ObjectId} from "mongoose";
-import {CommentInputType, CommentModel, LikeStatus, OutputCommentType} from "./commentsTypes";
+import {CommentInputType, CommentModel} from "./commentsTypes";
 
 export class CommentsRepository {
-    async createComment(dto: CommentInputType): Promise<OutputCommentType | null>  {
+    async createComment(dto: CommentInputType): Promise<string>  {
         const comment = new CommentModel(dto)
         const result = await comment.save()
-        return {
-            id: result._id,
-            content: result.content,
-            createdAt: result.createdAt,
-            commentatorInfo: result.commentatorInfo,
-            likesInfo: {
-                likesCount: 0,
-                dislikesCount: 0,
-                myStatus: LikeStatus.None
-            }
-        }
+        return result._id.toString()
     }
-    async deleteComment(id: ObjectId): Promise<boolean | null> {
+    async deleteComment(id: string): Promise<boolean | null> {
        const result: any = await CommentModel.deleteOne({_id:id})
         if (result.deletedCount === 0) {
             return null
         }
         return true
     }
-    async updateComment(id: ObjectId, comment: string): Promise<boolean | null> {
+    async updateComment(id: string, comment: string): Promise<boolean | null> {
         const result: any = await CommentModel.updateOne({_id:id}, {$set: {content: comment}})
         if (result.modifiedCount === 0) {
             return null
         }
         return true
     }
-    async addLikeToComment(commentId: ObjectId,userId: ObjectId, likeStatus: string): Promise<boolean | null> {
+    async addLikeToComment(commentId: string,userId: string, likeStatus: string): Promise<boolean | null> {
         const result: any =  await CommentModel.updateOne({_id: commentId}, {$push: {likes: {likeStatus: likeStatus, userId: userId}}})
         if (result.modifiedCount === 0) {
             return null
@@ -39,16 +28,20 @@ export class CommentsRepository {
         return true
     }
 
-    async updateLikeToComment(commentId: ObjectId,userId: ObjectId, likeStatus: string): Promise<boolean | null> {
-        const result: any =  await CommentModel.updateOne({_id: commentId, "likes.userId": userId}, {$set: {likes: {likeStatus: likeStatus}}})
+    async updateLikeToComment(commentId: string,userId: string, likeStatus: string): Promise<boolean | null> {
+        const result: any =  await CommentModel.updateOne({_id: commentId, "likes.userId": userId}, {$set: {likes: {likeStatus: likeStatus, userId: userId}}})
         if (result.modifiedCount === 0) {
             return null
         }
         return true
     }
 
-    async checkUserLike(commentId: ObjectId, userId: ObjectId): Promise<boolean> {
+    async checkUserLike(commentId: string, userId: string): Promise<boolean> {
         const comment = await CommentModel.findOne({_id: commentId, likes: {$elemMatch: {userId: userId}}})
+        return !!comment
+    }
+    async checkComment(commentId: string): Promise<boolean> {
+        const comment = await CommentModel.findOne({_id: commentId})
         return !!comment
     }
 }

@@ -1,8 +1,7 @@
-import {ObjectId} from "mongoose";
 import {recoveryCodeDBType, RecoveryCodeModel} from "./recoveryCodeTypes";
 
 export class RecoveryPasswordRepository {
-    async addRecoveryCode(recoveryCode: string, userId: ObjectId, expiredAt: Date, isUsed: boolean) {
+    async addRecoveryCode(recoveryCode: string, userId: string, expiredAt: Date, isUsed: boolean) {
         const newRecoveryCode = new RecoveryCodeModel({recoveryCode, userId, expiredAt, isUsed})
         await newRecoveryCode.save()
     }

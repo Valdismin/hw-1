@@ -1,18 +1,21 @@
 import {Request, Response} from "express";
-import {BlogDBType, OutputPaginatedBlogsType} from "./blogsTypes";
+import {BlogDBType, BlogViewModelType, OutputPaginatedBlogsType} from "./blogsTypes";
 import {BlogsQueryRepository} from "./blogsQueryRepository";
 import {queryHelper} from "../../utils/helpers";
 import {BlogService} from "./blogService";
-import {OutputErrorsType} from "../../types/errorsTypes";
 import {Schema} from "mongoose";
 
 export class BlogsController {
-    constructor(protected blogService: BlogService, protected blogsQueryRepository: BlogsQueryRepository) {}
-    async createBlog(req: Request, res: Response<BlogDBType | OutputErrorsType>) {
-        const newBlog = await this.blogService.createBlogService(req.body);
+    constructor(protected blogService: BlogService, protected blogsQueryRepository: BlogsQueryRepository) {
+    }
+
+    async createBlog(req: Request, res: Response<BlogViewModelType>) {
+        const newBlogId = await this.blogService.createBlogService(req.body);
+        const blog = await this.blogsQueryRepository.getBlogById(newBlogId)
+
         res
             .status(201)
-            .json(newBlog as BlogDBType)
+            .json(blog)
     }
 
     async getBlogs(req: Request, res: Response<OutputPaginatedBlogsType | undefined>) {
@@ -62,9 +65,7 @@ export class BlogsController {
     }
 
     async findBlog(req: Request, res: Response<BlogDBType>) {
-        //@ts-ignore
-        //TODO: ask on the lesson
-        const id = req.params.id as Schema.Types.ObjectId
+        const id = req.params.id
         const blog = await this.blogsQueryRepository.getBlogById(id)
         if (!blog) {
             res

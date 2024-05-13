@@ -8,10 +8,10 @@ const commentsSchema = new mongoose.Schema<CommentsDBType>({
         userId: {type: String, required: true},
         userLogin: {type: String, required: true}
     },
-    postId: {type: mongoose.Schema.ObjectId, required: true},
+    postId: {type: String, required: true},
     likes: [{
         likeStatus: {type: String, required: true},
-        userId: {type: mongoose.Schema.ObjectId, required: true}
+        userId: {type: String, required: true}
     }]
 })
 
@@ -24,7 +24,7 @@ export type CommentsDBType = {
     content: string,
     createdAt: string,
     commentatorInfo: CommentatorInfoType,
-    postId: ObjectId,
+    postId: string,
     likes: LikesAndDislikesType[]
 }
 
@@ -36,17 +36,17 @@ export enum LikeStatus {
 
 export type LikesAndDislikesType = {
     likeStatus: LikeStatus,
-    userId: ObjectId
+    userId: string
 }
 
 export type CommentInputType = {
     content: string,
     createdAt: string,
     commentatorInfo: {
-        userId?: ObjectId,
+        userId?: string,
         userLogin: string
     },
-    postId: ObjectId
+    postId: string
 }
 
 type CommentatorInfoType = {
@@ -56,7 +56,7 @@ type CommentatorInfoType = {
 
 
 export type OutputCommentType = {
-    id: ObjectId,
+    id: string,
     content: string,
     commentatorInfo: CommentatorInfoType,
     createdAt: string

@@ -2,7 +2,6 @@ import {Request, Response} from "express";
 import {authMeType} from "./authTypes";
 import {JWTService} from "./JWTService";
 import {AuthService} from "./authService";
-import {Schema} from "mongoose";
 import {SecurityService} from "../securityFeature/securityService";
 
 export class AuthController {
@@ -37,15 +36,13 @@ export class AuthController {
         if (!tokenFields) {
             return null
         }
-        await this.securityService.deleteSpecificDeviceSession(tokenFields.userId, tokenFields.deviceId, req.cookies.refreshToken)
+        await this.securityService.deleteSpecificDeviceSession(tokenFields.userId, tokenFields.deviceId)
         return res.status(204).json()
     }
 
     async updateToken(req: Request, res: Response) {
         const refreshToken = req.cookies.refreshToken
-        //@ts-ignore
-        //TODO: ask on the lesson
-        const userId = req.userId as Schema.Types.ObjectId
+        const userId = req.userId
         const result = await this.authService.updateTokens(refreshToken, userId)
         if (!result) {
             res.status(401).end()
@@ -57,10 +54,8 @@ export class AuthController {
     }
 
     async userCheck(req: Request, res: Response<authMeType | null>) {
-        //@ts-ignore
-        //TODO: ask on the lesson
-        const userId = req.userId as Schema.Types.ObjectId
-        const user = await this.authService.getMe(userId)
+        const userId = req.userId
+        const user = await this.authService.getMe(userId!)
         if (!user) {
             res.status(401).end()
             return

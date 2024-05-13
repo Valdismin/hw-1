@@ -1,5 +1,4 @@
-import {OutputPaginatedUsersType, UsersDBType, UsersModel} from "./usersTypes";
-import {sanitizeUser} from "../../utils/helpers";
+import {OutputPaginatedUsersType, UsersDBType, UsersModel, UserViewModelType} from "./usersTypes";
 
 export class UsersQueryRepository {
     async getAllUsers(query: any): Promise<OutputPaginatedUsersType | undefined> {
@@ -23,7 +22,12 @@ export class UsersQueryRepository {
                 .limit(query.pageSize)
 
             let mappedItems = items.map((item: UsersDBType) => {
-                return sanitizeUser(item)
+                return {
+                    id: item._id,
+                    userInfo: item.userInfo,
+                    userConfirmation: item.userConfirmation,
+                    createdAt: item.createdAt
+                }
             })
 
             const c = await UsersModel.countDocuments(findQuery).exec();
@@ -37,6 +41,21 @@ export class UsersQueryRepository {
             }
         } catch (e) {
             return undefined
+        }
+    }
+
+    async getUserById(id: string): Promise<UserViewModelType | null> {
+        const user = await UsersModel.findOne({_id: id}).exec()
+
+        if (!user) {
+            return null
+        }
+
+        return {
+            id: user._id.toString(),
+            userInfo: user.userInfo,
+            userConfirmation: user.userConfirmation,
+            createdAt: user.createdAt
         }
     }
 }

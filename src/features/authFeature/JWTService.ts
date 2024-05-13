@@ -1,23 +1,22 @@
 import jwt from 'jsonwebtoken';
 import {SETTINGS} from "../../settings";
-import {UsersDBType} from "../usersFeature/usersTypes";
+import { UserViewModelType} from "../usersFeature/usersTypes";
 import {uuid} from "uuidv4";
 import {RefreshTokenRepository} from "./refreshTokenRepository";
-import {ObjectId} from "mongoose";
 
 export class JWTService {
     constructor(protected refreshTokenRepository: RefreshTokenRepository) {}
-    createToken(user: UsersDBType) {
+    createToken(user: UserViewModelType) {
         return jwt.sign({
-            id: user._id,
+            id: user.id,
         }, SETTINGS.JWT_SECRET, {
             expiresIn: '30m'
         });
     }
-    createRefreshToken(user: UsersDBType, deviceId?: string){
+    createRefreshToken(user: UserViewModelType, deviceId?: string){
         const newDeviceId = deviceId || uuid()
         return jwt.sign({
-            id: user._id,
+            id: user.id,
             deviceId: newDeviceId,
         }, SETTINGS.JWT_REFRESH_SECRET, {
             expiresIn: '1h'
@@ -58,7 +57,7 @@ export class JWTService {
         return this.refreshTokenRepository.addToken(token)
     }
     getFieldsForDeviceSession(token: string): {
-        userId: ObjectId,
+        userId: string,
         deviceId: string,
         issuedAt: string,
         expiredAt: string

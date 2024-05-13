@@ -1,5 +1,5 @@
 import {NextFunction, Request, Response} from "express";
-import {jwtService, usersRepository} from "./compositionRoot";
+import {jwtService, usersQueryRepository} from "./compositionRoot";
 
 
 
@@ -13,7 +13,7 @@ export const checkJWT = (req: Request, res: Response, next: NextFunction) => {
     const userId = jwtService.getUserIdByToken(token)
 
     if (userId) {
-        const user = usersRepository.getUserById(userId)
+        const user = usersQueryRepository.getUserById(userId)
         if (!user) {
             res.status(401).end()
             return

@@ -1,21 +1,32 @@
 import {Request, Response} from 'express'
-import {queryHelper, sanitizeUser} from "../../utils/helpers";
+import {queryHelper} from "../../utils/helpers";
 import {OutputUsersType} from "./usersTypes";
 import {UsersQueryRepository} from "./usersQueryRepository";
 import {UsersService} from "./usersService";
-import {Schema} from "mongoose";
 
 export class UsersController {
     constructor(protected usersService: UsersService, protected usersQueryRepository: UsersQueryRepository) {
     }
-     async createUser(req: Request, res: Response<OutputUsersType | null>) {
+
+    async createUser(req: Request, res: Response<OutputUsersType>) {
         const {login, email, password} = req.body
-        const user = await this.usersService.createUserService({login, email, password})
-        if(!user) {
+        const userId = await this.usersService.createUserService({login, email, password})
+        if (!userId) {
             res.status(400).end()
             return
         }
-        const sanitizedUser = sanitizeUser(user)
+        const user = await this.usersQueryRepository.getUserById(userId)
+        if (!user) {
+            res.status(400).end()
+            return
+        }
+        const sanitizedUser = {
+            id: user.id,
+            email: user.userInfo.email,
+            login: user.userInfo.login,
+            createdAt: user.createdAt
+        } as OutputUsersType
+
         res.status(201).json(sanitizedUser)
     }
 
@@ -29,10 +40,8 @@ export class UsersController {
         res.status(200).json(users)
     }
 
-     async deleteUser(req: Request, res: Response) {
-         //@ts-ignore
-         //TODO: ask on the lesson
-         const id = req.params.id as Schema.Types.ObjectId
+    async deleteUser(req: Request, res: Response) {
+        const id = req.params.id
         const deletedBlog = await this.usersService.deleteUser(id)
         if (deletedBlog.length === 0) {
             res

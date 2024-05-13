@@ -1,7 +1,6 @@
 import bcrypt from 'bcrypt';
 import {InputUsersType} from "./usersTypes";
 import {UsersRepository} from "./usersRepository";
-import {ObjectId} from "mongoose";
 
 export class UsersService {
     constructor(protected usersRepository: UsersRepository) {
@@ -25,7 +24,7 @@ export class UsersService {
         }
         return await this.usersRepository.create(newUser)
     }
-    async deleteUser(id: ObjectId){
+    async deleteUser(id: string){
         return await this.usersRepository.deleteUser(id)
     }
 }

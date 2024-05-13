@@ -6,13 +6,15 @@ export class BlogService {
     constructor(protected blogsRepository: BlogsRepository) {
     }
 
-    createBlogService(blog: InputBlogType) {
+   async createBlogService(blog: InputBlogType): Promise<string> {
         const newBlog = {
             createdAt: new Date().toISOString(),
             isMembership: false,
             ...blog
         }
-        return this.blogsRepository.createBlog(newBlog)
+        const createdBlogId = await this.blogsRepository.createBlog(newBlog)
+
+       return createdBlogId.toString()
     }
 
     async deleteBlogService(id: ObjectId): Promise<BlogDBType[]> {

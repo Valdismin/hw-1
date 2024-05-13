@@ -1,9 +1,8 @@
 import {Request, Response} from "express";
 import {CommentsService} from "./commentsService";
 import {CommentsQueryRepository} from "./commentsQueryRepository";
-import {Schema} from "mongoose";
+import mongoose from "mongoose";
 import {JWTService} from "../authFeature/JWTService";
-
 
 export class CommentsController {
     constructor(protected commentsService: CommentsService,
@@ -12,9 +11,7 @@ export class CommentsController {
     }
 
     async getCommentById(req: Request, res: Response) {
-        //@ts-ignore
-        //TODO: ask on the lesson
-        const id = req.params.id as Schema.Types.ObjectId
+        const id = req.params.id
         let token
         let userId
         if (req.headers.authorization) {
@@ -29,9 +26,7 @@ export class CommentsController {
     }
 
     async deleteComment(req: Request, res: Response) {
-        //@ts-ignore
-        //TODO: ask on the lesson
-        const id = req.params.id as Schema.Types.ObjectId
+        const id = req.params.id
         const comment = await this.commentsQueryRepository.getCommentById(id)
         if (!comment) {
             res
@@ -54,9 +49,7 @@ export class CommentsController {
     }
 
     async updateComment(req: Request, res: Response) {
-        //@ts-ignore
-        //TODO: ask on the lesson
-        const id = req.params.id as Schema.Types.ObjectId
+        const id = req.params.id
         const comment = await this.commentsQueryRepository.getCommentById(id)
         if (!comment) {
             res
@@ -79,12 +72,14 @@ export class CommentsController {
     }
 
     async addLikeToComment(req: Request, res: Response) {
-        //@ts-ignore
-        //TODO: ask on the lesson
-        const id = req.params.id as Schema.Types.ObjectId
-        //@ts-ignore
-        const userId = req.userId as Schema.Types.ObjectId
-        const result = await this.commentsService.addLikeToComment(id, userId, req.body.likeStatus)
+        if(!mongoose.Types.ObjectId.isValid(req.params.id)) {
+            res
+                .status(404).end()
+            return
+        }
+        const id = req.params.id
+        const userId = req.userId
+        const result = await this.commentsService.addLikeToComment(id, userId!, req.body.likeStatus)
 
         if (!result) {
             res

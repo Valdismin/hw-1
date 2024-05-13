@@ -5,9 +5,9 @@ import {add} from "date-fns/add";
 import {sendConfirmationEmail, sendPasswordRecoveryEmail} from "../../managers/emailManager";
 import {UsersRepository} from "../usersFeature/usersRepository";
 import {JWTService} from "./JWTService";
-import {ObjectId} from "mongoose";
 import {SecurityRepository} from "../securityFeature/securityRepository";
 import {RecoveryPasswordRepository} from "../passwordRecoveryFeature/recoveryPasswordRepository";
+import {UsersQueryRepository} from "../usersFeature/usersQueryRepository";
 
 export type authResultType = {
     refreshToken: string
@@ -16,15 +16,17 @@ export type authResultType = {
 export class AuthService {
     constructor(protected usersRepository: UsersRepository,
                 protected JWTService: JWTService,
+                protected usersQueryRepository: UsersQueryRepository,
                 protected securityRepository: SecurityRepository,
                 protected recoveryPasswordRepository: RecoveryPasswordRepository) {}
 
 
     async authUser(loginOrEmail: string, password: string): Promise<authResultType | null> {
-        const user = await this.usersRepository.getUserForAuth(loginOrEmail)
-        if (!user) {
+        const userId = await this.usersRepository.getUserForAuth(loginOrEmail)
+        if (!userId) {
             return null
         }
+        const user = await this.usersQueryRepository.getUserById(userId)
         const hashedPassword = await bcrypt.hash(password, user?.userInfo.salt!)
         if (hashedPassword === user?.userInfo.hash) {
             const refreshToken = this.JWTService.createRefreshToken(user)
@@ -34,11 +36,11 @@ export class AuthService {
             return null
         }
     }
-    async updateTokens(refreshToken: string, userId: ObjectId | null): Promise<authResultType | null> {
+    async updateTokens(refreshToken: string, userId: string | null): Promise<authResultType | null> {
         if (!userId) {
             return null
         }
-        const user = await this.usersRepository.getUserById(userId)
+        const user = await this.usersQueryRepository.getUserById(userId)
         if (!user) {
             return null
         }
@@ -53,8 +55,8 @@ export class AuthService {
         await this.JWTService.killRefreshToken(refreshToken)
         return {refreshToken: newRefreshToken, accessToken: newAccessToken}
     }
-    async getMe(userId: ObjectId) {
-        const user: UsersDBType | null = await this.usersRepository.getUserById(userId)
+    async getMe(userId: string) {
+        const user: UsersDBType | null = await this.usersQueryRepository.getUserById(userId)
         if (!user) {
             return null
         }
@@ -86,7 +88,7 @@ export class AuthService {
             await sendConfirmationEmail(email, newUser.userConfirmation.confirmCode)
         } catch (e) {
             if(result) {
-                await this.usersRepository.deleteUser(result._id!)
+                await this.usersRepository.deleteUser(result)
             }
         }
     }
@@ -95,7 +97,7 @@ export class AuthService {
         if (!user) {
             return
         }
-        return await this.usersRepository.confirmUser(user._id!)
+        return await this.usersRepository.confirmUser(user)
     }
     async resendEmail(email: string) {
         const user = await this.usersRepository.getUserForAuth(email)
@@ -110,7 +112,7 @@ export class AuthService {
 
         try {
             await sendConfirmationEmail(email, userConfirmation.confirmCode)
-            await this.usersRepository.updateUserConfirmation(user._id!, userConfirmation)
+            await this.usersRepository.updateUserConfirmation(user, userConfirmation)
         } catch (e) {
             return
         }
@@ -119,10 +121,13 @@ export class AuthService {
         return await this.JWTService.killRefreshToken(token)
     }
     async passwordRecovery(email: string) {
-        const user = await this.usersRepository.getUserForAuth(email)
-        //const userId: ObjectId =
+        const userId = await this.usersRepository.getUserForAuth(email)
+        if (!userId) {
+            return
+        }
+        const user = await this.usersQueryRepository.getUserById(userId)
         const recoveryCodeInfo = {
-            userId: user!._id! as ObjectId,
+            userId: user!.id,
             expirationTime: add(new Date(), {hours: 1}),
             recoveryCode: uuid(),
             isUsed: false

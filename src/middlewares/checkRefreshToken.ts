@@ -1,5 +1,5 @@
 import {NextFunction, Request, Response} from "express";
-import {jwtService, securityRepository, usersRepository} from "./compositionRoot";
+import {jwtService, securityRepository, usersQueryRepository} from "./compositionRoot";
 
 export const checkRefreshToken = async (req: Request, res: Response, next: NextFunction) => {
     const token = req.cookies.refreshToken
@@ -22,7 +22,7 @@ export const checkRefreshToken = async (req: Request, res: Response, next: NextF
     const deviceId = jwtService.getDeviceIdByRefreshToken(token)
 
     if (userId) {
-        const user = usersRepository.getUserById(userId)
+        const user = usersQueryRepository.getUserById(userId)
         if (!user) {
             res.status(401).end()
             return

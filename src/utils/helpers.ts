@@ -1,4 +1,4 @@
-import {OutputUsersType, UsersDBType} from "../features/usersFeature/usersTypes";
+import {OutputUsersType, UserViewModelType} from "../features/usersFeature/usersTypes";
 
 export const queryHelper = (query: any) => {
     return {
@@ -12,10 +12,10 @@ export const queryHelper = (query: any) => {
     }
 }
 
-export const sanitizeUser = (user: UsersDBType): OutputUsersType => {
+export const sanitizeUser = (user: UserViewModelType): OutputUsersType => {
 
     return {
-        id: user._id,
+        id: user.id,
         email: user.userInfo.email,
         login: user.userInfo.login,
         createdAt: user.createdAt
