@@ -10,7 +10,7 @@ import {UsersQueryRepository} from "../usersFeature/usersQueryRepository";
 export class PostService {
     constructor(@inject(PostsRepository) protected postsRepository: PostsRepository,
                 @inject(BlogsRepository)  protected blogsRepository: BlogsRepository,
-                @inject('UsersQueryRepository') protected usersQueryRepository: UsersQueryRepository
+                @inject(UsersQueryRepository) protected usersQueryRepository: UsersQueryRepository
                 ) {
     }
 
