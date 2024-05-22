@@ -1,9 +1,11 @@
 import {JWTService} from "../authFeature/JWTService";
 import {SecurityRepository} from "./securityRepository";
+import {inject, injectable} from "inversify";
+import {CommentsService} from "../commentsFeature/commentsService";
 
-
+@injectable()
 export class SecurityService {
-    constructor(protected securityRepository: SecurityRepository, protected JWTService: JWTService) {
+    constructor(@inject(SecurityRepository) protected securityRepository: SecurityRepository, @inject(JWTService) protected JWTService: JWTService) {
     }
 
     async deleteDevicesSessions(userId: string, deviceId: string) {

@@ -4,9 +4,12 @@ import {BlogsQueryRepository} from "./blogsQueryRepository";
 import {queryHelper} from "../../utils/helpers";
 import {BlogService} from "./blogService";
 import {Schema} from "mongoose";
+import {inject, injectable} from "inversify";
+import {RefreshTokenRepository} from "../authFeature/refreshTokenRepository";
 
+@injectable()
 export class BlogsController {
-    constructor(protected blogService: BlogService, protected blogsQueryRepository: BlogsQueryRepository) {
+    constructor(@inject(BlogService) protected blogService: BlogService, @inject(BlogsQueryRepository) protected blogsQueryRepository: BlogsQueryRepository) {
     }
 
     async createBlog(req: Request, res: Response<BlogViewModelType>) {
@@ -37,9 +40,7 @@ export class BlogsController {
     }
 
     async updateBlog(req: Request, res: Response) {
-        //@ts-ignore
-        //TODO: ask on the lesson
-        const id = req.params.id as Schema.Types.ObjectId
+        const id = req.params.id
         const updatedBlog = await this.blogService.updateBlogService(req.body, id)
         if (updatedBlog.length === 0) {
             res
@@ -51,9 +52,7 @@ export class BlogsController {
     }
 
     async deleteBlog(req: Request, res: Response) {
-        //@ts-ignore
-        //TODO: ask on the lesson
-        const id = req.params.id as Schema.Types.ObjectId
+        const id = req.params.id
         const deletedBlog = await this.blogService.deleteBlogService(id)
         if (deletedBlog.length === 0) {
             res

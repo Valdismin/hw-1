@@ -3,7 +3,10 @@ import {inputUserValidation} from "./usersValidation";
 import {inputCheckErrorsMiddleware} from "../../middlewares/createErrorMiddleware";
 import {authMiddleware} from "../../middlewares/auth";
 import {updateSession} from "../../middlewares/updateSession";
-import {usersController} from "./compositionRoots";
+import {container} from "../../db/ioc";
+import {UsersController} from "./usersController";
+
+const usersController = container.get(UsersController)
 
 export const usersRouter = Router()
 

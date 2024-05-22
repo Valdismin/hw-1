@@ -1,9 +1,11 @@
 import bcrypt from 'bcrypt';
 import {InputUsersType} from "./usersTypes";
 import {UsersRepository} from "./usersRepository";
+import {inject, injectable} from "inversify";
 
+@injectable()
 export class UsersService {
-    constructor(protected usersRepository: UsersRepository) {
+    constructor(@inject(UsersRepository) protected usersRepository: UsersRepository) {
     }
     async createUserService(user: InputUsersType) {
         const salt = await bcrypt.genSalt(10)

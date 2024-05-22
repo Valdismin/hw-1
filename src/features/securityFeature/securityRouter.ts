@@ -1,6 +1,9 @@
 import {Router} from "express";
 import {checkRefreshToken} from "../../middlewares/checkRefreshToken";
-import {securityController} from "./compositionRoot";
+import {container} from "../../db/ioc";
+import {SecurityController} from "./securityController";
+
+const securityController = container.get(SecurityController)
 
 export const securityRouter = Router()
 

@@ -1,11 +1,14 @@
 import {UsersRepository} from "../usersFeature/usersRepository";
 import {CommentsRepository} from "./commentsRepository";
 import {UsersQueryRepository} from "../usersFeature/usersQueryRepository";
+import {inject, injectable} from "inversify";
+import {BlogsRepository} from "../blogFeature/blogsRepository";
 
+@injectable()
 export class CommentsService {
-    constructor(protected commentsRepository: CommentsRepository,
-                protected usersRepository: UsersRepository,
-                protected usersQueryRepository: UsersQueryRepository) {
+    constructor(@inject(CommentsRepository) protected commentsRepository: CommentsRepository,
+                @inject(UsersRepository) protected usersRepository: UsersRepository,
+                @inject(UsersQueryRepository) protected usersQueryRepository: UsersQueryRepository) {
     }
     async createPostCommentService(postId: string, comment: string, token: string, userId: string) {
         const user = await this.usersQueryRepository.getUserById(userId)
@@ -22,7 +25,6 @@ export class CommentsService {
             postId: postId
         }
         return await this.commentsRepository.createComment(newComment)
-        //return await this.commentsRepository.getCommentByDBId(createdCommentResult.insertedId)
     }
 
     async deleteComment(id: string) {

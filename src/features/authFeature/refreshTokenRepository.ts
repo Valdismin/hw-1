@@ -1,5 +1,7 @@
 import {expiredTokenDBType, ExpiredTokensModel} from "./tokensTypes";
+import {injectable} from "inversify";
 
+@injectable()
 export class RefreshTokenRepository {
     async addToken(dto: string) {
         const token = new ExpiredTokensModel({expiredToken: dto})

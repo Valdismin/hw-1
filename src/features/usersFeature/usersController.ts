@@ -3,9 +3,12 @@ import {queryHelper} from "../../utils/helpers";
 import {OutputUsersType} from "./usersTypes";
 import {UsersQueryRepository} from "./usersQueryRepository";
 import {UsersService} from "./usersService";
+import {inject, injectable} from "inversify";
+import {ApiUsageRepository} from "../securityFeature/apiUsageRepository";
 
+@injectable()
 export class UsersController {
-    constructor(protected usersService: UsersService, protected usersQueryRepository: UsersQueryRepository) {
+    constructor(@inject(UsersService) protected usersService: UsersService, @inject(UsersQueryRepository) protected usersQueryRepository: UsersQueryRepository) {
     }
 
     async createUser(req: Request, res: Response<OutputUsersType>) {

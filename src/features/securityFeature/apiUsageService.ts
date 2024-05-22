@@ -1,5 +1,10 @@
+import {inject, injectable} from "inversify";
+import {SecurityService} from "./securityService";
+import {ApiUsageRepository} from "./apiUsageRepository";
+
+@injectable()
 export class ApiUsageService {
-    constructor(protected apiUsageRepository: any) {
+    constructor(@inject(ApiUsageRepository) protected apiUsageRepository: ApiUsageRepository) {
     }
     async setRecord(IP: string, URL: string) {
         const date = new Date();

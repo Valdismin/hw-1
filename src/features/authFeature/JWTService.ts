@@ -3,9 +3,11 @@ import {SETTINGS} from "../../settings";
 import { UserViewModelType} from "../usersFeature/usersTypes";
 import {uuid} from "uuidv4";
 import {RefreshTokenRepository} from "./refreshTokenRepository";
+import {inject, injectable} from "inversify";
 
+@injectable()
 export class JWTService {
-    constructor(protected refreshTokenRepository: RefreshTokenRepository) {}
+    constructor(@inject(RefreshTokenRepository) protected refreshTokenRepository: RefreshTokenRepository) {}
     createToken(user: UserViewModelType) {
         return jwt.sign({
             id: user.id,

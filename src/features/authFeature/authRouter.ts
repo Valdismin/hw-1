@@ -12,7 +12,10 @@ import {
     passwordRecoveryEmailValidation,
     passwordRecoveryValidation
 } from "../passwordRecoveryFeature/passwordRecoveryValidation";
-import {authController} from "./compositionRoot";
+import {container} from "../../db/ioc";
+import {AuthController} from "./authController";
+
+const authController = container.get(AuthController)
 
 export const authRouter = Router()
 

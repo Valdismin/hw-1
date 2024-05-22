@@ -3,7 +3,10 @@ import {commentValidation, likeValidation} from "./commentsValidation";
 import {inputCheckErrorsMiddleware} from "../../middlewares/createErrorMiddleware";
 import {checkJWT} from "../../middlewares/checkJWT";
 import {updateSession} from "../../middlewares/updateSession";
-import {commentsController} from "./compositionRoots";
+import {container} from "../../db/ioc";
+import {CommentsController} from "./commentsController";
+
+const commentsController = container.get(CommentsController)
 
 export const commentsRouter = Router()
 

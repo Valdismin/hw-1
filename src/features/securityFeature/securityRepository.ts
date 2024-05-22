@@ -1,5 +1,7 @@
 import {DevicesSessionsModel} from "./devicesSessionsTypes";
+import {injectable} from "inversify";
 
+@injectable()
 export class SecurityRepository {
     async deleteAllSessions(userId: string, deviceId: string) {
         await DevicesSessionsModel.deleteMany({userId: userId, deviceId: {$ne: deviceId}});

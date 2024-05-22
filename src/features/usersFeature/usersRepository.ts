@@ -1,5 +1,7 @@
 import {userConfirmationType, UsersDBType, UsersModel} from "./usersTypes";
+import {injectable} from "inversify";
 
+@injectable()
 export class UsersRepository {
     async create(dto: UsersDBType): Promise<string> {
         const user = new UsersModel(dto);

@@ -4,8 +4,12 @@ import {inputCheckErrorsMiddleware} from "../../middlewares/createErrorMiddlewar
 import {authMiddleware} from "../../middlewares/auth";
 import {postForBlogValidation} from "../postsFeature/postsValidation";
 import {updateSession} from "../../middlewares/updateSession";
-import {blogsController} from "./compositionRoots";
-import {postsController} from "../postsFeature/compositionRoots";
+import {container} from "../../db/ioc";
+import {BlogsController} from "./blogsController";
+import {PostsController} from "../postsFeature/postsController";
+
+const blogsController = container.get(BlogsController)
+const postsController = container.get(PostsController)
 
 export const blogsRouter = Router()
 

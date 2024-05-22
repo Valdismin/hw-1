@@ -8,17 +8,20 @@ import {JWTService} from "./JWTService";
 import {SecurityRepository} from "../securityFeature/securityRepository";
 import {RecoveryPasswordRepository} from "../passwordRecoveryFeature/recoveryPasswordRepository";
 import {UsersQueryRepository} from "../usersFeature/usersQueryRepository";
+import {inject, injectable} from "inversify";
 
 export type authResultType = {
     refreshToken: string
     accessToken: string
 }
+
+@injectable()
 export class AuthService {
-    constructor(protected usersRepository: UsersRepository,
-                protected JWTService: JWTService,
-                protected usersQueryRepository: UsersQueryRepository,
-                protected securityRepository: SecurityRepository,
-                protected recoveryPasswordRepository: RecoveryPasswordRepository) {}
+    constructor(@inject(UsersRepository) protected usersRepository: UsersRepository,
+                @inject(JWTService) protected JWTService: JWTService,
+                @inject(UsersQueryRepository) protected usersQueryRepository: UsersQueryRepository,
+                @inject(SecurityRepository) protected securityRepository: SecurityRepository,
+                @inject(RecoveryPasswordRepository) protected recoveryPasswordRepository: RecoveryPasswordRepository) {}
 
 
     async authUser(loginOrEmail: string, password: string): Promise<authResultType | null> {

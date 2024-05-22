@@ -8,14 +8,16 @@ import {BlogsQueryRepository} from "../blogFeature/blogsQueryRepository";
 import {CommentsService} from "../commentsFeature/commentsService";
 import {CommentsQueryRepository} from "../commentsFeature/commentsQueryRepository";
 import {JWTService} from "../authFeature/JWTService";
+import {inject, injectable} from "inversify";
 
+@injectable()
 export class PostsController {
-    constructor(protected postService: PostService,
-                protected blogsQueryRepository: BlogsQueryRepository,
-                protected postQueryRepository: PostsQueryRepository,
-                protected commentsService: CommentsService,
-                protected commentsQueryRepository: CommentsQueryRepository,
-                protected JWTService: JWTService
+    constructor(@inject(PostService) protected postService: PostService,
+                @inject(BlogsQueryRepository) protected blogsQueryRepository: BlogsQueryRepository,
+                @inject(PostsQueryRepository) protected postQueryRepository: PostsQueryRepository,
+                @inject(CommentsService) protected commentsService: CommentsService,
+                @inject(CommentsQueryRepository) protected commentsQueryRepository: CommentsQueryRepository,
+                @inject(JWTService) protected JWTService: JWTService
     ) {
     }
 
@@ -29,10 +31,9 @@ export class PostsController {
                 return
             }
         }
-        //@ts-ignore
-        //TODO: ask at the lesson
-        const id = req.params.blogId as Schema.Types.ObjectId
-        const posts = await this.postQueryRepository.getManyPosts(sanitizedQuery, id)
+        const id = req.params.blogId
+        const userId = req.userId
+        const posts = await this.postQueryRepository.getManyPosts(sanitizedQuery, id, userId!)
         if (!posts) {
             res.status(404).end()
             return
@@ -42,30 +43,31 @@ export class PostsController {
 
     async createPost(req: Request, res: Response<PostViewModelType>) {
         const post = await this.postService.createPostService(req.body)
-
-        const createdPost = await this.postQueryRepository.getPostById(post)
+        const userId = req.userId
+        const createdPost = await this.postQueryRepository.getPostById(post, userId!)
 
         res.status(201).json(createdPost!)
     }
 
-    async createPostForBlog(req: Request, res: Response<PostDBType>) {
+    async createPostForBlog(req: Request, res: Response<PostViewModelType>) {
         const id = req.params.blogId
         const blog = await this.blogsQueryRepository.getBlogById(id)
         if (!blog) {
             res.status(404).end()
             return
         }
-
+        const userId = req.userId
         const postId = await this.postService.createPostForBlogService(req.body, blog)
 
-        const createdPost = await this.postQueryRepository.getPostById(postId)
+        const createdPost = await this.postQueryRepository.getPostById(postId, userId!)
 
         res.status(201).json(createdPost!)
     }
 
-    async getPostById(req: Request, res: Response<PostDBType>) {
+    async getPostById(req: Request, res: Response<PostViewModelType>) {
         const id = req.params.id
-        const post = await this.postQueryRepository.getPostById(id)
+        const userId = req.userId
+        const post = await this.postQueryRepository.getPostById(id,userId!)
         if (!post) {
             res.status(404).end()
             return
@@ -75,9 +77,7 @@ export class PostsController {
     }
 
     async updatePost(req: Request, res: Response) {
-        //@ts-ignore
-        //TODO: ask on the lesson
-        const id = req.params.id as Schema.Types.ObjectId
+        const id = req.params.id
         const updatedPost = await this.postService.updatePostService(req.body, id)
         if (!updatedPost) {
             res
@@ -89,9 +89,7 @@ export class PostsController {
     }
 
     async deletePost(req: Request, res: Response) {
-        //@ts-ignore
-        //TODO: ask on the lesson
-        const id = req.params.id as Schema.Types.ObjectId
+        const id = req.params.id
         const deletedPost = await this.postService.deletePostService(id)
         if (!deletedPost) {
             res
@@ -104,21 +102,19 @@ export class PostsController {
 
     async getPostComments(req: Request, res: Response) {
         const id = req.params.id
-        const post = await this.postQueryRepository.getPostById(id)
+        let userId
+        let token
+
+        if(req.headers.authorization) {
+            token = req.headers.authorization.split(' ')[1]
+            userId = await this.JWTService.getUserIdByToken(token)
+        }
+        const post = await this.postQueryRepository.getPostById(id, userId)
         if (!post) {
             res.status(404).end()
             return
         }
         const sanitizedQuery = queryHelper(req.query)
-
-        let token
-        let userId
-        if(req.headers.authorization) {
-            token = req.headers.authorization.split(' ')[1]
-            userId = await this.JWTService.getUserIdByToken(token)
-        }
-
-
 
         const comments = await this.commentsQueryRepository.getPostComments(id, sanitizedQuery, userId)
         if (!comments) {
@@ -131,7 +127,7 @@ export class PostsController {
     async createPostComment(req: Request, res: Response) {
         const id = req.params.id
         const userId = req.userId
-        const post = await this.postQueryRepository.getPostById(id)
+        const post = await this.postQueryRepository.getPostById(id, userId!)
         if (!post) {
             res.status(404).end()
             return
@@ -143,5 +139,21 @@ export class PostsController {
         }
         const comment = await this.commentsQueryRepository.getCommentById(commentId)
         res.status(201).json(comment)
+    }
+
+    async addLike(req: Request, res: Response) {
+        const id = req.params.id
+        const userId = req.userId
+        const post = await this.postQueryRepository.getPostById(id, userId!)
+        if (!post) {
+            res.status(404).end()
+            return
+        }
+        const result = await this.postService.addLikeService(id, userId!, req.body.likeStatus)
+        if (!result) {
+            res.status(404).end()
+            return
+        }
+        res.status(204).end()
     }
 }

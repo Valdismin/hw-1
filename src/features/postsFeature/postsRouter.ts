@@ -5,7 +5,10 @@ import {inputCheckErrorsMiddleware} from "../../middlewares/createErrorMiddlewar
 import {commentValidation} from "../commentsFeature/commentsValidation";
 import {checkJWT} from "../../middlewares/checkJWT";
 import {updateSession} from "../../middlewares/updateSession";
-import {postsController} from "./compositionRoots";
+import {container} from "../../db/ioc";
+import {PostsController} from "./postsController";
+
+const postsController = container.get(PostsController)
 
 export const postsRouter = Router()
 
@@ -16,3 +19,4 @@ postsRouter.put('/:id', [authMiddleware, ...postValidation], inputCheckErrorsMid
 postsRouter.delete('/:id', authMiddleware, updateSession, postsController.deletePost.bind(postsController))
 postsRouter.get('/:id/comments', updateSession, postsController.getPostComments.bind(postsController))
 postsRouter.post('/:id/comments', checkJWT, commentValidation, inputCheckErrorsMiddleware, updateSession, postsController.createPostComment.bind(postsController))
+postsRouter.put(':id/like-status', checkJWT, updateSession, postsController.addLike.bind(postsController))

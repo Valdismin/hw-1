@@ -5,7 +5,9 @@ import {
     OutputCommentType,
     OutputPaginatedCommentsType
 } from "./commentsTypes";
+import {injectable} from "inversify";
 
+@injectable()
 export class CommentsQueryRepository {
     async getPostComments(postId: string, query: any, userId?: string): Promise<OutputPaginatedCommentsType | undefined> {
 

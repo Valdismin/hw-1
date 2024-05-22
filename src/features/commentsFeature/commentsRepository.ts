@@ -1,5 +1,7 @@
 import {CommentInputType, CommentModel} from "./commentsTypes";
+import {injectable} from "inversify";
 
+@injectable()
 export class CommentsRepository {
     async createComment(dto: CommentInputType): Promise<string>  {
         const comment = new CommentModel(dto)

@@ -1,6 +1,7 @@
 import {BlogModel, BlogViewModelType, OutputPaginatedBlogsType} from "./blogsTypes";
 import {blogsMapper} from "./utils/blogMapper";
-
+import {injectable} from "inversify";
+@injectable()
 export class BlogsQueryRepository {
     async getBlogs(query: any): Promise<OutputPaginatedBlogsType | undefined> {
         const search = query.searchNameTerm ? {name: {$regex: query.searchNameTerm, $options: 'i'}} : {}

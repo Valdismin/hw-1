@@ -1,12 +1,24 @@
 import mongoose, {model, Model, ObjectId} from "mongoose";
 
+export enum LikeStatus {
+    None = 'None',
+    Like = 'Like',
+    Dislike = 'Dislike'
+}
+
 const postsSchema = new mongoose.Schema<PostDBType>({
     title: {type: String, required: true},
     shortDescription: {type: String, required: true},
     content: {type: String, required: true},
     blogId: {type: mongoose.Schema.ObjectId, required: true},
     blogName: {type: String, required: true},
-    createdAt: {type: Date, default: Date.now}
+    createdAt: {type: Date, default: Date.now},
+    likes: [{
+        likeStatus: {type: String, required: true},
+        userId: {type: String, required: true},
+        createdAt: {type: String, default: Date.now},
+        userLogin: {type: String, required: true}
+    }]
 })
 
 type PostModel = Model<PostDBType>;
@@ -16,8 +28,13 @@ export type InputPostType = {
     title: string,
     shortDescription: string,
     content: string,
-    blogId: ObjectId,
+    blogId: string,
 }
+
+export type ExtendedInputPostType = InputPostType & {
+    blogName: string
+}
+
 export type InputForBlogsPostType = {
     title: string,
     shortDescription: string,
@@ -28,7 +45,7 @@ export type UpdatePostType = {
     title: string,
     shortDescription: string,
     content: string,
-    blogId?: ObjectId,
+    blogId?: string,
 }
 
 export type OutputPostType = {
@@ -36,9 +53,10 @@ export type OutputPostType = {
     title: string,
     shortDescription: string,
     content: string,
-    blogId?: ObjectId,
+    blogId?: string,
     blogName: string,
     createdAt?: string,
+    extendedLikesInfo: ExtendedLikesInfoType
 }
 export type OutputPaginatedPostType = {
     items: OutputPostType[],
@@ -53,17 +71,38 @@ export type PostViewModelType = {
     title: string,
     shortDescription: string,
     content: string,
-    blogId?: ObjectId,
+    blogId?: string,
     blogName: string
     createdAt?: string,
+    extendedLikesInfo: ExtendedLikesInfoType
 }
+type newestLikesType = {
+    addedAt: string,
+    userId: string,
+    login: string
+}
+type ExtendedLikesInfoType = {
+    likesCount: number,
+    dislikesCount: number,
+    myStatus: LikeStatus,
+    newestLikes: newestLikesType[]
+}
+
+export type LikesAndDislikesType = {
+    likeStatus: LikeStatus,
+    userId: string,
+    createdAt: string,
+    login: string
+}
+
 
 export type PostDBType = {
     _id?: ObjectId,
     title: string,
     shortDescription: string,
     content: string,
-    blogId?: ObjectId,
+    blogId?: string,
     blogName: string
     createdAt?: string,
+    likes: LikesAndDislikesType[]
 }

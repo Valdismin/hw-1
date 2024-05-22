@@ -1,5 +1,7 @@
 import {OutputPaginatedUsersType, UsersDBType, UsersModel, UserViewModelType} from "./usersTypes";
+import {injectable} from "inversify";
 
+@injectable()
 export class UsersQueryRepository {
     async getAllUsers(query: any): Promise<OutputPaginatedUsersType | undefined> {
         const searchConditions = [];

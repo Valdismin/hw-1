@@ -3,11 +3,13 @@ import {CommentsService} from "./commentsService";
 import {CommentsQueryRepository} from "./commentsQueryRepository";
 import mongoose from "mongoose";
 import {JWTService} from "../authFeature/JWTService";
+import {inject, injectable} from "inversify";
 
+@injectable()
 export class CommentsController {
-    constructor(protected commentsService: CommentsService,
-                protected commentsQueryRepository: CommentsQueryRepository,
-                protected JWTService: JWTService) {
+    constructor(@inject(CommentsService) protected commentsService: CommentsService,
+                @inject(CommentsQueryRepository) protected commentsQueryRepository: CommentsQueryRepository,
+                @inject(JWTService) protected JWTService: JWTService) {
     }
 
     async getCommentById(req: Request, res: Response) {

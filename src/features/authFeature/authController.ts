@@ -3,11 +3,13 @@ import {authMeType} from "./authTypes";
 import {JWTService} from "./JWTService";
 import {AuthService} from "./authService";
 import {SecurityService} from "../securityFeature/securityService";
+import {inject, injectable} from "inversify";
 
+@injectable()
 export class AuthController {
-    constructor(protected authService: AuthService,
-                protected JWTService: JWTService,
-                protected securityService:SecurityService
+    constructor(@inject(AuthService) protected authService: AuthService,
+                @inject(JWTService) protected JWTService: JWTService,
+                @inject(SecurityService) protected securityService:SecurityService
                 ) {}
 
     async loginUser(req: Request, res: Response) {

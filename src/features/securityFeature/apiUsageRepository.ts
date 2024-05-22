@@ -1,6 +1,8 @@
 
 import {ApiUsageModel} from "./apiUsageTypes";
+import {injectable} from "inversify";
 
+@injectable()
 export class ApiUsageRepository {
      async setRecord(IP: string, URL: string, date: Date) {
         const apiUsage = new ApiUsageModel({IP, URL, date});

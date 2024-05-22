@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import express from 'express'
 import {blogsRouter} from "./features/blogFeature/blogsRouter";
 import {postsRouter} from "./features/postsFeature/postsRouter";
