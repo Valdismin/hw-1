@@ -92,7 +92,7 @@ export type LikesAndDislikesType = {
     likeStatus: LikeStatus,
     userId: string,
     createdAt: string,
-    login: string
+    userLogin: string
 }
 
 

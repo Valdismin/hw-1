@@ -4,7 +4,6 @@ import {jwtService, securityService} from "./compositionRoot";
 
 export const updateSession = async (req: Request, res: Response, next: NextFunction) => {
     const refreshToken = req.cookies.refreshToken
-
     if (!refreshToken) {
         next()
         return

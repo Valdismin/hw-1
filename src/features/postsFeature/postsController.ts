@@ -1,8 +1,7 @@
 import {Request, Response} from 'express'
-import {OutputPaginatedPostType, PostDBType, PostViewModelType} from "./postsTypes";
+import {OutputPaginatedPostType, PostViewModelType} from "./postsTypes";
 import {queryHelper} from "../../utils/helpers";
 import {PostsQueryRepository} from "./postQueryRepository";
-import {Schema} from "mongoose";
 import {PostService} from "./postService";
 import {BlogsQueryRepository} from "../blogFeature/blogsQueryRepository";
 import {CommentsService} from "../commentsFeature/commentsService";
@@ -31,8 +30,13 @@ export class PostsController {
                 return
             }
         }
+        let token
+        let userId
+        if (req.headers.authorization) {
+            token = req.headers.authorization.split(' ')[1]
+            userId = await this.JWTService.getUserIdByToken(token)
+        }
         const id = req.params.blogId
-        const userId = req.userId
         const posts = await this.postQueryRepository.getManyPosts(sanitizedQuery, id, userId!)
         if (!posts) {
             res.status(404).end()
@@ -66,7 +70,12 @@ export class PostsController {
 
     async getPostById(req: Request, res: Response<PostViewModelType>) {
         const id = req.params.id
-        const userId = req.userId
+        let token
+        let userId
+        if (req.headers.authorization) {
+            token = req.headers.authorization.split(' ')[1]
+            userId = await this.JWTService.getUserIdByToken(token)
+        }
         const post = await this.postQueryRepository.getPostById(id,userId!)
         if (!post) {
             res.status(404).end()
@@ -145,11 +154,13 @@ export class PostsController {
         const id = req.params.id
         const userId = req.userId
         const post = await this.postQueryRepository.getPostById(id, userId!)
+
         if (!post) {
             res.status(404).end()
             return
         }
         const result = await this.postService.addLikeService(id, userId!, req.body.likeStatus)
+
         if (!result) {
             res.status(404).end()
             return

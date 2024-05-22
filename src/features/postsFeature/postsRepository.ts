@@ -1,7 +1,5 @@
 import {ExtendedInputPostType, PostDBType, PostModel, UpdatePostType} from "./postsTypes";
-import {ObjectId} from "mongoose";
 import {injectable} from "inversify";
-import {CommentModel} from "../commentsFeature/commentsTypes";
 
 @injectable()
 export class PostsRepository {
@@ -29,7 +27,7 @@ export class PostsRepository {
     }
 
     async checkUserLike(postId: string, userId: string) {
-        const post = PostModel.findOne({_id: postId, 'likes.userId': userId}).lean().exec()
+        const post = await PostModel.findOne({_id: postId, likes: {$elemMatch: {userId: userId}}})
 
         return !!post
     }
@@ -40,21 +38,33 @@ export class PostsRepository {
                 likes: {
                     likeStatus: likeStatus,
                     userId: userId,
-                    userLogin: login
+                    userLogin: login,
+                    createdAt: new Date().toISOString()
                 }
             }
         })
+
         if (result.modifiedCount === 0) {
             return null
         }
         return true
     }
 
-    async updateLikeToPost(commentId: string, userId: string, likeStatus: string, login: string): Promise<boolean | null> {
-        const result: any = await CommentModel.updateOne({
-            _id: commentId,
+    async updateLikeToPost(postId: string, userId: string, likeStatus: string, login: string): Promise<boolean | null> {
+        const result: any = await PostModel.updateOne({
+            _id: postId,
             "likes.userId": userId
-        }, {$set: {likes: {likeStatus: likeStatus, userId: userId, userLogin: login}}})
+        }, {
+            $set: {
+                likes: {
+                    likeStatus: likeStatus,
+                    userId: userId,
+                    userLogin: login,
+                    createdAt: new Date().toISOString()
+                }
+            }
+        })
+
         if (result.modifiedCount === 0) {
             return null
         }

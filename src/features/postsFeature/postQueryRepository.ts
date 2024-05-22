@@ -1,13 +1,8 @@
 import {LikesAndDislikesType, LikeStatus, OutputPaginatedPostType, PostModel, PostViewModelType} from "./postsTypes";
-import {ObjectId} from "mongoose";
 import {injectable} from "inversify";
 
 @injectable()
 export class PostsQueryRepository {
-    async getPosts() {
-        return PostModel.find({})
-    }
-
     async getManyPosts(query: any, blogId: string, userId?: string): Promise<OutputPaginatedPostType | undefined> {
         const id = blogId ? {blogId: blogId} : {}
         try {
@@ -20,16 +15,18 @@ export class PostsQueryRepository {
             const sanitizedItems = items.map((item: any) => {
                 const likesCount = item.likes.filter((like: LikesAndDislikesType) => like.likeStatus === LikeStatus.Like).length
                 const dislikesCount = item.likes.filter((like: LikesAndDislikesType) => like.likeStatus === LikeStatus.Dislike).length
-                const myStatus = item.likes.find((like: any) => like.userId === userId)?.likeStatus || LikeStatus.None
-                const newestLikes = item.likes.sort((a: LikesAndDislikesType, b: LikesAndDislikesType) => {
-                    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-                }).slice(0, 3).map((like: LikesAndDislikesType) => {
-                    return {
-                        addedAt: like.createdAt,
-                        userId: like.userId,
-                        login: 'login'
-                    }
-                })
+                const myStatus = item.likes.find((like: LikesAndDislikesType) => like.userId === userId)?.likeStatus || LikeStatus.None
+                const newestLikes = item.likes.filter((like: LikesAndDislikesType) => like.likeStatus === LikeStatus.Like)
+                    .sort((a: LikesAndDislikesType, b: LikesAndDislikesType) => {
+                        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+                    }).slice(0, 3)
+                    .map((like: LikesAndDislikesType) => {
+                        return {
+                            addedAt: like.createdAt,
+                            userId: like.userId,
+                            login: like.userLogin
+                        }
+                    })
                 return {
                     id: item._id,
                     title: item.title,
@@ -62,21 +59,20 @@ export class PostsQueryRepository {
 
     async getPostById(id: string, userId?: string): Promise<PostViewModelType | null> {
         const post = await PostModel.findOne({_id: id}).lean().exec()
-
         if (!post) {
             return null
         }
 
-        const postLikeStatus = await PostModel.findOne({_id: id, 'likes.userId': userId}).lean().exec()
+        const postLikeStatus = await PostModel.findOne({_id: id, likes: {$elemMatch: {userId: userId}}}).lean().exec()
         const likesCount = post.likes.filter((like: LikesAndDislikesType) => like.likeStatus === LikeStatus.Like).length
         const dislikesCount = post.likes.filter((like: LikesAndDislikesType) => like.likeStatus === LikeStatus.Dislike).length
-        const newestLikes = post.likes.sort((a: LikesAndDislikesType, b: LikesAndDislikesType) => {
+        const newestLikes = post.likes.filter((like) => like.likeStatus === LikeStatus.Like).sort((a: LikesAndDislikesType, b: LikesAndDislikesType) => {
             return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         }).slice(0, 3).map((like: LikesAndDislikesType) => {
             return {
                 addedAt: like.createdAt,
                 userId: like.userId,
-                login: 'login'
+                login: like.userLogin
             }
         })
 

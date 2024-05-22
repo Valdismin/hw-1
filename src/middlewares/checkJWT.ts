@@ -1,7 +1,10 @@
 import {NextFunction, Request, Response} from "express";
-import {jwtService, usersQueryRepository} from "./compositionRoot";
+import {container} from "../db/ioc";
+import {JWTService} from "../features/authFeature/JWTService";
+import {UsersQueryRepository} from "../features/usersFeature/usersQueryRepository";
 
-
+const jwtService = container.get(JWTService)
+const usersQueryRepository = container.get(UsersQueryRepository)
 
 export const checkJWT = (req: Request, res: Response, next: NextFunction) => {
     if (!req.headers.authorization) {
@@ -18,6 +21,7 @@ export const checkJWT = (req: Request, res: Response, next: NextFunction) => {
             res.status(401).end()
             return
         }
+
         req.userId = userId
         return next()
     }

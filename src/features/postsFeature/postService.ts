@@ -45,6 +45,7 @@ export class PostService {
     async addLikeService(postId: string, userId: string, likeStatus: string) {
         const checkResult = await this.postsRepository.checkUserLike(postId, userId)
         const user = await this.usersQueryRepository.getUserById(userId)
+
         if(checkResult) {
             return this.postsRepository.updateLikeToPost(postId, userId, likeStatus, user!.userInfo.login)
         }

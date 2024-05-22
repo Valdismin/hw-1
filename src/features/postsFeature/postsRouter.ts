@@ -2,7 +2,7 @@ import {Router} from "express";
 import {authMiddleware} from "../../middlewares/auth";
 import {postValidation} from "./postsValidation";
 import {inputCheckErrorsMiddleware} from "../../middlewares/createErrorMiddleware";
-import {commentValidation} from "../commentsFeature/commentsValidation";
+import {commentValidation, likeValidation} from "../commentsFeature/commentsValidation";
 import {checkJWT} from "../../middlewares/checkJWT";
 import {updateSession} from "../../middlewares/updateSession";
 import {container} from "../../db/ioc";
@@ -19,4 +19,4 @@ postsRouter.put('/:id', [authMiddleware, ...postValidation], inputCheckErrorsMid
 postsRouter.delete('/:id', authMiddleware, updateSession, postsController.deletePost.bind(postsController))
 postsRouter.get('/:id/comments', updateSession, postsController.getPostComments.bind(postsController))
 postsRouter.post('/:id/comments', checkJWT, commentValidation, inputCheckErrorsMiddleware, updateSession, postsController.createPostComment.bind(postsController))
-postsRouter.put('/:id/like-status', checkJWT, updateSession, postsController.addLike.bind(postsController))
+postsRouter.put('/:id/like-status', checkJWT, likeValidation, inputCheckErrorsMiddleware, updateSession, postsController.addLike.bind(postsController))
